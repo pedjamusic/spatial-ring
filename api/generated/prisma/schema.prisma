@@ -1,0 +1,119 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserGroup {
+  Admin
+  Montaza
+  Produkcija
+}
+
+model User {
+  id        String     @id @default(cuid())
+  name      String?
+  email     String     @unique
+  password  String
+  group     UserGroup
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  Movement  Movement[]
+}
+
+model Category {
+  id       String  @id @default(cuid())
+  name     String  @unique
+  parentId String?
+  Asset    Asset[]
+}
+
+model Location {
+  id        String   @id @default(cuid())
+  name      String   @unique // e.g., Warehouse A, Garage Bay, Backyard Roof
+  kind      String? // warehouse, garage, yard, venue, etc.
+  createdAt DateTime @default(now())
+}
+
+model Event {
+  id        String     @id @default(cuid())
+  name      String
+  venue     String?
+  startsAt  DateTime?
+  endsAt    DateTime?
+  createdAt DateTime   @default(now())
+  Movement  Movement[]
+}
+
+enum AssetStatus {
+  Ready
+  Stored
+  InUse
+  Maintenance
+}
+
+model Asset {
+  id                String      @id @default(cuid())
+  name              String
+  categoryId        String
+  make              String?
+  model             String?
+  dimensions        String?
+  photoUrl          String?
+  assetTag          String?     @unique
+  serialRequired    Boolean     @default(false)
+  serial            String? // optional if tracking only one unit
+  quantity          Int         @default(1) // total units owned for this asset definition
+  lastMaintenance   DateTime?
+  restingLocationId String? // default storage spot
+  shelf             String? // free-text shelf/spot inside the location
+  status            AssetStatus @default(Ready)
+  notes             String?
+  createdById       String?
+  updatedById       String?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  category Category   @relation(fields: [categoryId], references: [id])
+  Movement Movement[]
+
+  @@index([categoryId])
+  @@index([restingLocationId])
+}
+
+enum MovementType {
+  Stored // put-away or return to a storage location
+  InUse // checked out to an event or usage place
+  Maintenance // sent to maintenance; notes carry details
+}
+
+model Movement {
+  id               String       @id @default(cuid())
+  assetId          String
+  type             MovementType
+  quantity         Int // units affected by this action
+  locationId       String? // for Stored (put-away/return) or origin hint for InUse if captured
+  eventId          String? // for InUse
+  performedById    String
+  performedAt      DateTime     @default(now())
+  expectedReturnAt DateTime?
+  notes            String?
+
+  asset       Asset  @relation(fields: [assetId], references: [id])
+  event       Event? @relation(fields: [eventId], references: [id])
+  performedBy User   @relation(fields: [performedById], references: [id])
+
+  @@index([assetId, performedAt])
+  @@index([eventId, performedAt])
+  @@index([locationId, performedAt])
+}

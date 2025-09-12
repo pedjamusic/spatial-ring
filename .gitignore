@@ -1,0 +1,21 @@
+node_modules
+
+# Keep environment variables out of version control
+.env
+
+# Ignore Prisma Client
+/generated/prisma
+prisma/client/
+
+.DS_Store
+.vscode
+.idea
+.tmp/
+tmp/
+
+# Ignore build output directories
+dist/
+build/
+out/
+.vite/
+coverage/
