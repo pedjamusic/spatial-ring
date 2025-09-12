@@ -1,0 +1,114 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  // output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --- Data Models ---
+
+enum AssetStatus {
+  Ready
+  Stored
+  InUse
+  Maintenance
+}
+
+enum MovementType {
+  Stored // put-away or return to storage
+  InUse // checked out to an event
+  Maintenance // sent to maintenance; notes capture details
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // relations (optional usage): movements performed by this user
+  movements Movement[]
+}
+
+model Location {
+  id        String   @id @default(cuid())
+  name      String   @unique // e.g., Warehouse A, Garage Bay, Backyard Roof
+  kind      String?
+  createdAt DateTime @default(now())
+
+  // helper: assets that have this as their default/resting location
+  assets Asset[]
+}
+
+model Event {
+  id        String    @id @default(cuid())
+  name      String
+  venue     String?
+  startsAt  DateTime?
+  endsAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  // helper: movements that assign assets to this event
+  movements Movement[]
+}
+
+model Asset {
+  id                String      @id @default(cuid())
+  name              String
+  category          String
+  make              String?
+  model             String?
+  dimensions        String?
+  photoUrl          String?
+  assetTag          String?     @unique
+  serialRequired    Boolean     @default(false)
+  serial            String?
+  quantity          Int         @default(1)
+  lastMaintenance   DateTime?
+  restingLocationId String?
+  shelf             String?
+  status            AssetStatus @default(Ready)
+  notes             String?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  // relations
+  restingLocation Location?  @relation(fields: [restingLocationId], references: [id])
+  movements       Movement[]
+
+  @@index([status])
+  @@index([restingLocationId])
+}
+
+model Movement {
+  id               String       @id @default(cuid())
+  assetId          String
+  type             MovementType
+  quantity         Int
+  locationId       String? // for Stored (return to this location)
+  eventId          String? // for InUse (assigned to this event)
+  performedById    String
+  performedAt      DateTime     @default(now())
+  expectedReturnAt DateTime?
+  notes            String?
+
+  // relations
+  asset       Asset  @relation(fields: [assetId], references: [id])
+  event       Event? @relation(fields: [eventId], references: [id])
+  performedBy User   @relation(fields: [performedById], references: [id])
+
+  @@index([assetId, performedAt])
+  @@index([eventId, performedAt])
+  @@index([locationId, performedAt])
+}
