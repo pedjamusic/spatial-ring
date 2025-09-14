@@ -47,20 +47,38 @@ model Location {
   kind      String?
   createdAt DateTime @default(now())
 
+  notes String?
+
   // helper: assets that have this as their default/resting location
   assets Asset[]
 }
 
 model Event {
-  id        String    @id @default(cuid())
-  name      String
-  venue     String?
-  startsAt  DateTime?
-  endsAt    DateTime?
-  createdAt DateTime  @default(now())
+  id   String @id @default(cuid())
+  name String
+
+  // Optional relation to EventLocation
+  locationId String?
+  location   EventLocation? @relation(fields: [locationId], references: [id])
+  notes      String?
+  startsAt   DateTime?
+  endsAt     DateTime?
+  createdAt  DateTime       @default(now())
 
   // helper: movements that assign assets to this event
   movements Movement[]
+}
+
+model EventLocation {
+  id        String   @id @default(cuid())
+  name      String // e.g., "Belgrade Convention Center", "Hotel Metropol"
+  city      String
+  address   String?
+  notes     String?
+  createdAt DateTime @default(now())
+
+  // One EventLocation can be used by many Events
+  events Event[]
 }
 
 model Asset {
