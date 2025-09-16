@@ -15,7 +15,6 @@ const app = express()
 app.use(helmet())
 app.use(cors({origin: 'http://localhost:5173', credentials: true}))
 app.use(express.json())
-// const prisma = new PrismaClient();
 
 // Authentication routes are public and should not be protected by requiring a token
 app.use('/auth', authRouter);
