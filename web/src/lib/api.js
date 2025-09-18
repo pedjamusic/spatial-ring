@@ -1,9 +1,10 @@
 // web/src/lib/api.js
 import { getToken } from './auth'
 
-const base = import.meta.env.VITE_API_BASE_URL || '/apii'
+const base = import.meta.env.VITE_API_BASE_URL || '/api'
 
-const json = async (res) => {
+const json = async (resPromise) => {
+  const res = await resPromise
   if (!res.ok) throw new Error((await res.json().catch(() => ({})))?.error || res.statusText)
   return res.json()
 }

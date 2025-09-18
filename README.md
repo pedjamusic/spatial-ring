@@ -27,11 +27,11 @@
 
 - Run an official Postgres container with a named volume so data survives restarts:
 
-  ```bash
+  ```docker
   docker run -d --name pg-local -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres -e POSTGRES_DB=app -p 5432:5432 -v pg/var/lib/postgresql/data postgres
   ```
 
-- Verify with docker ps and note that Postgres listens on localhost:5432 for the API.
+- Verify with `docker ps` and note that Postgres listens on _localhost:5432_ for the API.
 
 ## Step 2 — Scaffold the API (Express + Prisma)
 
@@ -42,9 +42,35 @@
   DATABASE_URL=“postgresql://postgres:postgres@localhost:5432/app?schema=public”
   ```
 
-- Create api/src/server.js with a basic Express server and CORS/Helmet setup to prepare for routes.
+- Create _api/src/server.js_ with a basic Express server and CORS/Helmet setup to prepare for routes.
 
 ## Step 3 — Add Prisma schema with Users
 
-- Edit api/prisma/schema.prisma with datasource and generator, then a minimal User including passwordHash; Prisma’s guides show this flow clearly.
+- Edit _api/prisma/schema.prisma_ with datasource and generator, then a minimal User including passwordHash; Prisma’s guides show this flow clearly.
 - Run: `npx prisma migrate dev –name init` to create tables and generate the client; the Prisma tutorial uses this exact command for first migrations.
+
+# Rails scaffold equivalent
+
+✅ Backend Architecture
+
+- Prisma DMMF integration - Reads your schema and exposes clean metadata via `/api/meta/*` endpoints
+- Express API routes - RESTful CRUD endpoints for all your models
+- JWT authentication - Proper auth middleware protecting your admin routes
+- Clean separation - Public metadata, protected data operations
+  ✅ Frontend Magic
+- Dynamic form generation - Forms automatically adapt to your Prisma schema changes
+- Smart field mapping - Handles different field types (text, numbers, dates, enums, relations)
+- Reverse relation filtering - Correctly hides `assets Asset[]` from Location forms
+- React Router layout - Professional admin shell with sidebar navigation
+
+# Resources used in Spatial Ring App
+
+Tailwind CSS,
+Lucide,
+Dockerized Postgres,
+Express JS,
+Prisma,
+bcrypt for password hashing,
+JWT for stateless auth,
+React (Vite) for web, and
+Expo for handheld.

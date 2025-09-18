@@ -46,11 +46,36 @@ model Location {
   name      String   @unique // e.g., Warehouse A, Garage Bay, Backyard Roof
   kind      String?
   createdAt DateTime @default(now())
-
-  notes String?
-
+  notes     String?
   // helper: assets that have this as their default/resting location
-  assets Asset[]
+  assets    Asset[]
+}
+
+model Asset {
+  id                String      @id @default(cuid())
+  name              String
+  category          String
+  make              String?
+  model             String?
+  dimensions        String?
+  photoUrl          String?
+  assetTag          String?     @unique
+  serialRequired    Boolean     @default(false)
+  serial            String?
+  quantity          Int         @default(1)
+  restingLocationId String?
+  shelf             String?
+  status            AssetStatus @default(Ready)
+  notes             String?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  // relations
+  restingLocation Location?  @relation(fields: [restingLocationId], references: [id])
+  movements       Movement[]
+
+  @@index([status])
+  @@index([restingLocationId])
 }
 
 model Event {
@@ -79,34 +104,6 @@ model EventLocation {
 
   // One EventLocation can be used by many Events
   events Event[]
-}
-
-model Asset {
-  id                String      @id @default(cuid())
-  name              String
-  category          String
-  make              String?
-  model             String?
-  dimensions        String?
-  photoUrl          String?
-  assetTag          String?     @unique
-  serialRequired    Boolean     @default(false)
-  serial            String?
-  quantity          Int         @default(1)
-  lastMaintenance   DateTime?
-  restingLocationId String?
-  shelf             String?
-  status            AssetStatus @default(Ready)
-  notes             String?
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
-
-  // relations
-  restingLocation Location?  @relation(fields: [restingLocationId], references: [id])
-  movements       Movement[]
-
-  @@index([status])
-  @@index([restingLocationId])
 }
 
 model Movement {

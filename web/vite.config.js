@@ -6,8 +6,13 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      // Forward /api/* to backend in development
+      // Forward /api/* and /auth/* to backend in development
       '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/auth': {
         target: 'http://localhost:3000',
         changeOrigin: true,
         secure: false,

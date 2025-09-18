@@ -1,0 +1,21 @@
+{
+  "name": "inventory-app",
+  "version": "1.0.0",
+  "description": "**Spatial Rings**: In many fantasy series, a \"spatial ring\" or \"space ring\" is a ring that creates a small, separate pocket dimension. These can store items, and with advanced versions, even living beings, though common ones may not.",
+  "homepage": "https://github.com/pedjamusic/spatial-ring#readme",
+  "bugs": {
+    "url": "https://github.com/pedjamusic/spatial-ring/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pedjamusic/spatial-ring.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npm run dev --prefix api & npm run dev --prefix web",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
