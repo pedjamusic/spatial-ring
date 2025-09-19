@@ -14,6 +14,21 @@ export default function GenericCrud({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // Log when model metadata is first loaded
+  useEffect(() => {
+    if (meta) {
+      console.log(`🏗️ CRUD page initialized for ${modelName}`);
+      console.log(`📊 Model has ${meta.fields.length} total fields`);
+
+      const relationCount = meta.fields.filter(
+        (f) => f.kind === "object"
+      ).length;
+      if (relationCount > 0) {
+        console.log(`🔗 Found ${relationCount} relation field(s)`);
+      }
+    }
+  }, [meta, modelName]);
+
   const api = useMemo(() => resource(resourceName), [resourceName]);
 
   const loadData = async () => {

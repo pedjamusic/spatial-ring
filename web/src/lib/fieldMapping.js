@@ -42,7 +42,7 @@ export function isFieldHidden(field, uiConfig = {}) {
   
   // Hide reverse relations (one-to-many, many-to-many arrays)
   if (field.kind === 'object' && field.isList === true) {
-    console.log(`🙈 Hiding reverse relation field: ${field.name}`)
+    // console.log(`🙈 Hiding reverse relation field: ${field.name}`)
     return true
   }
   

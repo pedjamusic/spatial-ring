@@ -57,7 +57,9 @@
 - Express API routes - RESTful CRUD endpoints for all your models
 - JWT authentication - Proper auth middleware protecting your admin routes
 - Clean separation - Public metadata, protected data operations
-  ✅ Frontend Magic
+
+✅ Frontend Magic
+
 - Dynamic form generation - Forms automatically adapt to your Prisma schema changes
 - Smart field mapping - Handles different field types (text, numbers, dates, enums, relations)
 - Reverse relation filtering - Correctly hides `assets Asset[]` from Location forms

@@ -4,6 +4,7 @@ import AdminLayout from "./layouts/AdminLayout";
 import Login from "./pages/Login";
 import AdminHome from "./pages/AdminHome";
 import Locations from "./pages/Locations";
+import AssetCategories from "./pages/AssetCategories";
 import Assets from "./pages/Assets";
 import Events from "./pages/Events";
 import Movements from "./pages/Movements";
@@ -25,6 +26,7 @@ export default function App() {
         >
           <Route index element={<AdminHome />} />
           <Route path="locations" element={<Locations />} />
+          <Route path="assetCategories" element={<AssetCategories />} />
           <Route path="assets" element={<Assets />} />
           <Route path="events" element={<Events />} />
           <Route path="movements" element={<Movements />} />
