@@ -11,7 +11,7 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const events = await prisma.event.findMany({
-      include: { location: true },
+      include: { eventLocation: true },
       orderBy: { createdAt: 'desc' }
     })
     res.json(events)

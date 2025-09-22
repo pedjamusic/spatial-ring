@@ -95,22 +95,23 @@ model Event {
   id   String @id @default(cuid())
   name String
 
-  // Optional relation to EventLocation
-  locationId String?
-  location   EventLocation? @relation(fields: [locationId], references: [id])
-  notes      String?
-  startsAt   DateTime?
-  endsAt     DateTime?
-  createdAt  DateTime       @default(now())
+  notes     String?
+  startsAt  DateTime?
+  endsAt    DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
+  // Optional relation to EventLocation
+  eventLocationId String?
+  eventLocation   EventLocation? @relation(fields: [eventLocationId], references: [id])
   // helper: movements that assign assets to this event
-  movements Movement[]
+  movements       Movement[]
 }
 
 model EventLocation {
   id        String   @id @default(cuid())
   name      String // e.g., "Belgrade Convention Center", "Hotel Metropol"
-  city      String
+  // city      String
   address   String?
   notes     String?
   createdAt DateTime @default(now())

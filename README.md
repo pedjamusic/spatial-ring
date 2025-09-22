@@ -13,7 +13,7 @@
 "db": "npx prisma studio --schema ./prisma/schema.prisma"
 ```
 
-## Step 0 — Prerequisites
+# Prerequisites
 
 - Install Node.js LTS, VS Code, and Docker Desktop; Docker will run a local Postgres without installing it natively.
 - Create a new Git repo/folder (e.g., inventory-app) with subfolders api, web, and app for clear separation.

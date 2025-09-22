@@ -6,6 +6,7 @@ import AdminHome from "./pages/AdminHome";
 import Locations from "./pages/Locations";
 import AssetCategories from "./pages/AssetCategories";
 import Assets from "./pages/Assets";
+import EventLocations from "./pages/EventLocations";
 import Events from "./pages/Events";
 import Movements from "./pages/Movements";
 // Import other CRUD pages as needed
@@ -28,6 +29,7 @@ export default function App() {
           <Route path="locations" element={<Locations />} />
           <Route path="assetCategories" element={<AssetCategories />} />
           <Route path="assets" element={<Assets />} />
+          <Route path="eventLocations" element={<EventLocations />} />
           <Route path="events" element={<Events />} />
           <Route path="movements" element={<Movements />} />
           {/* Add more CRUD pages similarly */}

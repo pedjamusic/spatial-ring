@@ -6,6 +6,10 @@ const base = import.meta.env.VITE_API_BASE_URL || '/api'
 const json = async (resPromise) => {
   const res = await resPromise
   if (!res.ok) throw new Error((await res.json().catch(() => ({})))?.error || res.statusText)
+
+      // If response is 204 No Content, return empty object instead of trying to parse JSON
+  if (res.status === 204) return {}
+  
   return res.json()
 }
 

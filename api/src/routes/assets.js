@@ -36,4 +36,38 @@ router.post('/', async (req, res) => {
   }
 })
 
+// PUT /api/assets/:id
+router.put('/:id', async (req, res) => {
+  try {
+    const { id } = req.params
+    const { name, category, make, model, quantity, restingLocationId, shelf, notes } = req.body
+
+    const asset = await prisma.asset.update({
+      where: { id: id },
+      data: { name, category, make, model, quantity, restingLocationId, shelf, notes }
+    })
+    res.json(asset)
+  } catch (error) {
+    console.error('❌ Failed to update asset:', error)
+    res.status(400).json({ error: '❌ Failed to update asset' })
+  }
+})
+
+// DELETE /api/assets/:id
+router.delete('/:id', async (req, res) => {
+  try {
+    const { id } = req.params
+
+    await prisma.asset.delete({
+      where: { id: id }
+    })
+
+    res.status(204).send()
+    console.log('✅ Deleted location successfully')
+  } catch (error) {
+    console.error('❌ Failed to delete location:', error)
+    res.status(400).json({ error: '❌ Failed to delete location' })
+  }
+})
+
 export default router;
