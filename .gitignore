@@ -19,3 +19,6 @@ build/
 out/
 .vite/
 coverage/
+
+#
+.code-workspace
