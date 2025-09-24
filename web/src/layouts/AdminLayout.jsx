@@ -4,10 +4,6 @@ export default function AdminLayout() {
   const { pathname } = useLocation();
   const title = pathname.startsWith("/admin/locations")
     ? "Locations"
-    : pathname.startsWith("/admin/assetCategories")
-    ? "Asset Categories"
-    : pathname.startsWith("/admin/eventLocations")
-    ? "Event Locations"
     : pathname.startsWith("/admin/assets")
     ? "Assets"
     : pathname.startsWith("/admin/events")
@@ -41,10 +37,7 @@ export default function AdminLayout() {
           }}
         >
           <h1 style={{ margin: 0, fontSize: 18 }}>{title}</h1>
-          {/* Optional per-page nav area */}
-          <div style={{ marginLeft: "auto" }}>
-            {/* Add per-page controls here later */}
-          </div>
+          <div style={{ marginLeft: "auto" }} />
         </header>
         <section style={{ padding: 16, overflow: "auto" }}>
           <Outlet />

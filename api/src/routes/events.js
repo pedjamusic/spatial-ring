@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
     console.log('👤 Request user:', req.user) // Debug log
     
     const events = await prisma.event.findMany({
-      include: { eventLocation: true },
+      include: { location: true },
       orderBy: { createdAt: 'desc' }
     })
     res.json(events)

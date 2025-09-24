@@ -7,7 +7,6 @@ import assetsRouter from './assets.js';
 import eventsRouter from './events.js';
 import movementsRouter from './movements.js';
 import assetCategories from './assetCategories.js';
-import eventLocations from './eventLocations.js';
 
 const router = express.Router();
 
@@ -17,7 +16,6 @@ router.use('/assets', assetsRouter);
 router.use('/events', eventsRouter);
 router.use('/movements', movementsRouter);
 router.use('/assetCategories', assetCategories);
-router.use('/eventLocations', eventLocations);
 
 // You can also add a /me route here if you like
 router.get('/me', (req, res) => {

@@ -68,13 +68,10 @@ export default function ModelForm({
       );
 
       const endpointMap = {
-        User: "users",
         Location: "locations",
         AssetCategory: "assetCategories",
-        Asset: "assets",
-        EventLocation: "eventLocations",
+        User: "users",
         Event: "events",
-        Movement: "movements",
       };
 
       const optionsPromises = relationFields.map(async (field) => {
