@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { setToken } from "../lib/auth";
+import { login } from "../lib/auth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/admin";
@@ -13,21 +14,39 @@ export default function Login() {
   const onSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
+
     try {
-      const res = await fetch("/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "Login failed");
-      }
-      const data = await res.json();
-      setToken(data.token);
+      console.log("🚀 Calling login function with:", { email }); // DEBUG
+
+      const result = await login({ email, password });
+      console.log("✅ Login successful:", result); // DEBUG
+
+      // Check if tokens were stored
+      console.log("📦 Tokens in storage:", {
+        accessToken: localStorage.getItem("accessToken"),
+        refreshToken: localStorage.getItem("refreshToken"),
+      }); // DEBUG
       navigate(from, { replace: true });
+      // Old fetch-based login (for reference)
+      //
+      //   const res = await fetch("/auth/login", {
+      //     method: "POST",
+      //     headers: { "Content-Type": "application/json" },
+      //     body: JSON.stringify({ email, password }),
+      //   });
+      //   if (!res.ok) {
+      //     const data = await res.json().catch(() => ({}));
+      //     throw new Error(data.error || "Login failed");
+      //   }
+      //   const data = await res.json();
+      //   setToken(data.token);
+      //   navigate(from, { replace: true });
     } catch (err) {
-      setError(err.message);
+      console.error("❌ Login error:", err); // DEBUG
+      setError(err.message || "⚠️ Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 

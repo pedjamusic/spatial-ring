@@ -16,6 +16,8 @@ export default function ModelForm({
   const [formData, setFormData] = useState(initialData);
   const [relationOptions, setRelationOptions] = useState({});
   const [loading, setLoading] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [error, setError] = useState("");
 
   // --- TOP-LEVEL HOOKS ---
 
@@ -100,8 +102,22 @@ export default function ModelForm({
         } catch (error) {
           console.error(`Failed to load options for ${field.name}:`, error);
           // Set error state to display it in the UI
-          setError(`Failed to load ${field.relation.to}: ${error.message}`);
+          setFormError(`Failed to load ${field.relation.to}: ${error.message}`);
           return { field: field.name, options: [] };
+        }
+        {
+          formError && (
+            <div
+              style={{
+                padding: 12,
+                background: "#ffe6e6",
+                color: "#b00",
+                border: "1px solid #fcc",
+              }}
+            >
+              {formError}
+            </div>
+          );
         }
       });
 

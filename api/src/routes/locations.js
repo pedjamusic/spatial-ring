@@ -8,8 +8,10 @@ const router = express.Router();
 // so a GET on '/' here corresponds to GET /api/locations
 
 // GET /api/locations
-router.get('/', async (req, res) => {
+router.get('/', async (req, res) => {  
   try {
+    console.log('👤 Request user:', req.user) // Debug log
+
     const locations = await prisma.location.findMany({
       orderBy: { name: 'asc' }
     })

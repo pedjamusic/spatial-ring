@@ -1,0 +1,137 @@
+import axios from 'axios'
+
+const base = import.meta.env.VITE_API_BASE_URL || '/api'
+
+// Create axios instance
+export const http = axios.create({
+  baseURL: base,
+  timeout: 10000,
+})
+
+// Token management
+const getAccessToken = () => {
+  const token = localStorage.getItem('accessToken')
+  console.log('🔍 Getting access token:', token ? token.substring(0, 20) + '...' : 'NULL') // DEBUG
+  return token
+}
+
+const getRefreshToken = () => {
+  const token = localStorage.getItem('refreshToken')
+  console.log('🔍 Getting refresh token:', token ? token.substring(0, 20) + '...' : 'NULL') // DEBUG
+  return token
+}
+
+const setTokens = (accessToken, refreshToken) => {
+  console.log('💾 Setting tokens:', { 
+    accessToken: accessToken ? accessToken.substring(0, 20) + '...' : 'NULL',
+    refreshToken: refreshToken ? refreshToken.substring(0, 20) + '...' : 'NULL'
+  }) // DEBUG
+
+    localStorage.setItem('accessToken', accessToken)
+    if (refreshToken) localStorage.setItem('refreshToken', refreshToken)
+}
+
+const clearTokens = () => {
+  localStorage.removeItem('accessToken')
+  localStorage.removeItem('refreshToken')
+}
+
+// Request interceptor: Add auth header
+http.interceptors.request.use(
+  (config) => {
+    const token = getAccessToken()
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+    return config
+  },
+  (error) => Promise.reject(error)
+)
+
+// Response interceptor: Handle token refresh
+let isRefreshing = false
+let failedQueue = []
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error)
+    } else {
+      prom.resolve(token)
+    }
+  })
+  failedQueue = []
+}
+
+http.interceptors.response.use(
+  (config) => {
+    const token = getAccessToken()
+    console.log('🚀 Making request:', config.method?.toUpperCase(), config.url) // DEBUG
+    console.log('🔑 Token for request:', token ? token.substring(0, 20) + '...' : 'NO TOKEN') // DEBUG
+    
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+      console.log('✅ Authorization header set') // DEBUG
+    } else {
+      console.log('❌ No token available for request') // DEBUG
+    }
+    return config
+  },
+  (error) => {
+    console.error('❌ Request interceptor error:', error) // DEBUG
+    return Promise.reject(error)
+  },
+  
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject })
+        }).then(token => {
+          originalRequest.headers.Authorization = `Bearer ${token}`
+          return http(originalRequest)
+        }).catch(err => Promise.reject(err))
+      }
+
+      originalRequest._retry = true
+      isRefreshing = true
+
+      const refreshToken = getRefreshToken()
+      
+      if (!refreshToken) {
+        clearTokens()
+        window.location.href = '/login'
+        return Promise.reject(error)
+      }
+
+      try {
+        const response = await axios.post(`${base}/auth/refresh`, {
+          refreshToken
+        })
+
+        const { accessToken, refreshToken: newRefreshToken } = response.data
+        setTokens(accessToken, newRefreshToken)
+
+        processQueue(null, accessToken)
+        
+        originalRequest.headers.Authorization = `Bearer ${accessToken}`
+        return http(originalRequest)
+      } catch (refreshError) {
+        processQueue(refreshError, null)
+        clearTokens()
+        window.location.href = '/login'
+        return Promise.reject(refreshError)
+      } finally {
+        isRefreshing = false
+      }
+    }
+
+    return Promise.reject(error)
+  }
+)
+
+export default http
+export { setTokens, clearTokens, getAccessToken, getRefreshToken }

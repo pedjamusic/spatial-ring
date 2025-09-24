@@ -16,17 +16,14 @@ datasource db {
 
 // --- Data Models ---
 
-enum AssetStatus {
-  Ready
-  Stored
-  InUse
-  Maintenance
-}
-
-enum MovementType {
-  Stored // put-away or return to storage
-  InUse // checked out to an event
-  Maintenance // sent to maintenance; notes capture details
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  revoked   Boolean  @default(false)
+  createdAt DateTime @default(now())
 }
 
 model User {
@@ -38,7 +35,22 @@ model User {
   updatedAt    DateTime @updatedAt
 
   // relations (optional usage): movements performed by this user
-  movements Movement[]
+  movements     Movement[]
+  // helper: refresh tokens issued to this user
+  refreshTokens RefreshToken[]
+}
+
+enum AssetStatus {
+  Ready
+  Stored
+  InUse
+  Maintenance
+}
+
+enum MovementType {
+  Stored // put-away or return to storage
+  InUse // checked out to an event
+  Maintenance // sent to maintenance; notes capture details
 }
 
 model Location {

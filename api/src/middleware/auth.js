@@ -1,29 +1,45 @@
 import jwt from 'jsonwebtoken'
-import prisma from '../lib/prisma.js';
+// import prisma from '../lib/prisma.js';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'yo$6$5daUcgvHTC/hcHiD$Mdv9JEBNNEoDWXB0h0G.g.iXrHjOb253Bj0tNR/yU732jjjNPRIXzJiPup9kEBMACfJyy9ncFZ/B8raR5FKjd1ur_jwt_secret'
 
 export const authenticateToken = async (req, res, next) => {
   const authHeader = req.headers['authorization']
   const token = authHeader && authHeader.split(' ')[1] // Bearer TOKEN
 
+  console.log('🔍 Raw auth header:', authHeader)
+  console.log('🔍 Extracted token:', token ? token.substring(0, 20) + '...' : 'NO TOKEN')
+
   if (!token) {
-    return res.status(401).json({ error: 'Access token required' })
+    return res.status(401).json({ error: '⚠️ Access token required' })
   }
 
-try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET)
-    const user = await prisma.user.findUnique({ 
-      where: { id: payload.sub },
-      select: { id: true, name: true, email: true }
-    })
-    
-    if (!user) {
-      return res.status(401).json({ error: 'User not found' })
+jwt.verify(token, JWT_SECRET, (err, decoded) => {
+    if (err) {
+      console.log('❌ JWT verification failed:', err.message)
+      console.log('❌ Token causing error:', token.substring(0, 50) + '...')
+      return res.status(401).json({ error: '⚠️ Invalid or expired token' })
     }
     
-    req.user = user
+    // Debug: log the decoded token to see its structure
+    console.log('🔍 Decoded JWT payload:', decoded)
+    
+    // Fix: Handle different possible field names for user ID
+    const userId = decoded.userId || decoded.id || decoded.sub
+    
+    if (!userId) {
+      console.log('❌ No user ID found in token payload')
+      return res.status(403).json({ error: '⚠️ Invalid token payload' })
+    }
+    
+    // Set user object with consistent structure
+    req.user = { 
+      id: userId,
+      userId: userId,
+      ...decoded 
+    }
+    console.log('✅ User authenticated:', req.user.id)
     next()
-  } catch (error) {
-    return res.status(403).json({ error: 'Invalid or expired token' })
-  }
+  })
 }
 export default authenticateToken

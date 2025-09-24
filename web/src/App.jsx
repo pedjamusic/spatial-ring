@@ -26,11 +26,11 @@ export default function App() {
           }
         >
           <Route index element={<AdminHome />} />
-          <Route path="locations" element={<Locations />} />
           <Route path="assetCategories" element={<AssetCategories />} />
           <Route path="assets" element={<Assets />} />
           <Route path="eventLocations" element={<EventLocations />} />
           <Route path="events" element={<Events />} />
+          <Route path="locations" element={<Locations />} />
           <Route path="movements" element={<Movements />} />
           {/* Add more CRUD pages similarly */}
         </Route>

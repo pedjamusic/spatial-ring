@@ -10,6 +10,8 @@ const router = express.Router();
 // GET /api/movements
 router.get('/', async (req, res) => {
   try {
+    console.log('👤 Request user:', req.user) // Debug log
+    
     const movements = await prisma.movement.findMany({
       include: { asset: true, event: true, performedBy: { select: { id: true, name: true } } },
       orderBy: { performedAt: 'desc' },

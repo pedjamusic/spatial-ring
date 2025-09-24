@@ -10,6 +10,8 @@ const router = express.Router()
 // GET /api/assetCategories
 router.get('/', async (req, res) => {
   try {
+    console.log('👤 Request user:', req.user) // Debug log
+    
     const categories = await prisma.assetCategory.findMany({
       orderBy: { name: 'asc' },
       include: {

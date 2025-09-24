@@ -10,6 +10,8 @@ const router = express.Router();
 // GET /api/assets
 router.get('/', async (req, res) => {
   try {
+    console.log('👤 Request user:', req.user) // Debug log
+    
     const assets = await prisma.asset.findMany({
       include: { restingLocation: true },
       orderBy: { name: 'asc' }
