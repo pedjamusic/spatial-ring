@@ -29,8 +29,8 @@ export default function ModelTable({
       if (ib === -1) return -1; // b not listed → after a
       return ia - ib; // both listed → compare pos
     })
-    .slice(0, uiConfig.maxColumns || 4) // optional limit (default 4)
-    .sort((a, b) => order.indexOf(a.name) - order.indexOf(b.name) || 0);
+    .slice(0, uiConfig.maxColumns || meta.fields.length); // Limit columns
+  // .sort((a, b) => order.indexOf(a.name) - order.indexOf(b.name) || 0);
 
   if (!data?.length) {
     return <div>👀 No records found.</div>;

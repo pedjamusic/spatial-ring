@@ -1,16 +1,16 @@
 import GenericCrud from "./GenericCrud";
 
-export default function Locations() {
+export default function Warehouses() {
   const uiConfig = {
     // Optional: customize fields
-    // kind: { label: 'Location Type' },
+    // kind: { label: 'Warehouse Type' },
     // createdAt: { hidden: true }
     // notes: { widget: "textarea" },
   };
   return (
     <GenericCrud
-      modelName="Location"
-      resourceName="locations"
+      modelName="Warehouse"
+      resourceName="warehouses"
       uiConfig={uiConfig}
     />
   );

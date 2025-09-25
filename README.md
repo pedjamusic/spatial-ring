@@ -65,7 +65,15 @@
 - Reverse relation filtering - Correctly hides `assets Asset[]` from Location forms
 - React Router layout - Professional admin shell with sidebar navigation
 
-# Resources used in Spatial Ring App
+## uiConfig
+
+- Hide columns: `fieldName: { hidden: true }`
+- Reorder columns: `columnOrder: ['field1', 'field2', ...]`
+- Limit columns: `maxColumns: 4`
+- Custom labels: `fieldName: { label: 'Custom Name' }`
+- Show relations: `relation: { path: 'relation.name' }`
+
+### Resources used in Spatial Ring App
 
 Tailwind CSS,
 Lucide,

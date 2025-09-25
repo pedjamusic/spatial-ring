@@ -41,10 +41,11 @@ enum MovementType {
   Maintenance // sent to maintenance; notes capture details
 }
 
-model Location {
+// model Location {
+model Warehouse {
   id        String   @id @default(cuid())
-  name      String   @unique // e.g., Warehouse A, Garage Bay, Backyard Roof
-  kind      String?
+  name      String   @unique // e.g., Warehouse A, At Joe's, Backyard Shed
+  kind      String? // e.g., Garage, Storage Unit, Outdoor, Shed
   createdAt DateTime @default(now())
   notes     String?
   // helper: assets that have this as their default/resting location
@@ -82,9 +83,9 @@ model Asset {
   categoryId        String? // Optional foreign key
   category          AssetCategory? @relation(fields: [categoryId], references: [id])
   restingLocationId String?
+  restingLocation   Warehouse?     @relation(fields: [restingLocationId], references: [id])
 
-  restingLocation Location?  @relation(fields: [restingLocationId], references: [id])
-  movements       Movement[]
+  movements Movement[]
 
   @@index([status])
   @@index([restingLocationId])

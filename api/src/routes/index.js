@@ -2,7 +2,7 @@
 // and mounts them under the /api prefix with authentication middleware applied.
 
 import express from 'express';
-import locationsRouter from './locations.js';
+import warehousesRouter from './warehouses.js';
 import assetsRouter from './assets.js';
 import eventsRouter from './events.js';
 import movementsRouter from './movements.js';
@@ -12,7 +12,7 @@ import eventLocations from './eventLocations.js';
 const router = express.Router();
 
 // Mount each resource router at its respective path
-router.use('/locations', locationsRouter);
+router.use('/warehouses', warehousesRouter);
 router.use('/assets', assetsRouter);
 router.use('/events', eventsRouter);
 router.use('/movements', movementsRouter);

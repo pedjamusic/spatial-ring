@@ -6,6 +6,7 @@ import {
   isFieldRequired,
 } from "../lib/fieldMapping";
 import { authFetch } from "../lib/api";
+import Warehouses from "../pages/Warehouses";
 
 export default function ModelForm({
   meta,
@@ -65,7 +66,7 @@ export default function ModelForm({
       );
 
       const endpointMap = {
-        Location: "locations",
+        Warehouses: "warehouses",
         AssetCategory: "assetCategories",
         User: "users",
         Event: "events",

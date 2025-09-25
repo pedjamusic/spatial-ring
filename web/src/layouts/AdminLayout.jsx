@@ -2,8 +2,8 @@ import { Link, Outlet, useLocation } from "react-router-dom";
 
 export default function AdminLayout() {
   const { pathname } = useLocation();
-  const title = pathname.startsWith("/admin/locations")
-    ? "Locations"
+  const title = pathname.startsWith("/admin/warehouses")
+    ? "Warehouses"
     : pathname.startsWith("/admin/assets")
     ? "Assets"
     : pathname.startsWith("/admin/events")
@@ -18,11 +18,11 @@ export default function AdminLayout() {
         <h2 style={{ marginTop: 0 }}>Admin</h2>
         <nav style={{ display: "grid", gap: 8 }}>
           <Link to="/admin">Dashboard</Link>
+          <Link to="/admin/warehouses">Warehouses</Link>
           <Link to="/admin/assets">Assets</Link>
           <Link to="/admin/assetCategories">Asset Categories</Link>
           <Link to="/admin/events">Events</Link>
           <Link to="/admin/eventLocations">Event Locations</Link>
-          <Link to="/admin/locations">Locations</Link>
           <Link to="/admin/movements">Movements</Link>
         </nav>
       </aside>

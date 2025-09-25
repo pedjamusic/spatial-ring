@@ -3,7 +3,7 @@ import GenericCrud from "./GenericCrud";
 export default function Events() {
   const uiConfig = {
     // Optional: customize fields
-    columnOrder: ["name", "date", "location", "status"],
+    columnOrder: ["name", "location"],
     maxColumns: 2,
     location: {
       label: "Event Location",
