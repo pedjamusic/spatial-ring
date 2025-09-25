@@ -30,13 +30,17 @@ async function handleResponse(response) {
 // A helper to construct the authorization headers.
 function getAuthHeaders() {
   const token = localStorage.getItem('token');
-  const headers = {
+  // const headers = {
+  //   'Content-Type': 'application/json',
+  // };
+  // if (token) {
+  //   headers['Authorization'] = `Bearer ${token}`;
+  // }
+  // return headers;
+  return {
     'Content-Type': 'application/json',
-  };
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
   }
-  return headers;
 }
 
 // The main function for making API requests.

@@ -17,9 +17,6 @@ export default function ModelForm({
   const [relationOptions, setRelationOptions] = useState({});
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState("");
-  const [error, setError] = useState("");
-
-  // --- TOP-LEVEL HOOKS ---
 
   // Effect 1: Log metadata analysis when meta changes
   useEffect(() => {
@@ -72,6 +69,8 @@ export default function ModelForm({
         AssetCategory: "assetCategories",
         User: "users",
         Event: "events",
+        EventLocation: "eventLocations",
+        // Add more mappings as needed
       };
 
       const optionsPromises = relationFields.map(async (field) => {
@@ -84,9 +83,8 @@ export default function ModelForm({
         }
 
         try {
+          // FIXED: Only use authFetch, remove the duplicate fetch call
           const data = await authFetch(endpoint);
-          const response = await fetch(`/api/${endpoint}`);
-          // const data = await response.json();
 
           // Ensure data is an array before mapping
           const options = Array.isArray(data)
@@ -98,23 +96,8 @@ export default function ModelForm({
           return { field: field.name, options };
         } catch (error) {
           console.error(`Failed to load options for ${field.name}:`, error);
-          // Set error state to display it in the UI
           setFormError(`Failed to load ${field.relation.to}: ${error.message}`);
           return { field: field.name, options: [] };
-        }
-        {
-          formError && (
-            <div
-              style={{
-                padding: 12,
-                background: "#ffe6e6",
-                color: "#b00",
-                border: "1px solid #fcc",
-              }}
-            >
-              {formError}
-            </div>
-          );
         }
       });
 
@@ -144,10 +127,12 @@ export default function ModelForm({
     e.preventDefault();
     setLoading(true);
 
-    console.log("🚀 About to submit form data:", formData);
+    console.log("🚀 About to submit form ", formData);
 
     try {
       await onSubmit(formData);
+    } catch (error) {
+      setFormError(error.message || "Failed to submit form");
     } finally {
       setLoading(false);
     }
@@ -159,18 +144,11 @@ export default function ModelForm({
     const required = isFieldRequired(field);
     const value = formData[field.name] ?? "";
 
-    // --- Correct way to handle relation fields ---
+    // Handle relation fields
     if (field.kind === "object" && !field.isList) {
       const options = relationOptions[field.name] || [];
 
-      // Map field names for foreign keys
-      // let actualFieldName = field.name;
-      // if (field.name === "category") actualFieldName = "categoryId";
-      // if (field.name === "restingLocation")
-      //   actualFieldName = "restingLocationId";
       // Generic foreign key field name mapping
-      // If field name is "category", use "categoryId" for the form data
-      // If field name is "restingLocation", use "restingLocationId", etc.
       const foreignKeyFieldName = field.name.endsWith("Id")
         ? field.name
         : `${field.name}Id`;
@@ -182,7 +160,7 @@ export default function ModelForm({
           </div>
           <select
             required={required}
-            value={value || ""}
+            value={formData[foreignKeyFieldName] || ""}
             onChange={(e) => handleChange(foreignKeyFieldName, e.target.value)}
             style={{ width: "100%", padding: "8px", border: "1px solid #ccc" }}
           >
@@ -220,8 +198,6 @@ export default function ModelForm({
         </label>
       );
     }
-
-    // Checkbox, Textarea, and other inputs remain the same...
 
     // Checkbox for booleans
     if (inputType === "checkbox") {
@@ -287,41 +263,58 @@ export default function ModelForm({
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      style={{ display: "grid", gap: "16px", maxWidth: "600px" }}
-    >
-      {formFields.map(renderField)}
-      <div style={{ display: "flex", gap: "8px" }}>
-        <button
-          type="submit"
-          disabled={loading}
+    <>
+      {/* FIXED: Moved error display to proper JSX location */}
+      {formError && (
+        <div
           style={{
-            padding: "10px 20px",
-            backgroundColor: loading ? "#ccc" : "#007bff",
-            color: "white",
-            border: "none",
-            cursor: loading ? "not-allowed" : "pointer",
+            padding: 12,
+            background: "#ffe6e6",
+            color: "#b00",
+            border: "1px solid #fcc",
+            marginBottom: "16px",
           }}
         >
-          {loading ? "Saving..." : initialData.id ? "Update" : "Create"}
-        </button>
-        {initialData.id && (
+          {formError}
+        </div>
+      )}
+
+      <form
+        onSubmit={handleSubmit}
+        style={{ display: "grid", gap: "16px", maxWidth: "600px" }}
+      >
+        {formFields.map(renderField)}
+        <div style={{ display: "flex", gap: "8px" }}>
           <button
-            type="button"
-            onClick={() => setFormData({})}
+            type="submit"
+            disabled={loading}
             style={{
               padding: "10px 20px",
-              backgroundColor: "#6c757d",
+              backgroundColor: loading ? "#ccc" : "#007bff",
               color: "white",
               border: "none",
-              cursor: "pointer",
+              cursor: loading ? "not-allowed" : "pointer",
             }}
           >
-            Cancel
+            {loading ? "Saving..." : initialData.id ? "Update" : "Create"}
           </button>
-        )}
-      </div>
-    </form>
+          {initialData.id && (
+            <button
+              type="button"
+              onClick={() => setFormData({})}
+              style={{
+                padding: "10px 20px",
+                backgroundColor: "#6c757d",
+                color: "white",
+                border: "none",
+                cursor: "pointer",
+              }}
+            >
+              Cancel
+            </button>
+          )}
+        </div>
+      </form>
+    </>
   );
 }

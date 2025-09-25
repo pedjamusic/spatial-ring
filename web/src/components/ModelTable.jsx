@@ -8,14 +8,32 @@ export default function ModelTable({
   uiConfig = {},
 }) {
   // Select visible columns (limit for readability)
+  // .filter((field) => !uiConfig[field.name]?.hidden)
+  // .filter((field) => !["Json"].includes(field.type)) // Skip complex types in table
+  // .filter((field) => field.kind !== "object") // Skip relations for now
+  // .slice(0, 6) // Limit columns
+
+  // If the page provides uiConfig.columnOrder = ['field1','field2',…]
+  // sort meta.fields accordingly and fall back to schema order.
+  const order = uiConfig.columnOrder || [];
+
   const visibleFields = meta.fields
-    .filter((field) => !uiConfig[field.name]?.hidden)
-    .filter((field) => !["Json"].includes(field.type)) // Skip complex types in table
-    .filter((field) => field.kind !== "object") // Skip relations for now
-    .slice(0, 6); // Limit columns
+    .filter((f) => !uiConfig[f.name]?.hidden)
+    .filter((f) => !["Json"].includes(f.type))
+    .filter((f) => f.kind !== "object")
+    .sort((a, b) => {
+      const ia = order.indexOf(a.name);
+      const ib = order.indexOf(b.name);
+      if (ia === -1 && ib === -1) return 0; // neither specified
+      if (ia === -1) return 1; // a not listed → after b
+      if (ib === -1) return -1; // b not listed → after a
+      return ia - ib; // both listed → compare pos
+    })
+    .slice(0, uiConfig.maxColumns || 4) // optional limit (default 4)
+    .sort((a, b) => order.indexOf(a.name) - order.indexOf(b.name) || 0);
 
   if (!data?.length) {
-    return <div>No records found.</div>;
+    return <div>👀 No records found.</div>;
   }
 
   return (

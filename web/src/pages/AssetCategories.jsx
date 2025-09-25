@@ -1,6 +1,6 @@
 import GenericCrud from "./GenericCrud";
 
-export default function AssetCategoriesCrud() {
+export default function AssetCategories() {
   const uiConfig = {
     // Optional: customize if needed
   };

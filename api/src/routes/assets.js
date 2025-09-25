@@ -18,23 +18,51 @@ router.get('/', async (req, res) => {
     })
     res.json(assets)
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch assets' })
+    res.status(500).json({ error: '⚠️ Failed to fetch assets' })
   }
 })
 // POST /api/assets
 router.post('/', async (req, res) => {
   try {
-    const { name, category, make, model, quantity, restingLocationId, shelf, notes } = req.body
+    const { name, make, model, dimensions, photoUrl, assetTag, serial, quantity, shelf, status, notes, categoryId, restingLocationId } = req.body
     const asset = await prisma.asset.create({
        data: {
-        name, category, make, model,
+        name, make, model, dimensions, photoUrl, assetTag, serial,
         quantity: parseInt(quantity) || 1,
-        restingLocationId, shelf, notes
+        shelf, status, notes, categoryId, restingLocationId
       }
     })
     res.status(201).json(asset)
   } catch (error) {
-    res.status(400).json({ error: 'Failed to create asset' })
+    res.status(400).json({ error: '⚠️ Failed to create asset' })
+  }
+})
+// PUT /api/assets/:id
+router.put('/:id', async (req, res) => {
+  try {
+    const { name, make, model, dimensions, photoUrl, assetTag, serial, quantity, shelf, status, notes, categoryId, restingLocationId } = req.body
+    const asset = await prisma.asset.update({
+      where: { id: req.params.id },
+      data: {
+        name, make, model, dimensions, photoUrl, assetTag, serial,
+        quantity: parseInt(quantity) || 1,
+        shelf, status, notes, categoryId, restingLocationId
+      }
+    })
+    res.json(asset)
+  } catch (error) {
+    res.status(400).json({ error: '⚠️ Failed to update asset' })
+  }
+})
+// DELETE /api/assets/:id
+router.delete('/:id', async (req, res) => {
+  try {
+    await prisma.asset.delete({
+      where: { id: req.params.id }
+    })
+    res.status(204).send()
+  } catch (error) {
+    res.status(400).json({ error: '⚠️ Failed to delete asset' })
   }
 })
 

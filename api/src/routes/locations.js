@@ -10,7 +10,7 @@ const router = express.Router();
 // GET /api/locations
 router.get('/', async (req, res) => {  
   try {
-    console.log('👤 Request user:', req.user) // Debug log
+    // console.log('👤 Request user:', req.user) // Debug log
 
     const locations = await prisma.location.findMany({
       orderBy: { name: 'asc' }

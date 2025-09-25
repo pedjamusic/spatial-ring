@@ -10,7 +10,7 @@ const router = express.Router();
 // GET /api/eventLocations
 router.get('/', async (req, res) => {
   try {
-    console.log('👤 Request user:', req.user) // Debug log
+    // console.log('👤 Request user:', req.user) // Debug log
     
     const eventLocations = await prisma.eventLocation.findMany({
       orderBy: { name: 'asc' }

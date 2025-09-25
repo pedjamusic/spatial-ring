@@ -62,30 +62,29 @@ model AssetCategory {
 }
 
 model Asset {
-  id             String      @id @default(cuid())
-  name           String
-  make           String?
-  model          String?
-  dimensions     String?
-  photoUrl       String?
-  assetTag       String?     @unique
-  serialRequired Boolean     @default(false)
-  serial         String?
-  quantity       Int         @default(1)
-  shelf          String?
-  status         AssetStatus @default(Ready)
-  notes          String?
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
+  id         String      @id @default(cuid())
+  name       String
+  make       String?
+  model      String?
+  dimensions String?
+  photoUrl   String?
+  assetTag   String?     @unique
+  // serialRequired Boolean     @default(false)
+  serial     String?
+  quantity   Int         @default(1)
+  shelf      String?
+  status     AssetStatus @default(Stored)
+  notes      String?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
 
   // relations
   categoryId        String? // Optional foreign key
   category          AssetCategory? @relation(fields: [categoryId], references: [id])
   restingLocationId String?
-  restingLocation   Location?      @relation(fields: [restingLocationId], references: [id])
-  movements         Movement[]
-  // AssetCategory   AssetCategory? @relation(fields: [CategoryId], references: [id])
-  // assetCategoryId String?
+
+  restingLocation Location?  @relation(fields: [restingLocationId], references: [id])
+  movements       Movement[]
 
   @@index([status])
   @@index([restingLocationId])

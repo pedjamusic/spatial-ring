@@ -5,7 +5,7 @@ export default function EventLocations() {
     // Optional: customize fields
     // kind: { label: 'Location Type' },
     // createdAt: { hidden: true }
-    notes: { widget: "textarea" },
+    // notes: { widget: "textarea" },
   };
   return (
     <GenericCrud

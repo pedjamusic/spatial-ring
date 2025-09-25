@@ -1,11 +1,11 @@
 import GenericCrud from "./GenericCrud";
 
-export default function LocationsCrud() {
+export default function Locations() {
   const uiConfig = {
     // Optional: customize fields
     // kind: { label: 'Location Type' },
     // createdAt: { hidden: true }
-    notes: { widget: "textarea" },
+    // notes: { widget: "textarea" },
   };
   return (
     <GenericCrud
