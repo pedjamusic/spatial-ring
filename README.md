@@ -67,7 +67,7 @@
 
 ## uiConfig
 
-- Hide columns: `fieldName: { hidden: true }`
+- Hide columns everywhere or only in the all items table: `fieldName: { hidden: true }` or `fieldName: { hideInTable: true }`
 - Reorder columns: `columnOrder: ['field1', 'field2', ...]`
 - Limit columns: `maxColumns: 4`
 - Custom labels: `fieldName: { label: 'Custom Name' }`

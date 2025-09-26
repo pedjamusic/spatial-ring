@@ -18,9 +18,10 @@ export default function ModelTable({
   const order = uiConfig.columnOrder || [];
 
   const visibleFields = meta.fields
-    .filter((f) => !uiConfig[f.name]?.hidden)
+    .filter((f) => !uiConfig[f.name]?.hidden) // hide everywhere
+    .filter((f) => !uiConfig[f.name]?.hideInTable) // hide **only** in table
     .filter((f) => !["Json"].includes(f.type))
-    .filter((f) => f.kind !== "object")
+    .filter((f) => f.kind !== "object" || Boolean(uiConfig[f.name]?.path)) // allow relations with path, otherwise hide
     .sort((a, b) => {
       const ia = order.indexOf(a.name);
       const ib = order.indexOf(b.name);
@@ -76,7 +77,17 @@ export default function ModelTable({
           <tr key={row.id} style={{ borderBottom: "1px solid #eee" }}>
             {visibleFields.map((field) => (
               <td key={field.name} style={{ padding: "12px" }}>
-                {formatFieldValue(row[field.name], field)}
+                {/* {formatFieldValue(row[field.name], field)} */}
+                {(() => {
+                  const cfg = uiConfig[field.name] || {};
+                  const path = cfg.path; // e.g. "location.name"
+                  const raw = path
+                    ? path
+                        .split(".")
+                        .reduce((acc, key) => (acc ? acc[key] : undefined), row)
+                    : row[field.name];
+                  return formatFieldValue(raw, field); // existing helper for dates etc.
+                })()}
               </td>
             ))}
             <td style={{ padding: "12px" }}>

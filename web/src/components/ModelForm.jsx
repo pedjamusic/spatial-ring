@@ -66,7 +66,7 @@ export default function ModelForm({
       );
 
       const endpointMap = {
-        Warehouses: "warehouses",
+        Warehouse: "warehouses",
         AssetCategory: "assetCategories",
         User: "users",
         Event: "events",
