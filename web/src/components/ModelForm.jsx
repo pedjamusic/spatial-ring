@@ -6,7 +6,6 @@ import {
   isFieldRequired,
 } from "../lib/fieldMapping";
 import { authFetch } from "../lib/api";
-import Warehouses from "../pages/Warehouses";
 
 export default function ModelForm({
   meta,
@@ -84,7 +83,6 @@ export default function ModelForm({
         }
 
         try {
-          // FIXED: Only use authFetch, remove the duplicate fetch call
           const data = await authFetch(endpoint);
 
           // Ensure data is an array before mapping
