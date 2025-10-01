@@ -1,8 +1,17 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+
 import { setToken } from "../lib/auth";
-import { Form, TextField, Label, Input, Button } from "react-aria-components";
 import { toast } from "../lib/toast";
+
+import {
+  Form,
+  TextField,
+  Label,
+  Input,
+  Text,
+  Button,
+} from "react-aria-components";
 import { ValidationPopover } from "../components/ui/ValidationPopover";
 
 export default function Login() {
@@ -10,8 +19,12 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [passwordTouched, setPasswordTouched] = useState(false);
+
+  // Validation states for each field
   const [emailValidation, setEmailValidation] = useState({
-    state: "none",
+    state: "none", // 'none' | 'valid' | 'invalid'
     message: "",
   });
   const [passwordValidation, setPasswordValidation] = useState({
@@ -19,21 +32,19 @@ export default function Login() {
     message: "",
   });
 
-  const [emailTouched, setEmailTouched] = useState(false);
-  const [passwordTouched, setPasswordTouched] = useState(false);
-
   // Popover open states
-  const [emailPopoverOpen, setEmailPopoverOpen] = useState(false);
-  const [passwordPopoverOpen, setPasswordPopoverOpen] = useState(false);
+  // const [emailPopoverOpen, setEmailPopoverOpen] = useState(false);
+  // const [passwordPopoverOpen, setPasswordPopoverOpen] = useState(false);
 
   // Refs for popover anchoring
-  const emailInputRef = useRef(null);
-  const passwordInputRef = useRef(null);
+  // const emailInputRef = useRef(null);
+  // const passwordInputRef = useRef(null);
 
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/admin";
 
+  // Email validation function
   const validateEmail = (value) => {
     if (!value) {
       return { state: "invalid", message: "Email is required" };
@@ -48,9 +59,10 @@ export default function Login() {
     return { state: "valid", message: "Looks good!" };
   };
 
+  // Password validation function
   const validatePassword = (value) => {
     if (!value) {
-      return { state: "invalid", message: "Password is required" };
+      return { state: "invalid", message: "Please, enter password" };
     }
     if (value.length < 4) {
       return {
@@ -61,13 +73,14 @@ export default function Login() {
     return { state: "valid", message: "Looks good!" };
   };
 
+  // Change handlers
   const handleEmailChange = (e) => {
     const value = e.target.value;
     setEmail(value);
     if (emailTouched) {
       const validation = validateEmail(value);
       setEmailValidation(validation);
-      setEmailPopoverOpen(validation.state === "invalid");
+      // setEmailPopoverOpen(validation.state === "invalid");
     }
   };
 
@@ -77,16 +90,17 @@ export default function Login() {
     if (passwordTouched) {
       const validation = validatePassword(value);
       setPasswordValidation(validation);
-      setPasswordPopoverOpen(validation.state === "invalid");
+      // setPasswordPopoverOpen(validation.state === "invalid");
     }
   };
 
+  // Blur handlers (when user leaves the field)
   const onEmailBlur = () => {
     if (!emailTouched) {
       setEmailTouched(true);
       const validation = validateEmail(email);
       setEmailValidation(validation);
-      setEmailPopoverOpen(validation.state === "invalid");
+      // setEmailPopoverOpen(validation.state === "invalid");
     }
   };
 
@@ -95,7 +109,7 @@ export default function Login() {
       setPasswordTouched(true);
       const validation = validatePassword(password);
       setPasswordValidation(validation);
-      setPasswordPopoverOpen(validation.state === "invalid");
+      // setPasswordPopoverOpen(validation.state === "invalid");
     }
   };
 
@@ -103,6 +117,7 @@ export default function Login() {
     e.preventDefault();
     setError("");
 
+    // Validate both fields before submission
     const emailVal = validateEmail(email);
     const passwordVal = validatePassword(password);
 
@@ -111,9 +126,10 @@ export default function Login() {
     setEmailTouched(true);
     setPasswordTouched(true);
 
-    setEmailPopoverOpen(emailVal.state === "invalid");
-    setPasswordPopoverOpen(passwordVal.state === "invalid");
+    // setEmailPopoverOpen(emailVal.state === "invalid");
+    // setPasswordPopoverOpen(passwordVal.state === "invalid");
 
+    // Don't submit if validation fails
     if (emailVal.state === "invalid" || passwordVal.state === "invalid") {
       return;
     }
@@ -124,7 +140,6 @@ export default function Login() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         const msg = data?.error || "Login failed";
@@ -141,15 +156,16 @@ export default function Login() {
     }
   };
 
+  // Dynamic border color classes based on validation state
   const getInputClasses = (validationState) => {
     const baseClasses =
-      "block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 dark:bg-gray-800 dark:text-white";
+      "block w-full rounded-xl border border-gray-200 px-4 py-2.5 focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 sm:py-3 sm:text-sm dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600";
 
     if (validationState === "invalid") {
-      return `${baseClasses} ring-red-500 focus:ring-red-500 dark:ring-red-500`;
+      return `${baseClasses} border-red-500 focus:ring-red-500 dark:ring-red-500`;
     }
     if (validationState === "valid") {
-      return `${baseClasses} ring-green-500 focus:ring-green-500 dark:ring-green-500`;
+      return `${baseClasses} border-green-500 focus:ring-green-500 dark:ring-green-500`;
     }
     return `${baseClasses} ring-gray-300 focus:ring-indigo-600 dark:ring-gray-700`;
   };
@@ -173,79 +189,110 @@ export default function Login() {
       </div>
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <Form onSubmit={onSubmit} className="space-y-6">
-          <TextField isRequired>
-            <Label className="block text-sm leading-6 font-medium text-gray-900 dark:text-white">
-              Email address
-            </Label>
-            <div className="relative mt-2">
-              <Input
-                ref={emailInputRef}
-                type="email"
-                autoComplete="email"
-                value={email}
-                onChange={handleEmailChange}
-                onBlur={onEmailBlur}
-                onFocus={() =>
-                  emailValidation.state === "invalid" &&
-                  setEmailPopoverOpen(true)
-                }
-                className={getInputClasses(emailValidation.state)}
-              />
-              <ValidationPopover
-                isOpen={emailPopoverOpen}
-                onOpenChange={setEmailPopoverOpen}
-                message={emailValidation.message}
-                variant={
-                  emailValidation.state === "invalid" ? "error" : "success"
-                }
-                triggerRef={emailInputRef}
-              />
-            </div>
-          </TextField>
+        <Form onSubmit={onSubmit} aria-label="Login form" className="space-y-6">
+          <div className="grid gap-y-4">
+            {/* Email / username */}
+            <TextField isRequired>
+              <Label
+                htmlFor="email"
+                className="mb-2 block text-sm dark:text-white"
+              >
+                Email address
+              </Label>
+              <div className="mt-2">
+                <Input
+                  type="email"
+                  autoComplete="email"
+                  id="email"
+                  name="email"
+                  onBlur={onEmailBlur}
+                  // className="block w-full rounded-xl border border-gray-200 px-4 py-2.5 focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 sm:py-3 sm:text-sm dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+                  className={getInputClasses(emailValidation.state)}
+                  required
+                  aria-describedby="email-error"
+                  value={email}
+                  // onChange={(e) => setEmail(e.target.value)}
+                  onChange={handleEmailChange}
+                  // className={getInputClasses(emailValidation.state)}
+                />
+                <Text
+                  slot="description"
+                  className="mt-2 block text-xs text-gray-500 dark:text-neutral-400"
+                >
+                  E-Mail address is <i>username</i> at the same time.
+                </Text>
+                {emailValidation.state === "invalid" && (
+                  <Text
+                    slot="errorMessage"
+                    className="mt-2 text-sm text-red-600 dark:text-red-400"
+                  >
+                    {emailValidation.message}
+                  </Text>
+                )}
+                {emailValidation.state === "valid" && (
+                  <Text
+                    slot="description"
+                    className="mt-2 text-sm text-green-600 dark:text-green-400"
+                  >
+                    {emailValidation.message}
+                  </Text>
+                )}
+              </div>
+            </TextField>
+            {/* Password */}
+            <TextField
+              isRequired
+              type="password"
+              className="flex flex-wrap items-center justify-between gap-2"
+            >
+              <Label className="block text-sm dark:text-white">Password</Label>
+              <span className="mb-2 block text-sm text-gray-500 dark:text-neutral-500">
+                Optional
+              </span>
 
-          <TextField isRequired>
-            <Label className="block text-sm leading-6 font-medium text-gray-900 dark:text-white">
-              Password
-            </Label>
-            <div className="relative mt-2">
               <Input
-                ref={passwordInputRef}
+                value={password}
+                // onChange={(e) => setPassword(e.target.value)}
+                onChange={handlePasswordChange}
                 type="password"
                 autoComplete="current-password"
-                value={password}
-                onChange={handlePasswordChange}
+                required
                 onBlur={onPasswordBlur}
-                onFocus={() =>
-                  passwordValidation.state === "invalid" &&
-                  setPasswordPopoverOpen(true)
-                }
                 className={getInputClasses(passwordValidation.state)}
               />
-              <ValidationPopover
-                isOpen={passwordPopoverOpen}
-                onOpenChange={setPasswordPopoverOpen}
-                message={passwordValidation.message}
-                variant={
-                  passwordValidation.state === "invalid" ? "error" : "success"
-                }
-                triggerRef={passwordInputRef}
-              />
-            </div>
-          </TextField>
-
-          {error && (
-            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-          )}
-
-          <div>
-            <Button
-              type="submit"
-              className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm leading-6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              Sign in
-            </Button>
+              {passwordValidation.state === "invalid" && (
+                <Text
+                  slot="errorMessage"
+                  className="text-xs text-red-600 dark:text-red-400"
+                >
+                  {passwordValidation.message}
+                </Text>
+              )}
+              {passwordValidation.state === "valid" && (
+                <Text
+                  slot="description"
+                  className="mt-2 text-sm text-green-600 dark:text-green-400"
+                >
+                  {passwordValidation.message}
+                </Text>
+              )}
+            </TextField>
           </div>
+          {error && (
+            <Text
+              slot="errorMessage"
+              className="text-sm text-red-600 dark:text-red-400"
+            >
+              {error}
+            </Text>
+          )}
+          <Button
+            type="submit"
+            variant="primary"
+            className="inline-flex w-full items-center justify-center gap-x-2 rounded-full border border-transparent bg-blue-600 px-4 py-3 text-sm font-medium text-white hover:bg-blue-700 focus:bg-blue-700 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50"
+          >
+            Sign in
+          </Button>
         </Form>
       </div>
     </div>
