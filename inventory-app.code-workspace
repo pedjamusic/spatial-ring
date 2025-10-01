@@ -1,8 +1,15 @@
 {
   "folders": [
-	{
-		"path": "."
-	}
-],
-  "settings": {}
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "tailwindCSS.experimental.classRegex": [
+      ["clsx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
+      ["twMerge\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
+      ["className(?:Container)?(?:\\w+)?\\s*:\\s*`([^`]*)`", "([^`]*)"],
+      ["const\\s+\\w+\\s*=\\s*`([^`]*)`", "([^`]*)"] // This line targets template literals assigned to constants
+    ]
+  }
 }
