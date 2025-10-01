@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
     })
     res.json(movements)
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch movements' })
+    res.status(500).json({ error: '[API routes] ⚠️ Failed to fetch movements' })
   }
 })
 // POST /api/movements
@@ -31,7 +31,7 @@ router.post('/', async (req, res) => {
     })
     res.status(201).json(movement)
   } catch (error) {
-    res.status(400).json({ error: 'Failed to create movement' })
+    res.status(400).json({ error: '[API routes] ⚠️ Failed to create movement' })
   }
 })
 

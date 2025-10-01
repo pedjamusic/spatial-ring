@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
     })
     res.json(categories)
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch categories' })
+    res.status(500).json({ error: '[API routes] ⚠️ Failed to fetch categories' })
   }
 })
 
@@ -35,7 +35,7 @@ router.post('/', async (req, res) => {
     })
     res.status(201).json(category)
   } catch (error) {
-    res.status(400).json({ error: 'Failed to create category' })
+    res.status(400).json({ error: '[API routes] ⚠️ Failed to create category' })
   }
 })
 
@@ -49,7 +49,7 @@ router.put('/:id', async (req, res) => {
     })
     res.json(category)
   } catch (error) {
-    res.status(400).json({ error: 'Failed to update category' })
+    res.status(400).json({ error: '[API routes] ⚠️ Failed to update category' })
   }
 })
 
@@ -61,7 +61,7 @@ router.delete('/:id', async (req, res) => {
     })
     res.status(204).send()
   } catch (error) {
-    res.status(400).json({ error: 'Failed to delete category' })
+    res.status(400).json({ error: '[API routes] ⚠️ Failed to delete category' })
   }
 })
 

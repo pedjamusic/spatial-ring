@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
     })
     res.json(assets)
   } catch (error) {
-    res.status(500).json({ error: '⚠️ Failed to fetch assets' })
+    res.status(500).json({ error: '[API routes] ⚠️ Failed to fetch assets' })
   }
 })
 // POST /api/assets
@@ -34,7 +34,7 @@ router.post('/', async (req, res) => {
     })
     res.status(201).json(asset)
   } catch (error) {
-    res.status(400).json({ error: '⚠️ Failed to create asset' })
+    res.status(400).json({ error: '[API routes] ⚠️ Failed to create asset' })
   }
 })
 // PUT /api/assets/:id
@@ -51,7 +51,7 @@ router.put('/:id', async (req, res) => {
     })
     res.json(asset)
   } catch (error) {
-    res.status(400).json({ error: '⚠️ Failed to update asset' })
+    res.status(400).json({ error: '[API routes] ⚠️ Failed to update asset' })
   }
 })
 // DELETE /api/assets/:id
@@ -62,7 +62,7 @@ router.delete('/:id', async (req, res) => {
     })
     res.status(204).send()
   } catch (error) {
-    res.status(400).json({ error: '⚠️ Failed to delete asset' })
+    res.status(400).json({ error: '[API routes] ⚠️ Failed to delete asset' })
   }
 })
 

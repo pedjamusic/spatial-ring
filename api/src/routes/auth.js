@@ -10,7 +10,7 @@ router.post('/register', async (req, res) => {
     const { name, email, password } = req.body
     const existingUser = await prisma.user.findUnique({ where: { email } }) // Check if user already exists
     if (existingUser) {
-      return res.status(400).json({ error: 'User already exists' })
+      return res.status(400).json({ error: '[API routes auth] ⚠️ User already exists' })
     }
     // Hash password
     const saltRounds = parseInt(process.env.BCRYPT_COST || '12')
@@ -26,8 +26,8 @@ router.post('/register', async (req, res) => {
       email: user.email 
     })
   } catch (error) {
-    console.error('⚠️ Registration error:', error)
-    res.status(400).json({ error: '❌ Registration failed' })
+    console.error('[API routes auth]⚠️ Registration error:', error)
+    res.status(400).json({ error: '[API routes auth] ❌ Registration failed' })
   }
 })
 
@@ -39,13 +39,13 @@ router.post('/login', async (req, res) => {
     const user = await prisma.user.findUnique({ where: { email } })
   
     if (!user) {
-      return res.status(401).json({ error: 'Invalid credentials' })
+      return res.status(401).json({ error: '[API routes auth] ⚠️ Invalid credentials' })
     }
     
     // Check password
     const valid = await bcrypt.compare(password, user.passwordHash)
     if (!valid) {
-      return res.status(401).json({ error: 'Invalid credentials' })
+      return res.status(401).json({ error: '[API routes auth] ⚠️ Invalid credentials' })
     }
     
     // Create simple JWT token (60 minutes)
@@ -64,8 +64,8 @@ router.post('/login', async (req, res) => {
       token // Simple token field
     })
   } catch (error) {
-    console.error('Login error:', error)
-    res.status(500).json({ error: 'Login failed' })
+    console.error('[API routes auth] ⚠️ Login error:', error)
+    res.status(500).json({ error: '[API routes auth] ❌ Login failed' })
   }
 })
 
@@ -77,11 +77,11 @@ router.post('/logout', async (req, res) => {
     if (refreshToken) {
       await revokeRefreshToken(refreshToken)
     }
-    
-    res.json({ message: '✅ Logged out successfully' })
+
+    res.json({ message: '[API routes auth] ✅ Logged out successfully' })
   } catch (error) {
-    console.error('⚠️ Logout error:', error)
-    res.status(500).json({ error: '❌ Logout failed' })
+    console.error('[API routes auth] ⚠️ Logout error:', error)
+    res.status(500).json({ error: '[API routes auth] ❌ Logout failed' })
   }
 })
 

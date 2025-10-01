@@ -16,9 +16,9 @@ router.get('/', async (req, res) => {
       orderBy: { name: 'asc' }
     })
     res.status(200).json(eventLocations)
-    console.log('✅ Fetched event locations successfully')
+    console.log('[API routes] ✅ Fetched event locations successfully')
   } catch (error) {
-    res.status(500).json({ error: '❌ Failed to fetch event locations' })
+    res.status(500).json({ error: '[API routes] ❌ Failed to fetch event locations' })
   }
 })
 
@@ -32,7 +32,7 @@ router.post('/', async (req, res) => {
     res.status(201).json(eventLocation)
     console.log('✅ Created', eventLocation, 'successfully')
   } catch (error) {
-    res.status(400).json({ error: '❌ Failed to create event location' })
+    res.status(400).json({ error: '[API routes] ❌ Failed to create event location' })
   }
 })
 
@@ -48,8 +48,8 @@ router.put('/:id', async (req, res) => {
     })
     res.json(eventLocation)
   } catch (error) {
-    console.error('❌ Failed to update event location:', error)
-    res.status(400).json({ error: '❌ Failed to update event location' })
+    console.error('[API routes] ❌ Failed to update event location:', error)
+    res.status(400).json({ error: '[API routes] ❌ Failed to update event location' })
   }
 })
 
@@ -63,10 +63,10 @@ router.delete('/:id', async (req, res) => {
     })
 
     res.status(204).send()
-    console.log('✅ Deleted event location successfully')
+    console.log('[API routes] ✅ Deleted event location successfully')
   } catch (error) {
-    console.error('❌ Failed to delete event location:', error)
-    res.status(400).json({ error: '❌ Failed to delete event location' })
+    console.error('[API routes] ❌ Failed to delete event location:', error)
+    res.status(400).json({ error: '[API routes] ❌ Failed to delete event location' })
   }
 })
 

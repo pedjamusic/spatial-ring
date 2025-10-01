@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
     })
     res.json(events)
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch events' })
+    res.status(500).json({ error: '[API routes] ⚠️ Failed to fetch events' })
   }
 })
 // POST /api/events
@@ -30,7 +30,7 @@ router.post('/', async (req, res) => {
     })
     res.status(201).json(event)
   } catch (error) {
-    res.status(400).json({ error: 'Failed to create event' })
+    res.status(400).json({ error: '[API routes] ⚠️ Failed to create event' })
   }
 })
 // PUT /api/events/:id
@@ -43,7 +43,7 @@ router.put('/:id', async (req, res) => {
     })
     res.json(event)
   } catch (error) {
-    res.status(400).json({ error: 'Failed to update event' })
+    res.status(400).json({ error: '[API routes] ⚠️ Failed to update event' })
   }
 })
 // DELETE /api/events/:id
@@ -54,7 +54,7 @@ router.delete('/:id', async (req, res) => {
     })
     res.status(204).send()
   } catch (error) {
-    res.status(400).json({ error: 'Failed to delete event' })
+    res.status(400).json({ error: '[API routes] ⚠️ Failed to delete event' })
   }
 })
 

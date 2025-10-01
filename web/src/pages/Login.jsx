@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+
 import { setToken } from "../lib/auth";
 
 import {
@@ -10,6 +11,7 @@ import {
   Text,
   Button,
 } from "react-aria-components";
+import { toast } from "../lib/toast";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -28,12 +30,16 @@ export default function Login() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      if (!res.ok)
-        throw new Error(
-          (await res.json().catch(() => ({})))?.error || "Login failed",
-        );
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        const msg = data?.error || "Login failed";
+        toast.error(msg);
+        throw new Error(msg);
+      }
+
       const data = await res.json();
       setToken(data.token);
+      toast.success("Successfully logged in!");
       navigate(from, { replace: true });
     } catch (err) {
       setError(err.message);
@@ -61,8 +67,11 @@ export default function Login() {
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <Form onSubmit={onSubmit} aria-label="Login form">
           <div className="grid gap-y-4">
-            <TextField className="relative">
-              <Label for="email" className="mb-2 block text-sm dark:text-white">
+            <TextField isRequired className="relative">
+              <Label
+                htmlFor="email"
+                className="mb-2 block text-sm dark:text-white"
+              >
                 Email address
               </Label>
               <Input
@@ -83,6 +92,7 @@ export default function Login() {
               </Text>
             </TextField>
             <TextField
+              isRequired
               type="password"
               className="flex flex-wrap items-center justify-between gap-2"
             >
@@ -105,7 +115,11 @@ export default function Login() {
               </Text>
             </TextField>
           </div>
-          {error && <div className="mt-2 text-xs text-red-600">{error}</div>}
+          {error && (
+            <Text className="text-sm text-red-600 dark:text-red-400">
+              {error}
+            </Text>
+          )}
           <Button
             variant="primary"
             type="submit"

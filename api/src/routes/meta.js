@@ -10,10 +10,10 @@ function getDMMF() {
       console.log('✅ Using Prisma.dmmf.datamodel')
       return Prisma.dmmf.datamodel
     }
-    throw new Error('DMMF not available')
+    throw new Error('⚠️ DMMF not available')
   } catch (error) {
     console.error('❌ DMMF access failed:', error.message)
-    throw new Error('DMMF not accessible - check Prisma setup')
+    throw new Error('⚠️ DMMF not accessible - check Prisma setup')
   }
 }
 
