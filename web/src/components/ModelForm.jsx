@@ -6,6 +6,7 @@ import {
   isFieldRequired,
 } from "../lib/fieldMapping";
 import { authFetch } from "../lib/api";
+import { Button, Form } from "react-aria-components";
 
 export default function ModelForm({
   meta,
@@ -278,42 +279,42 @@ export default function ModelForm({
         </div>
       )}
 
-      <form
+      <Form
         onSubmit={handleSubmit}
         style={{ display: "grid", gap: "16px", maxWidth: "600px" }}
       >
         {formFields.map(renderField)}
-        <div style={{ display: "flex", gap: "8px" }}>
-          <button
+        <div className="inline-flex rounded-lg shadow-2xs">
+          <Button
             type="submit"
             disabled={loading}
-            style={{
-              padding: "10px 20px",
-              backgroundColor: loading ? "#ccc" : "#007bff",
-              color: "white",
-              border: "none",
-              cursor: loading ? "not-allowed" : "pointer",
-            }}
+            className={`rounded-md px-4 py-2 text-sm font-semibold transition focus:outline-none hover:cursor-pointer
+            ${
+              loading
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                : "bg-blue-600 text-white hover:bg-blue-800"
+            }`}
+            // style={{
+            //   padding: "10px 20px",
+            //   backgroundColor: loading ? "#ccc" : "#007bff",
+            //   color: "white",
+            //   border: "none",
+            //   cursor: loading ? "not-allowed" : "pointer",
+            // }}
           >
             {loading ? "Saving..." : initialData.id ? "Update" : "Create"}
-          </button>
+          </Button>
           {initialData.id && (
-            <button
+            <Button
               type="button"
               onClick={() => setFormData({})}
-              style={{
-                padding: "10px 20px",
-                backgroundColor: "#6c757d",
-                color: "white",
-                border: "none",
-                cursor: "pointer",
-              }}
+              className="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-hidden focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-500 dark:hover:text-blue-400 dark:focus:text-blue-400"
             >
               Cancel
-            </button>
+            </Button>
           )}
         </div>
-      </form>
+      </Form>
     </>
   );
 }

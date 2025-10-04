@@ -1,3 +1,13 @@
+import {
+  Button,
+  Cell,
+  Column,
+  Row,
+  Table,
+  TableBody,
+  TableHeader,
+} from "react-aria-components";
+
 import { getFieldLabel, formatFieldValue } from "../lib/fieldMapping.js";
 
 export default function ModelTable({
@@ -38,91 +48,78 @@ export default function ModelTable({
   }
 
   return (
-    <table
-      style={{
-        width: "100%",
-        borderCollapse: "collapse",
-        border: "1px solid #ddd",
-      }}
-    >
-      <thead>
-        <tr style={{ backgroundColor: "#f8f9fa" }}>
-          {visibleFields.map((field) => (
-            <th
-              key={field.name}
-              style={{
-                padding: "12px",
-                textAlign: "left",
-                borderBottom: "2px solid #ddd",
-                fontWeight: "bold",
-              }}
+    <div className="flex flex-col">
+      <div className="-m-1.5 overflow-x-auto">
+        <div className="p-1.5 min-w-full inline-block align-middle">
+          <div className="border border-gray-200 rounded-lg overflow-hidden dark:border-neutral-700">
+            <Table
+              aria-label=""
+              selectionMode="multiple"
+              className="min-w-full divide-y divide-gray-200 dark:divide-neutral-700"
             >
-              {getFieldLabel(field, uiConfig)}
-            </th>
-          ))}
-          <th
-            style={{
-              padding: "12px",
-              textAlign: "left",
-              borderBottom: "2px solid #ddd",
-              fontWeight: "bold",
-            }}
-          >
-            Actions
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        {data.map((row) => (
-          <tr key={row.id} style={{ borderBottom: "1px solid #eee" }}>
-            {visibleFields.map((field) => (
-              <td key={field.name} style={{ padding: "12px" }}>
-                {/* {formatFieldValue(row[field.name], field)} */}
-                {(() => {
-                  const cfg = uiConfig[field.name] || {};
-                  const path = cfg.path; // e.g. "location.name"
-                  const raw = path
-                    ? path
-                        .split(".")
-                        .reduce((acc, key) => (acc ? acc[key] : undefined), row)
-                    : row[field.name];
-                  return formatFieldValue(raw, field); // existing helper for dates etc.
-                })()}
-              </td>
-            ))}
-            <td style={{ padding: "12px" }}>
-              <div style={{ display: "flex", gap: "8px" }}>
-                <button
-                  onClick={() => onEdit(row)}
-                  style={{
-                    padding: "4px 8px",
-                    backgroundColor: "#28a745",
-                    color: "white",
-                    border: "none",
-                    cursor: "pointer",
-                    fontSize: "12px",
-                  }}
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => onDelete(row.id)}
-                  style={{
-                    padding: "4px 8px",
-                    backgroundColor: "#dc3545",
-                    color: "white",
-                    border: "none",
-                    cursor: "pointer",
-                    fontSize: "12px",
-                  }}
-                >
-                  Delete
-                </button>
-              </div>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+              <TableHeader className="bg-gray-50 dark:bg-neutral-700">
+                {visibleFields.map((field) => (
+                  <Column
+                    scope="col"
+                    key={field.name}
+                    className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-400"
+                  >
+                    {getFieldLabel(field, uiConfig)}
+                  </Column>
+                ))}
+                <Column className="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-400">
+                  Actions
+                </Column>
+              </TableHeader>
+              <TableBody className="divide-y divide-gray-200 dark:divide-neutral-700">
+                {data.map((row) => (
+                  <Row key={row.id}>
+                    {visibleFields.map((field) => (
+                      <Cell
+                        key={field.name}
+                        className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200"
+                      >
+                        {/* {formatFieldValue(row[field.name], field)} */}
+                        {(() => {
+                          const cfg = uiConfig[field.name] || {};
+                          const path = cfg.path; // e.g. "location.name"
+                          const raw = path
+                            ? path
+                                .split(".")
+                                .reduce(
+                                  (acc, key) => (acc ? acc[key] : undefined),
+                                  row
+                                )
+                            : row[field.name];
+                          return formatFieldValue(raw, field); // existing helper for dates etc.
+                        })()}
+                      </Cell>
+                    ))}
+                    <Cell className="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
+                      <div className="inline-flex rounded-md shadow-2xs">
+                        <Button
+                          onClick={() => onEdit(row)}
+                          type="button"
+                          className="py-2 px-3 inline-flex justify-center items-center gap-2 -ms-px first:rounded-s-lg first:ms-0 last:rounded-e-lg text-sm font-medium focus:z-10 border border-gray-200 bg-white  shadow-2xs hover:bg-gray-50  focus:bg-gray-50 dark:bg-neutral-900 dark:border-neutral-700  dark:hover:bg-neutral-800 dark:focus:bg-neutral-800 text-blue-600 hover:text-blue-800 focus:outline-hidden focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-500 dark:hover:text-blue-400 dark:focus:text-blue-400 hover:cursor-pointer"
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          onClick={() => onDelete(row.id)}
+                          type="button"
+                          className="py-2 px-3 inline-flex justify-center items-center gap-2 -ms-px first:rounded-s-lg first:ms-0 last:rounded-e-lg text-sm font-medium focus:z-10 border border-gray-200 bg-white shadow-2xs hover:bg-gray-50 focus:bg-gray-50 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800 text-red-600 hover:text-red-800 focus:text-red-800 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50 dark:text-red-500 dark:hover:text-red-400 dark:focus:text-red-400 hover:cursor-wait"
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </Cell>
+                  </Row>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
