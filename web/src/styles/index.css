@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light dark;
+}
+body {
+  color: light-dark(var(--light), var(--dark));
+}

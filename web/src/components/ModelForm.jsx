@@ -6,7 +6,14 @@ import {
   isFieldRequired,
 } from "../lib/fieldMapping";
 import { authFetch } from "../lib/api";
-import { Button, Form } from "react-aria-components";
+import {
+  Button,
+  Form,
+  TextField,
+  Label,
+  Input,
+  TextArea,
+} from "react-aria-components";
 
 export default function ModelForm({
   meta,
@@ -240,11 +247,17 @@ export default function ModelForm({
 
     // Default input
     return (
-      <label key={field.name}>
-        <div>
-          {label} {required && <span style={{ color: "red" }}>*</span>}
-        </div>
-        <input
+      // <TextField {{required ? isRequired : ""}}>
+      <TextField>
+        <Label
+          key={field.name}
+          htmlFor={label}
+          className="block text-sm/6 font-medium text-gray-900 dark:text-gray-100"
+        >
+          {label} {required && <span className={"text-red-600"}>*</span>}
+        </Label>
+        <Input
+          id={label}
           type={inputType}
           required={required}
           value={value}
@@ -256,9 +269,9 @@ export default function ModelForm({
                 : e.target.value
             )
           }
-          style={{ width: "100%", padding: "8px", border: "1px solid #ccc" }}
+          className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-blue-500"
         />
-      </label>
+      </TextField>
     );
   };
 
@@ -284,15 +297,15 @@ export default function ModelForm({
         style={{ display: "grid", gap: "16px", maxWidth: "600px" }}
       >
         {formFields.map(renderField)}
-        <div className="inline-flex rounded-lg shadow-2xs">
+        <div className="inline-flex">
           <Button
             type="submit"
             disabled={loading}
-            className={`rounded-md px-4 py-2 text-sm font-semibold transition focus:outline-none hover:cursor-pointer
+            className={`py-3 px-4 inline-flex items-center gap-x-2 -ms-px first:rounded-s-lg first:ms-0 last:rounded-e-lg text-sm font-medium focus:z-10 border border-blue-600 text-gray-800 shadow-2xs focus:outline-hidden focus:bg-blue-800 disabled:opacity-50 disabled:pointer-events-none hover:cursor-pointer
             ${
               loading
                 ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-blue-600 text-white hover:bg-blue-800"
+                : "bg-blue-600 text-white hover:bg-blue-800 hover:border-blue-800"
             }`}
             // style={{
             //   padding: "10px 20px",
@@ -308,7 +321,7 @@ export default function ModelForm({
             <Button
               type="button"
               onClick={() => setFormData({})}
-              className="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-hidden focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-500 dark:hover:text-blue-400 dark:focus:text-blue-400"
+              className="py-3 px-4 inline-flex items-center gap-x-2 -ms-px first:rounded-s-md first:ms-0 last:rounded-e-md text-sm font-medium focus:z-10 border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-200 focus:border-gray-300 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
             >
               Cancel
             </Button>

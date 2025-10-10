@@ -6,6 +6,7 @@ export default function Assets() {
       label: "Category",
       path: "category.name", // Display the 'name' field from the related Category
     },
+    id: { hideInTable: true },
     // restingLocationId: {
     //   label: "Location",
     //   widget: "relation",

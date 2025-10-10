@@ -17,5 +17,8 @@
   "scripts": {
     "dev": "npm run dev --prefix api & npm run dev --prefix web",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "lucide-react": "^0.545.0"
   }
 }

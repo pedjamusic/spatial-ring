@@ -50,14 +50,16 @@ export default function ModelTable({
   return (
     <div className="flex flex-col">
       <div className="-m-1.5 overflow-x-auto">
-        <div className="p-1.5 min-w-full inline-block align-middle">
-          <div className="border border-gray-200 rounded-lg overflow-hidden dark:border-neutral-700">
+        <div className="border border-gray-200 dark:border-neutral-700 rounded-lg p-3 min-w-full inline-block align-middle">
+          {/* <div className="border border-gray-200 rounded-lg overflow-hidden dark:border-neutral-700"> */}
+          <div className="overflow-hidden">
             <Table
               aria-label=""
               selectionMode="multiple"
               className="min-w-full divide-y divide-gray-200 dark:divide-neutral-700"
             >
-              <TableHeader className="bg-gray-50 dark:bg-neutral-700">
+              {/* <TableHeader className="bg-gray-50 dark:bg-neutral-700"> */}
+              <TableHeader>
                 {visibleFields.map((field) => (
                   <Column
                     scope="col"
@@ -67,13 +69,16 @@ export default function ModelTable({
                     {getFieldLabel(field, uiConfig)}
                   </Column>
                 ))}
-                <Column className="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-400">
+                <Column className="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-400 flex-none">
                   Actions
                 </Column>
               </TableHeader>
               <TableBody className="divide-y divide-gray-200 dark:divide-neutral-700">
                 {data.map((row) => (
-                  <Row key={row.id}>
+                  <Row
+                    key={row.id}
+                    // className="odd:bg-white even:bg-gray-100 dark:odd:bg-neutral-900 dark:even:bg-neutral-800"
+                  >
                     {visibleFields.map((field) => (
                       <Cell
                         key={field.name}
@@ -95,8 +100,9 @@ export default function ModelTable({
                         })()}
                       </Cell>
                     ))}
-                    <Cell className="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
+                    <Cell className="px-6 py-2 whitespace-nowrap text-end text-sm font-medium">
                       <div className="inline-flex rounded-md shadow-2xs">
+                        {/* Action buttons */}
                         <Button
                           onClick={() => onEdit(row)}
                           type="button"
@@ -107,7 +113,7 @@ export default function ModelTable({
                         <Button
                           onClick={() => onDelete(row.id)}
                           type="button"
-                          className="py-2 px-3 inline-flex justify-center items-center gap-2 -ms-px first:rounded-s-lg first:ms-0 last:rounded-e-lg text-sm font-medium focus:z-10 border border-gray-200 bg-white shadow-2xs hover:bg-gray-50 focus:bg-gray-50 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800 text-red-600 hover:text-red-800 focus:text-red-800 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50 dark:text-red-500 dark:hover:text-red-400 dark:focus:text-red-400 hover:cursor-wait"
+                          className="py-2 px-3 inline-flex justify-center items-center gap-2 -ms-px first:rounded-s-lg first:ms-0 last:rounded-e-lg text-sm font-medium focus:z-10 border border-gray-200 bg-white shadow-2xs hover:bg-gray-50 focus:bg-gray-50 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800 text-red-600 hover:text-red-800 focus:text-red-800 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50 dark:text-red-500 dark:hover:text-red-400 dark:focus:text-red-400 hover:cursor-pointer"
                         >
                           Delete
                         </Button>

@@ -10,7 +10,9 @@
     "db:test": "NODE_ENV=test dotenv -e .env.test -- npx prisma studio",
     "test": "cross-env NODE_ENV=test dotenv -e .env.test -- vitest run",
     "test:watch": "cross-env NODE_ENV=test dotenv -e .env.test -- vitest",
-    "test:setup": "cross-env NODE_ENV=test dotenv -e .env.test -- npx prisma db push --force-reset"
+    "test:setup": "cross-env NODE_ENV=test dotenv -e .env.test -- npx prisma db push --force-reset",
+    "gen": "node scripts/generate-resources.mjs",
+    "build": "npm run gen:resources"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +29,7 @@
     "nodemon": "^3.1.10"
   },
   "devDependencies": {
+    "@prisma/internals": "^6.17.1",
     "cross-env": "^10.0.0",
     "dotenv-cli": "^10.0.0",
     "prisma": "^6.16.2",
