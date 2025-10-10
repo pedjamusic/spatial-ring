@@ -14,6 +14,7 @@ import AdminHome from "./pages/AdminHome";
 // import EventLocations from "./pages/EventLocations";
 // import Movements from "./pages/Movements";
 // Import other CRUD pages as needed
+import GenericCrud from "./pages/GenericCrud";
 import { useCrudResources } from "./components/sidebar/useCrudResources";
 
 import { AppToastRegion } from "./components/ui/Toast";
