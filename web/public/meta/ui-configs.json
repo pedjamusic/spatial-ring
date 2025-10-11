@@ -1,0 +1,83 @@
+{
+  "Warehouse": {
+    "id": {
+      "hidden": true
+    },
+    "createdAt": {
+      "hidden": true
+    }
+  },
+  "AssetCategory": {
+    "id": {
+      "hidden": true
+    },
+    "createdAt": {
+      "hidden": true
+    }
+  },
+  "Asset": {
+    "id": {
+      "hidden": true
+    },
+    "createdAt": {
+      "hidden": true
+    },
+    "category": {
+      "label": "Category",
+      "path": "category.name"
+    },
+    "warehouse": {
+      "label": "Warehouse",
+      "path": "warehouse.name"
+    },
+    "notes": {
+      "widget": "textarea",
+      "hideInTable": true
+    }
+  },
+  "Event": {
+    "id": {
+      "hidden": true
+    },
+    "createdAt": {
+      "hidden": true
+    },
+    "location": {
+      "label": "Location",
+      "path": "location.name"
+    },
+    "notes": {
+      "widget": "textarea",
+      "hideInTable": true
+    }
+  },
+  "EventLocation": {
+    "id": {
+      "hidden": true
+    },
+    "createdAt": {
+      "hidden": true
+    }
+  },
+  "Movement": {
+    "id": {
+      "hidden": true
+    },
+    "asset": {
+      "label": "Asset",
+      "path": "asset.name"
+    },
+    "fromWarehouse": {
+      "label": "From",
+      "path": "fromWarehouse.name"
+    },
+    "toWarehouse": {
+      "label": "To",
+      "path": "toWarehouse.name"
+    },
+    "notes": {
+      "widget": "textarea",
+      "hideInTable": true
+    }
+  }
+}
