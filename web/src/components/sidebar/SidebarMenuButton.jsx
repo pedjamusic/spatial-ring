@@ -17,6 +17,7 @@ export function SidebarMenuButton({
     <Link
       to={to}
       className={`
+        block hover:bg-gray-200 rounded-md p-1
         sidebar-menu-button
         ${active ? "sidebar-menu-button-active" : ""}
         ${isFocusVisible ? "focus-visible" : ""}

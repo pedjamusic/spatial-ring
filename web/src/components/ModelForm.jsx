@@ -279,22 +279,14 @@ export default function ModelForm({
     <>
       {/* FIXED: Moved error display to proper JSX location */}
       {formError && (
-        <div
-          style={{
-            padding: 12,
-            background: "#ffe6e6",
-            color: "#b00",
-            border: "1px solid #fcc",
-            marginBottom: "16px",
-          }}
-        >
+        <div className="p-3 bg-red-200 text-red-600 border border-red-300 mb-4">
           {formError}
         </div>
       )}
 
       <Form
         onSubmit={handleSubmit}
-        style={{ display: "grid", gap: "16px", maxWidth: "600px" }}
+        // style={{ display: "grid", gap: "16px", maxWidth: "600px" }}
       >
         {formFields.map(renderField)}
         <div className="inline-flex">
