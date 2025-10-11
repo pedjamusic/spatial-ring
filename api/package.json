@@ -11,8 +11,9 @@
     "test": "cross-env NODE_ENV=test dotenv -e .env.test -- vitest run",
     "test:watch": "cross-env NODE_ENV=test dotenv -e .env.test -- vitest",
     "test:setup": "cross-env NODE_ENV=test dotenv -e .env.test -- npx prisma db push --force-reset",
-    "gen": "node scripts/generate-resources.mjs",
-    "build": "npm run gen:resources"
+    "gen:resource": "node scripts/generate-resources.mjs",
+    "gen:ui-config": "node scripts/generate-ui-configs.mjs",
+    "build": "npm run gen"
   },
   "keywords": [],
   "author": "",

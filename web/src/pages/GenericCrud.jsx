@@ -1,12 +1,14 @@
 import { useEffect, useState, useMemo } from "react";
 import ModelForm from "../components/ModelForm";
 import ModelTable from "../components/ModelTable";
+import ColumnSettings from "../components/ColumnSettings";
 import { resource } from "../lib/api";
+import { useUiConfigWithPreferences } from "../hooks/useUiConfigWithPreferences";
 
 export default function GenericCrud({
   modelName,
   resourceName,
-  uiConfig = {},
+  uiConfig: defaultUiConfig = {},
 }) {
   const [meta, setMeta] = useState(null);
   const [data, setData] = useState([]);
@@ -14,20 +16,36 @@ export default function GenericCrud({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Log when model metadata is first loaded
-  useEffect(() => {
-    if (meta) {
-      console.log(`🏗️ CRUD page initialized for ${modelName}`);
-      console.log(`📊 Model has ${meta.fields.length} total fields`);
+  // Use preferences hook with default config
+  const { config, updatePreferences, resetPreferences } =
+    useUiConfigWithPreferences(modelName, defaultUiConfig);
 
-      const relationCount = meta.fields.filter(
-        (f) => f.kind === "object"
-      ).length;
-      if (relationCount > 0) {
-        console.log(`🔗 Found ${relationCount} relation field(s)`);
+  // Listen for preference changes to trigger re-render
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.detail.modelName === modelName) {
+        // Force re-render by updating a dummy state
+        setData((prev) => [...prev]);
       }
-    }
-  }, [meta, modelName]);
+    };
+    window.addEventListener("uiConfigChanged", handler);
+    return () => window.removeEventListener("uiConfigChanged", handler);
+  }, [modelName]);
+
+  // Log when model metadata is first loaded
+  // useEffect(() => {
+  //   if (meta) {
+  //     console.log(`🏗️ CRUD page initialized for ${modelName}`);
+  //     console.log(`📊 Model has ${meta.fields.length} total fields`);
+
+  //     const relationCount = meta.fields.filter(
+  //       (f) => f.kind === "object"
+  //     ).length;
+  //     if (relationCount > 0) {
+  //       console.log(`🔗 Found ${relationCount} relation field(s)`);
+  //     }
+  //   }
+  // }, [meta, modelName]);
 
   const api = useMemo(() => resource(resourceName), [resourceName]);
 
@@ -81,7 +99,6 @@ export default function GenericCrud({
       } else {
         await api.create(formData);
       }
-
       setEditingItem(null);
       await loadData();
     } catch (err) {
@@ -108,20 +125,21 @@ export default function GenericCrud({
   if (!meta) return <div>Model not found</div>;
 
   return (
-    <div style={{ display: "grid", gap: "24px" }}>
-      <h2 style={{ margin: 0 }}>
-        {editingItem ? `Edit ${modelName}` : `Create ${modelName}`}
-      </h2>
+    <div className="grid gap-6 border border-red-800">
+      <div className="flex items-center justify-between">
+        <h2 className="border border-red-500 mb-2">
+          {editingItem ? `Edit ${modelName}` : `Create ${modelName}`}
+        </h2>
+        <ColumnSettings
+          meta={meta}
+          config={config}
+          onToggle={updatePreferences}
+          onReset={resetPreferences}
+        />
+      </div>
 
       {error && (
-        <div
-          style={{
-            padding: "12px",
-            backgroundColor: "#ffe6e6",
-            color: "#d00",
-            border: "1px solid #fcc",
-          }}
-        >
+        <div className="p-4 bg-red-200 text-red-600 border border-red-300">
           {error}
         </div>
       )}
@@ -130,17 +148,17 @@ export default function GenericCrud({
         meta={meta}
         initialData={editingItem || {}}
         onSubmit={handleSave}
-        uiConfig={uiConfig}
+        uiConfig={config}
       />
 
       <div>
-        <h3>All {modelName}s</h3>
+        <h3 className="mb-4">All {modelName}s</h3>
         <ModelTable
           meta={meta}
           data={data}
           onEdit={handleEdit}
           onDelete={handleDelete}
-          uiConfig={uiConfig}
+          uiConfig={config}
         />
       </div>
     </div>
