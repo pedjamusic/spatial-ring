@@ -1,81 +1,106 @@
-import { useState } from "react";
-import { Button } from "react-aria-components";
+// web/src/components/ColumnSettings.jsx (JSX, no SelectionIndicator)
+import {
+  Button,
+  Menu,
+  MenuItem,
+  MenuTrigger,
+  Popover,
+} from "react-aria-components";
 
 export default function ColumnSettings({ meta, config, onToggle, onReset }) {
-  const [isOpen, setIsOpen] = useState(false);
+  // include all non-Json fields so users can re-show previously hidden ones
+  const allTableFields = meta.fields.filter((f) => !["Json"].includes(f.type)); // [attached_file:1]
 
-  const visibleFields = meta.fields.filter(
-    (f) =>
-      !["Json"].includes(f.type) &&
-      (f.kind !== "object" || config[f.name]?.path)
-  );
+  const getVisibleKeys = () =>
+    new Set(
+      allTableFields
+        .filter((f) => {
+          const c = config[f.name] || {};
+          return !(c.hidden || c.hideInTable);
+        })
+        .map((f) => f.name)
+    ); // [attached_file:1]
+
+  const handleSelectionChange = (keys) => {
+    const selected =
+      keys === "all" ? new Set(allTableFields.map((f) => f.name)) : keys; // [attached_file:1]
+    allTableFields.forEach((f) => {
+      const shouldBeVisible = selected.has(f.name);
+      const c = config[f.name] || {};
+      const isVisible = !(c.hidden || c.hideInTable);
+      if (shouldBeVisible !== isVisible) {
+        onToggle(f.name, { hideInTable: !shouldBeVisible, hidden: false });
+      }
+    }); // [attached_file:1]
+  };
 
   return (
-    <div className="relative">
-      <Button
-        onPress={() => setIsOpen(!isOpen)}
-        className="py-2 px-4 inline-flex items-center gap-2 text-sm font-medium rounded-lg border border-gray-200 bg-white shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:bg-neutral-800"
+    <MenuTrigger>
+      <Button className="py-2 px-4 inline-flex items-center gap-2 text-sm font-medium rounded-lg border border-gray-200 bg-white shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:bg-neutral-800">
+        ⚙️ Columns
+      </Button>{" "}
+      {/* [attached_file:1] */}
+      <Popover
+        placement="bottom end"
+        className="bg-white dark:bg-neutral-800 rounded-lg shadow-xl border border-gray-200 dark:border-neutral-700 min-w-[280px]"
       >
-        ⚙️ Column Settings
-      </Button>
-
-      {isOpen && (
-        <>
-          {/* Backdrop */}
-          <div
-            className="fixed inset-0 z-40"
-            onClick={() => setIsOpen(false)}
-          />
-
-          {/* Dropdown panel */}
-          <div className="absolute right-0 z-50 mt-2 w-72 bg-white rounded-lg shadow-lg border border-gray-200 dark:bg-neutral-800 dark:border-neutral-700">
-            <div className="p-4">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
-                  Show/Hide Columns
-                </h3>
-                <Button
-                  onPress={onReset}
-                  className="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400"
-                >
-                  Reset
-                </Button>
-              </div>
-
-              <div className="space-y-2 max-h-96 overflow-y-auto">
-                {visibleFields.map((field) => {
-                  const fieldConfig = config[field.name] || {};
-                  const isHidden =
-                    fieldConfig.hidden || fieldConfig.hideInTable;
-                  const label = fieldConfig.label || field.name;
-
-                  return (
-                    <label
-                      key={field.name}
-                      className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-neutral-700 p-2 rounded"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={!isHidden}
-                        onChange={(e) => {
-                          const show = e.target.checked;
-                          onToggle(field.name, {
-                            hideInTable: !show,
-                          });
-                        }}
-                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                      />
-                      <span className="text-sm text-gray-700 dark:text-gray-300">
-                        {label}
-                      </span>
-                    </label>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </>
-      )}
-    </div>
+        <div className="px-3 pt-3 pb-2 flex items-center justify-between border-b border-gray-200 dark:border-neutral-700">
+          <span className="text-sm font-semibold text-gray-900 dark:text-white">
+            Show/Hide Columns
+          </span>
+          <Button
+            onPress={onReset}
+            className="text-xs text-blue-600 hover:underline dark:text-blue-400 px-2 py-1 rounded"
+          >
+            Reset
+          </Button>
+        </div>{" "}
+        {/* [attached_file:1] */}
+        <Menu
+          selectionMode="multiple"
+          selectedKeys={getVisibleKeys()}
+          onSelectionChange={handleSelectionChange}
+          className="max-h-[400px] overflow-auto p-2"
+        >
+          {allTableFields.map((f) => {
+            const label = (config[f.name] && config[f.name].label) || f.name;
+            return (
+              <MenuItem
+                key={f.name}
+                id={f.name}
+                textValue={label}
+                className="px-3 py-2 rounded cursor-pointer outline-none text-sm text-gray-700 dark:text-gray-300
+                           data-[focused]:bg-gray-100 dark:data-[focused]:bg-neutral-700 flex items-center gap-2"
+              >
+                {({ isSelected }) => (
+                  <>
+                    <div className="w-4 h-4 border border-gray-300 dark:border-neutral-600 rounded flex items-center justify-center bg-white dark:bg-neutral-900">
+                      {isSelected && (
+                        <svg
+                          className="w-3 h-3 text-blue-600"
+                          viewBox="0 0 12 12"
+                          fill="none"
+                          aria-hidden="true"
+                        >
+                          <path
+                            d="M10 3L4.5 8.5L2 6"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      )}
+                    </div>
+                    <span>{label}</span>
+                  </>
+                )}
+              </MenuItem>
+            );
+          })}
+        </Menu>{" "}
+        {/* [attached_file:1] */}
+      </Popover>
+    </MenuTrigger>
   );
 }

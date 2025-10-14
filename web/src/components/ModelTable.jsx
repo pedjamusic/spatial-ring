@@ -7,7 +7,6 @@ import {
   TableBody,
   TableHeader,
 } from "react-aria-components";
-
 import { getFieldLabel, formatFieldValue } from "../lib/fieldMapping.js";
 
 export default function ModelTable({
@@ -69,10 +68,12 @@ export default function ModelTable({
                     {getFieldLabel(field, uiConfig)}
                   </Column>
                 ))}
+
                 <Column className="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-400 flex-none">
                   Actions
                 </Column>
               </TableHeader>
+
               <TableBody className="divide-y divide-gray-200 dark:divide-neutral-700">
                 {data.map((row) => (
                   <Row

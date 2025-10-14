@@ -1,9 +1,18 @@
 import { useEffect, useState, useMemo } from "react";
 import ModelForm from "../components/ModelForm";
 import ModelTable from "../components/ModelTable";
-import ColumnSettings from "../components/ColumnSettings";
 import { resource } from "../lib/api";
-import { useUiConfigWithPreferences } from "../hooks/useUiConfigWithPreferences";
+// import { useUiConfigWithPreferences } from "../hooks/useUiConfigWithPreferences";
+
+import ColumnSettings from "../components/ColumnSettings";
+const STORAGE_KEY_PREFIX = "uiConfig_";
+const deepMerge = (a = {}, b = {}) =>
+  Object.fromEntries(
+    Object.keys({ ...a, ...b }).map((k) => [
+      k,
+      { ...(a[k] || {}), ...(b[k] || {}) },
+    ])
+  );
 
 export default function GenericCrud({
   modelName,
@@ -16,21 +25,43 @@ export default function GenericCrud({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // NEW: uiConfig managed as state + localStorage
+  const storageKey = `${STORAGE_KEY_PREFIX}${modelName}`;
+  const [uiConfig, setUiConfig] = useState(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem(storageKey) || "{}");
+      return deepMerge(defaultUiConfig, stored);
+    } catch {
+      return defaultUiConfig;
+    }
+  });
+
   // Use preferences hook with default config
-  const { config, updatePreferences, resetPreferences } =
-    useUiConfigWithPreferences(modelName, defaultUiConfig);
+  // const { config, updatePreferences, resetPreferences } =
+  //   useUiConfigWithPreferences(modelName, defaultUiConfig);
 
   // Listen for preference changes to trigger re-render
+  // useEffect(() => {
+  //   const handler = (e) => {
+  //     if (e.detail.modelName === modelName) {
+  //       // Force re-render by updating a dummy state
+  //       setData((prev) => [...prev]);
+  //     }
+  //   };
+  //   window.addEventListener("uiConfigChanged", handler);
+  //   return () => window.removeEventListener("uiConfigChanged", handler);
+  // }, [modelName]);
+
+  // Re-merge when model or defaults change
   useEffect(() => {
-    const handler = (e) => {
-      if (e.detail.modelName === modelName) {
-        // Force re-render by updating a dummy state
-        setData((prev) => [...prev]);
-      }
-    };
-    window.addEventListener("uiConfigChanged", handler);
-    return () => window.removeEventListener("uiConfigChanged", handler);
-  }, [modelName]);
+    try {
+      const stored = JSON.parse(localStorage.getItem(storageKey) || "{}");
+      setUiConfig(deepMerge(defaultUiConfig, stored));
+    } catch {
+      setUiConfig(defaultUiConfig);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [modelName, JSON.stringify(defaultUiConfig)]);
 
   // Log when model metadata is first loaded
   // useEffect(() => {
@@ -47,6 +78,33 @@ export default function GenericCrud({
   //   }
   // }, [meta, modelName]);
 
+  // Handlers for Column Settings
+  const handleToggleColumnPref = (fieldName, updates) => {
+    setUiConfig((prev) => {
+      const next = {
+        ...prev,
+        [fieldName]: { ...(prev[fieldName] || {}), ...updates },
+      };
+
+      // Save to localStorage
+      const currentStored = JSON.parse(
+        localStorage.getItem(storageKey) || "{}"
+      );
+      const nextStored = {
+        ...currentStored,
+        [fieldName]: { ...(currentStored[fieldName] || {}), ...updates },
+      };
+      localStorage.setItem(storageKey, JSON.stringify(nextStored));
+
+      return next;
+    });
+  };
+
+  const handleResetPrefs = () => {
+    localStorage.removeItem(storageKey);
+    setUiConfig(defaultUiConfig);
+  };
+
   const api = useMemo(() => resource(resourceName), [resourceName]);
 
   const loadData = async () => {
@@ -57,7 +115,6 @@ export default function GenericCrud({
       // Load metadata with debugging
       const metaUrl = `/api/meta/models/${modelName}`;
       console.log(`📡 Fetching: ${metaUrl}`);
-
       const metaResponse = await fetch(metaUrl);
       console.log(`📡 Meta response status: ${metaResponse.status}`);
 
@@ -90,7 +147,10 @@ export default function GenericCrud({
 
   useEffect(() => {
     loadData();
-  }, [modelName]);
+  }, [modelName]); // eslint-disable-line
+
+  // if (loading) return <div>Loading...</div>;
+  // if (!meta) return <div>Model not found</div>;
 
   const handleSave = async (formData) => {
     try {
@@ -130,12 +190,6 @@ export default function GenericCrud({
         <h2 className="border border-red-500 mb-2">
           {editingItem ? `Edit ${modelName}` : `Create ${modelName}`}
         </h2>
-        <ColumnSettings
-          meta={meta}
-          config={config}
-          onToggle={updatePreferences}
-          onReset={resetPreferences}
-        />
       </div>
 
       {error && (
@@ -147,18 +201,35 @@ export default function GenericCrud({
       <ModelForm
         meta={meta}
         initialData={editingItem || {}}
-        onSubmit={handleSave}
-        uiConfig={config}
+        onSubmit={async (formData) => {
+          try {
+            if (editingItem) await api.update(editingItem.id, formData);
+            else await api.create(formData);
+            setEditingItem(null);
+            await loadData();
+          } catch (err) {
+            setError(err.message);
+          }
+        }}
+        uiConfig={uiConfig}
       />
 
-      <div>
-        <h3 className="mb-4">All {modelName}s</h3>
+      <div className="flex items-center justify-between mb-4">
+        <h3>All {modelName}s</h3>
+        <ColumnSettings
+          meta={meta}
+          config={uiConfig}
+          onToggle={handleToggleColumnPref}
+          onReset={handleResetPrefs}
+        />
         <ModelTable
           meta={meta}
           data={data}
           onEdit={handleEdit}
           onDelete={handleDelete}
-          uiConfig={config}
+          uiConfig={uiConfig}
+          // onToggleColumnPref={handleToggleColumnPref}
+          // onResetColumnPrefs={handleResetPrefs}
         />
       </div>
     </div>
