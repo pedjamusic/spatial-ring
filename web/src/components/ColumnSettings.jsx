@@ -6,6 +6,7 @@ import {
   MenuTrigger,
   Popover,
 } from "react-aria-components";
+import { CircleEllipsis } from "lucide-react";
 
 export default function ColumnSettings({ meta, config, onToggle, onReset }) {
   // include all non-Json fields so users can re-show previously hidden ones
@@ -37,20 +38,21 @@ export default function ColumnSettings({ meta, config, onToggle, onReset }) {
   return (
     <MenuTrigger>
       <Button className="py-2 px-4 inline-flex items-center gap-2 text-sm font-medium rounded-lg border border-gray-200 bg-white shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:bg-neutral-800">
-        ⚙️ Columns
-      </Button>{" "}
+        Columns
+        <CircleEllipsis size={16} strokeWidth={1} absoluteStrokeWidth />
+      </Button>
       {/* [attached_file:1] */}
       <Popover
         placement="bottom end"
-        className="bg-white dark:bg-neutral-800 rounded-lg shadow-xl border border-gray-200 dark:border-neutral-700 min-w-[280px]"
+        className="bg-gray-50 dark:bg-neutral-800 rounded-xl shadow-xl border border-gray-200 dark:border-neutral-700 min-w-[280px] opacity-95"
       >
         <div className="px-3 pt-3 pb-2 flex items-center justify-between border-b border-gray-200 dark:border-neutral-700">
           <span className="text-sm font-semibold text-gray-900 dark:text-white">
-            Show/Hide Columns
+            Show or hide columns
           </span>
           <Button
             onPress={onReset}
-            className="text-xs text-blue-600 hover:underline dark:text-blue-400 px-2 py-1 rounded"
+            className="text-xs text-blue-600 hover:underline dark:text-blue-400 px-2 py-1 cursor-pointer focus:outline-none"
           >
             Reset
           </Button>

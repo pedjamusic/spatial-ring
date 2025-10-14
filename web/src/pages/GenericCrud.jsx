@@ -222,6 +222,8 @@ export default function GenericCrud({
           onToggle={handleToggleColumnPref}
           onReset={handleResetPrefs}
         />
+      </div>
+      <div>
         <ModelTable
           meta={meta}
           data={data}
