@@ -44,7 +44,7 @@ export default function ColumnSettings({ meta, config, onToggle, onReset }) {
       {/* [attached_file:1] */}
       <Popover
         placement="bottom end"
-        className="bg-gray-50 dark:bg-neutral-800 rounded-xl shadow-xl border border-gray-200 dark:border-neutral-700 min-w-[280px] opacity-95"
+        className="bg-gray-50 dark:bg-neutral-800 rounded-xl shadow-xl border border-gray-200 dark:border-neutral-700 min-w-[280px]"
       >
         <div className="px-3 pt-3 pb-2 flex items-center justify-between border-b border-gray-200 dark:border-neutral-700">
           <span className="text-sm font-semibold text-gray-900 dark:text-white">

@@ -44,7 +44,11 @@ export function AppSidebar() {
             alt="Spatial Ring App"
             className={`transition-all ${open ? "h-8 w-8" : "h-6 w-6"}`}
           />
-          {open && <span className="font-semibold text-lg">Spatial Ring</span>}
+          {open && (
+            <span className="font-semibold text-lg lg:visible">
+              Spatial Ring
+            </span>
+          )}
         </div>
       </SidebarHeader>
 

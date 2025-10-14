@@ -185,11 +185,9 @@ export default function GenericCrud({
   if (!meta) return <div>Model not found</div>;
 
   return (
-    <div className="grid gap-6 border border-red-800">
+    <div className="grid gap-6">
       <div className="flex items-center justify-between">
-        <h2 className="border border-red-500 mb-2">
-          {editingItem ? `Edit ${modelName}` : `Create ${modelName}`}
-        </h2>
+        <h2>{editingItem ? `Edit ${modelName}` : `Create ${modelName}`}</h2>
       </div>
 
       {error && (

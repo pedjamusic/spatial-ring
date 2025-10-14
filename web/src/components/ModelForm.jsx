@@ -223,10 +223,14 @@ export default function ModelForm({
       );
     }
 
-    // Textarea for large text
+    // Textarea for large text (e.g. Notes)
     if (inputType === "textarea") {
       return (
-        <label key={field.name}>
+        <Label
+          key={field.name}
+          htmlFor={label}
+          className="block text-sm/6 font-medium text-gray-900 dark:text-gray-100"
+        >
           <div>
             {label} {required && <span style={{ color: "red" }}>*</span>}
           </div>
@@ -234,14 +238,9 @@ export default function ModelForm({
             required={required}
             value={value}
             onChange={(e) => handleChange(field.name, e.target.value)}
-            style={{
-              width: "100%",
-              padding: "8px",
-              border: "1px solid #ccc",
-              minHeight: "80px",
-            }}
+            className="block min-w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-blue-500"
           />
-        </label>
+        </Label>
       );
     }
 
@@ -284,10 +283,7 @@ export default function ModelForm({
         </div>
       )}
 
-      <Form
-        onSubmit={handleSubmit}
-        // style={{ display: "grid", gap: "16px", maxWidth: "600px" }}
-      >
+      <Form onSubmit={handleSubmit}>
         {formFields.map(renderField)}
         <div className="inline-flex">
           <Button
@@ -299,13 +295,6 @@ export default function ModelForm({
                 ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                 : "bg-blue-600 text-white hover:bg-blue-800 hover:border-blue-800"
             }`}
-            // style={{
-            //   padding: "10px 20px",
-            //   backgroundColor: loading ? "#ccc" : "#007bff",
-            //   color: "white",
-            //   border: "none",
-            //   cursor: loading ? "not-allowed" : "pointer",
-            // }}
           >
             {loading ? "Saving..." : initialData.id ? "Update" : "Create"}
           </Button>
