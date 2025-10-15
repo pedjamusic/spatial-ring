@@ -269,7 +269,7 @@ export default function ModelForm({
             )
           }
           className="block min-w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 hover:outline-gray-400 dark:hover:outline-gray-600 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:text-white dark:outline-white/5 dark:placeholder:text-gray-500 dark:focus:outline-blue-500
-          border border-gray-200 shadow-lg duration-300 dark:border-neutral-700/25 dark:bg-neutral-800/50"
+          border border-gray-200 duration-300 dark:border-neutral-700/25 dark:bg-neutral-800/50"
         />
       </TextField>
     );
