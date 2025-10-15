@@ -37,7 +37,7 @@ export default function ColumnSettings({ meta, config, onToggle, onReset }) {
 
   return (
     <MenuTrigger>
-      <Button className="py-2 px-4 inline-flex items-center gap-2 text-sm font-medium rounded-lg border border-gray-200 bg-white shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:bg-neutral-800">
+      <Button className="py-2 px-4 inline-flex items-center gap-2 text-sm font-medium rounded-lg bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:bg-neutral-800 cursor-pointer">
         Columns
         <CircleEllipsis size={16} strokeWidth={1} absoluteStrokeWidth />
       </Button>

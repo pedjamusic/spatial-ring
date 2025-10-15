@@ -5,14 +5,11 @@ import { SidebarTrigger } from "../components/sidebar/SidebarTrigger";
 
 export function DashboardLayout() {
   return (
-    <div className="flex gap-8 ">
-      <SidebarProvider defaultOpen={true}>
-        <div className="dashboard-layout">
-          <AppSidebar />
-        </div>
-
-        <main className="dashboard-main bg-white w-full rounded-xl border-gray-200 border-1">
-          <header className="dashboard-header">
+    <SidebarProvider defaultOpen={true}>
+      <div className="dashboard-layout flex gap-8 ">
+        <AppSidebar />
+        <main className="dashboard-main w-full rounded-xl">
+          <header className="dashboard-header border border-red-500">
             <SidebarTrigger />
             {/* User menu will go here on the right side */}
           </header>
@@ -20,7 +17,7 @@ export function DashboardLayout() {
             <Outlet />
           </div>
         </main>
-      </SidebarProvider>
-    </div>
+      </div>
+    </SidebarProvider>
   );
 }

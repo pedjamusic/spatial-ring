@@ -47,9 +47,9 @@ export default function ModelTable({
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col bg-white p-8 rounded-lg border border-gray-300 shadow">
       <div className="-m-1.5 overflow-x-auto">
-        <div className="border border-gray-200 dark:border-neutral-700 rounded-lg p-3 min-w-full inline-block align-middle">
+        <div className=" dark:border-neutral-700 min-w-full inline-block align-middle ">
           {/* <div className="border border-gray-200 rounded-lg overflow-hidden dark:border-neutral-700"> */}
           <div className="overflow-hidden">
             <Table
@@ -63,13 +63,13 @@ export default function ModelTable({
                   <Column
                     scope="col"
                     key={field.name}
-                    className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-400"
+                    className=" py-4 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-400"
                   >
                     {getFieldLabel(field, uiConfig)}
                   </Column>
                 ))}
 
-                <Column className="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-400 flex-none">
+                <Column className="py-4 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-400 flex-none">
                   Actions
                 </Column>
               </TableHeader>
@@ -83,7 +83,7 @@ export default function ModelTable({
                     {visibleFields.map((field) => (
                       <Cell
                         key={field.name}
-                        className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200"
+                        className="py-2 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200"
                       >
                         {/* {formatFieldValue(row[field.name], field)} */}
                         {(() => {
@@ -101,7 +101,7 @@ export default function ModelTable({
                         })()}
                       </Cell>
                     ))}
-                    <Cell className="px-6 py-2 whitespace-nowrap text-end text-sm font-medium">
+                    <Cell className="py-2 whitespace-nowrap text-end text-sm font-medium">
                       <div className="inline-flex rounded-md shadow-2xs">
                         {/* Action buttons */}
                         <Button

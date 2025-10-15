@@ -187,7 +187,9 @@ export default function GenericCrud({
   return (
     <div className="grid gap-6">
       <div className="flex items-center justify-between">
-        <h2>{editingItem ? `Edit ${modelName}` : `Create ${modelName}`}</h2>
+        <h2 className="text font-bold uppercase">
+          {editingItem ? `Edit ${modelName}` : `Create ${modelName}`}
+        </h2>
       </div>
 
       {error && (
@@ -212,8 +214,8 @@ export default function GenericCrud({
         uiConfig={uiConfig}
       />
 
-      <div className="flex items-center justify-between mb-4">
-        <h3>All {modelName}s</h3>
+      <div className="flex items-center justify-between">
+        <h3 className="text font-bold uppercase">All {modelName}s</h3>
         <ColumnSettings
           meta={meta}
           config={uiConfig}
@@ -228,8 +230,6 @@ export default function GenericCrud({
           onEdit={handleEdit}
           onDelete={handleDelete}
           uiConfig={uiConfig}
-          // onToggleColumnPref={handleToggleColumnPref}
-          // onResetColumnPrefs={handleResetPrefs}
         />
       </div>
     </div>
