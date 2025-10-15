@@ -62,7 +62,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton
                   to="/admin"
-                  // icon={Home}
+                  icon={Home}
                   isActive={isDashboardActive}
                   // isActive={location.pathname === "/admin"}
                 >
@@ -72,15 +72,12 @@ export function AppSidebar() {
               {/* API-driven items */}
               {!loading &&
                 resources.map((item) => {
-                  const Icon = iconRegistry[item.icon]; // enable when icons added
+                  const Icon = item.icon ? iconRegistry[item.icon] : null; // enable when icons added
                   const to = `/admin/${item.path}`;
                   const active = location.pathname.startsWith(to);
                   return (
                     <SidebarMenuItem key={item.path}>
-                      <SidebarMenuButton to={to} isActive={active}>
-                        {Icon && (
-                          <Icon className="sidebar-icon" aria-hidden="true" />
-                        )}
+                      <SidebarMenuButton to={to} isActive={active} icon={Icon}>
                         {item.title}
                       </SidebarMenuButton>
                     </SidebarMenuItem>

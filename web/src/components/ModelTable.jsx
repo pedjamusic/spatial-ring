@@ -47,7 +47,7 @@ export default function ModelTable({
   }
 
   return (
-    <div className="flex flex-col bg-white px-6 py-4 rounded-lg border border-gray-300 shadow">
+    <div className="flex flex-col bg-white px-6 py-4 rounded-lg border border-gray-300 not-dark:shadow dark:border-neutral-700/50 dark:bg-neutral-800/50">
       <div className="overflow-x-auto">
         <div className=" dark:border-neutral-700 min-w-full inline-block align-middle ">
           {/* <div className="border border-gray-200 rounded-lg overflow-hidden dark:border-neutral-700"> */}

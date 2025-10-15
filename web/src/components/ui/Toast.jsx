@@ -100,7 +100,7 @@ export function Toast({ toast }) {
   return (
     <AriaToast
       toast={toast}
-      className="animate-in slide-in-from-bottom-5 max-w-xs rounded-xl border border-gray-200 bg-white shadow-lg duration-300 dark:border-neutral-700 dark:bg-neutral-800"
+      className="animate-in slide-in-from-bottom-5 max-w-xs rounded-md border border-gray-200 bg-white shadow-lg duration-300 dark:border-neutral-700 dark:bg-neutral-800"
     >
       <div className="flex p-4">
         <div className="shrink-0">

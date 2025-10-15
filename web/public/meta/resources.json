@@ -5,7 +5,8 @@
     "resourceName": "warehouses",
     "path": "warehouses",
     "order": 10,
-    "enabled": true
+    "enabled": true,
+    "icon": "Warehouse"
   },
   {
     "title": "Asset Categories",

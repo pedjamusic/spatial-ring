@@ -1,6 +1,7 @@
 
 import {
   Box,
+  Warehouse,
   Package,
   FolderTree,
   Calendar,
@@ -10,6 +11,7 @@ import {
 
 export const iconRegistry = {
   Box,
+  Warehouse,
   Package,
   FolderTree,
   Calendar,
