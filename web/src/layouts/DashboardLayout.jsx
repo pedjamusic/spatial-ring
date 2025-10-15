@@ -6,9 +6,9 @@ import { SidebarTrigger } from "../components/sidebar/SidebarTrigger";
 export function DashboardLayout() {
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="dashboard-layout flex gap-8 ">
+      <div className="dashboard-layout flex gap-8">
         <AppSidebar />
-        <main className="dashboard-main w-full rounded-xl">
+        <main className="dashboard-main w-full">
           <header className="dashboard-header border border-red-500">
             <SidebarTrigger />
             {/* User menu will go here on the right side */}
