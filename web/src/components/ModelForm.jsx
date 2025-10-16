@@ -19,6 +19,7 @@ export default function ModelForm({
   meta,
   initialData = {},
   onSubmit,
+  onCancel,
   uiConfig = {},
 }) {
   const [formData, setFormData] = useState(initialData);
@@ -59,8 +60,11 @@ export default function ModelForm({
   }, [meta, uiConfig]);
 
   // Effect 2: Reset form when initial data changes
+  // useEffect(() => {
+  //   setFormData(initialData);
+  // }, [initialData]);
   useEffect(() => {
-    setFormData(initialData);
+    setFormData(initialData ?? {});
   }, [initialData]);
 
   // Effect 3: Load data for relation dropdowns when meta changes
@@ -130,19 +134,28 @@ export default function ModelForm({
     setFormData((prev) => ({ ...prev, [fieldName]: value }));
   };
 
+  // EDIT: submit handler (Create/Update is decided by presence of initialData.id)
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setFormError("");
 
     console.log("🚀 About to submit form ", formData);
 
     try {
       await onSubmit(formData);
     } catch (error) {
-      setFormError(error.message || "Failed to submit form");
+      setFormError(error?.message || "⚠️ Failed to submit form");
     } finally {
       setLoading(false);
     }
+  };
+
+  // CANCEL: restore original initialData and notify parent to exit Edit mode
+  const handleCancel = () => {
+    setFormError("");
+    setFormData(initialData ?? {}); // critical: reset to passed defaults, not {}
+    onCancel?.(); // let container route back / close dialog
   };
 
   const renderField = (field) => {
@@ -293,11 +306,12 @@ export default function ModelForm({
           <Button
             type="submit"
             disabled={loading}
+            isDisabled={loading}
             className={`py-3 px-4 inline-flex items-center gap-x-2 -ms-px first:rounded-s-lg first:ms-0 last:rounded-e-lg text-sm font-medium focus:z-10 border border-blue-600 text-gray-800 shadow-2xs focus:outline-hidden focus:bg-blue-800 disabled:opacity-50 disabled:pointer-events-none hover:cursor-pointer
             ${
               loading
                 ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-blue-600 text-white hover:bg-blue-800 hover:border-blue-800"
+                : "bg-blue-600 text-white hover:bg-blue-500"
             }`}
           >
             {loading ? "Saving..." : initialData.id ? "Update" : "Create"}
@@ -305,8 +319,9 @@ export default function ModelForm({
           {initialData.id && (
             <Button
               type="button"
-              onClick={() => setFormData({})}
-              className="py-3 px-4 inline-flex items-center gap-x-2 -ms-px first:rounded-s-md first:ms-0 last:rounded-e-md text-sm font-medium focus:z-10 border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-200 focus:border-gray-300 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+              // onClick={() => setFormData({})}
+              onClick={handleCancel}
+              className="py-3 px-4 inline-flex items-center gap-x-2 -ms-px first:rounded-s-md first:ms-0 last:rounded-e-md text-sm font-medium focus:z-10 border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-200 focus:border-gray-300 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:bg-neutral-900 dark:border-neutral-700  dark:hover:bg-neutral-800 dark:focus:bg-neutral-800 hover:cursor-pointer"
             >
               Cancel
             </Button>

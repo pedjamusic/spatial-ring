@@ -107,7 +107,7 @@ export default function ModelTable({
                         <Button
                           onClick={() => onEdit(row)}
                           type="button"
-                          className="py-2 px-3 inline-flex justify-center items-center gap-2 -ms-px first:rounded-s-lg first:ms-0 last:rounded-e-lg text-sm font-medium focus:z-10 border border-gray-200 bg-white  shadow-2xs hover:bg-gray-50  focus:bg-gray-50 dark:bg-neutral-900 dark:border-neutral-700  dark:hover:bg-neutral-800 dark:focus:bg-neutral-800 text-blue-600 hover:text-blue-800 focus:outline-hidden focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-500 dark:hover:text-blue-400 dark:focus:text-blue-400 hover:cursor-pointer"
+                          className="py-2 px-3 inline-flex justify-center items-center gap-2 -ms-px first:rounded-s-lg first:ms-0 last:rounded-e-lg text-sm font-medium focus:z-10 border border-gray-200 bg-white  shadow-2xs hover:bg-gray-50 focus:bg-gray-50 dark:bg-neutral-900 dark:border-neutral-700  dark:hover:bg-neutral-800 dark:focus:bg-neutral-800 text-blue-600 hover:text-blue-800 focus:outline-hidden focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-500 dark:hover:text-blue-400 dark:focus:text-blue-400 hover:cursor-pointer"
                         >
                           Edit
                         </Button>

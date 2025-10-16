@@ -1,6 +1,7 @@
 [
   {
-    "title": "Warehouse",
+    "title": "Warehouses",
+    "singular": "Warehouse",
     "modelName": "Warehouse",
     "resourceName": "warehouses",
     "path": "warehouses",
@@ -9,7 +10,8 @@
     "icon": "Warehouse"
   },
   {
-    "title": "Asset",
+    "title": "Assets",
+    "singular": "Asset",
     "modelName": "Asset",
     "resourceName": "assets",
     "path": "assets",
@@ -19,6 +21,7 @@
   },
   {
     "title": "Asset Categories",
+    "singular": "Asset Category",
     "modelName": "AssetCategory",
     "resourceName": "assetCategories",
     "path": "assetCategories",
@@ -27,7 +30,8 @@
     "icon": "FolderTree"
   },
   {
-    "title": "Event",
+    "title": "Events",
+    "singular": "Event",
     "modelName": "Event",
     "resourceName": "events",
     "path": "events",
@@ -37,6 +41,7 @@
   },
   {
     "title": "Event Locations",
+    "singular": "Event Location",
     "modelName": "EventLocation",
     "resourceName": "eventLocations",
     "path": "eventLocations",
@@ -45,7 +50,8 @@
     "icon": "MapPin"
   },
   {
-    "title": "Movement",
+    "title": "Movements",
+    "singular": "Movement",
     "modelName": "Movement",
     "resourceName": "movements",
     "path": "movements",

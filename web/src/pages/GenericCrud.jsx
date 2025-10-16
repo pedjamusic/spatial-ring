@@ -18,7 +18,11 @@ export default function GenericCrud({
   modelName,
   resourceName,
   uiConfig: defaultUiConfig = {},
+  titles = {},
 }) {
+  const singular = titles.singular || modelName; // safe fallback
+  const plural = titles.plural || `${modelName}s`;
+
   const [meta, setMeta] = useState(null);
   const [data, setData] = useState([]);
   const [editingItem, setEditingItem] = useState(null);
@@ -188,7 +192,7 @@ export default function GenericCrud({
     <div className="grid gap-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text font-bold uppercase">
-          {editingItem ? `Edit ${modelName}` : `Create ${modelName}`}
+          {editingItem ? `Edit ${singular}` : `Create ${singular}`}
         </h2>
       </div>
 
@@ -215,7 +219,7 @@ export default function GenericCrud({
       />
 
       <div className="flex items-center justify-between">
-        <h3 className="text font-bold uppercase">All {modelName}s</h3>
+        <h3 className="text font-bold uppercase">All {plural}</h3>
         <ColumnSettings
           meta={meta}
           config={uiConfig}

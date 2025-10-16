@@ -51,6 +51,17 @@ const toResource = (model, cfg) => ({
   icon: cfg.icon || null,
 });
 
+// helpers
+const humanize = (name) => name.replace(/([a-z])([A-Z])/g, '$1 $2').trim();  // "AssetCategory" → "Asset Category"
+const pluralize = (phrase) => {
+  // very small English pluralizer good enough for your models
+  return phrase.replace(/\b([A-Za-z]+)\b(\s*)$/g, (m, word, space) => {
+    if (/[^aeiou]y$/i.test(word)) return word.slice(0, -1) + 'ies' + space; // Category → Categories
+    if (/s$|x$|z$|ch$|sh$/i.test(word)) return word + 'es' + space;         // Box → Boxes
+    return word + 's' + space;                                              // Event → Events
+  });
+};
+
 
 
 const main = async () => {
@@ -88,8 +99,21 @@ const main = async () => {
     .map((model) => {
       const cfg = resourceManifest[model.name] || {};
       const base = toResource(model, cfg);
+      const baseSingular = humanize(model.name);
+      const singular = cfg.singular || baseSingular;
+      const plural = cfg.title || pluralize(singular);
       const icon = previousIconsByModel[model.name] ?? cfg.icon ?? null;
-      return { ...base, icon };
+      // return { ...base, icon };
+      return {
+        title: plural,           // plural display name (used in sidebar and “All …”)
+        singular,                // singular display name (used in “Create …”, “Edit …”)
+        modelName: model.name,
+        resourceName: toPath(model.name, cfg.path),
+        path: toPath(model.name, cfg.path),
+        order: cfg.order ?? 999,
+        enabled: cfg.enabled !== false,
+        icon: previousIconsByModel[model.name] ?? cfg.icon ?? null,
+      };
     })
     .sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
 

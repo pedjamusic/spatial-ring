@@ -9,13 +9,7 @@ import Login from "./pages/Login";
 import Logout from "./pages/Logout";
 import AdminHome from "./pages/AdminHome";
 import GenericCrud from "./pages/GenericCrud";
-// import Warehouses from "./pages/Warehouses";
-// import AssetCategories from "./pages/AssetCategories";
-// import Assets from "./pages/Assets";
-// import Events from "./pages/Events";
-// import EventLocations from "./pages/EventLocations";
-// import Movements from "./pages/Movements";
-// Import other CRUD pages as needed
+
 import { useCrudResources } from "./components/sidebar/useCrudResources";
 
 import { AppToastRegion } from "./components/ui/Toast";
@@ -59,15 +53,6 @@ export default function App() {
             }
           >
             <Route index element={<AdminHome />} />
-
-            {/* <Route path="warehouses" element={<Warehouses />} />
-          <Route path="assetCategories" element={<AssetCategories />} />
-          <Route path="assets" element={<Assets />} />
-          <Route path="eventLocations" element={<EventLocations />} />
-          <Route path="events" element={<Events />} />
-          <Route path="movements" element={<Movements />} /> */}
-            {/* Add more CRUD pages similarly */}
-            {/* While loading, hold off on adding dynamic routes */}
             {!loading &&
               configsLoaded &&
               resources.map((r) => (
@@ -79,6 +64,10 @@ export default function App() {
                       modelName={r.modelName}
                       resourceName={r.resourceName}
                       uiConfig={uiConfigs[r.modelName] || {}}
+                      titles={{
+                        singular: r.singular || r.title,
+                        plural: r.title,
+                      }}
                     />
                   }
                 />
