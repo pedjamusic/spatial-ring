@@ -60,10 +60,8 @@ export default function ModelForm({
   }, [meta, uiConfig]);
 
   // Effect 2: Reset form when initial data changes
-  // useEffect(() => {
-  //   setFormData(initialData);
-  // }, [initialData]);
   useEffect(() => {
+    // setFormData(initialData);
     setFormData(initialData ?? {});
   }, [initialData]);
 
@@ -130,10 +128,6 @@ export default function ModelForm({
     (field) => !isFieldHidden(field, uiConfig)
   );
 
-  const handleChange = (fieldName, value) => {
-    setFormData((prev) => ({ ...prev, [fieldName]: value }));
-  };
-
   // EDIT: submit handler (Create/Update is decided by presence of initialData.id)
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -149,6 +143,10 @@ export default function ModelForm({
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleChange = (fieldName, value) => {
+    setFormData((prev) => ({ ...prev, [fieldName]: value }));
   };
 
   // CANCEL: restore original initialData and notify parent to exit Edit mode

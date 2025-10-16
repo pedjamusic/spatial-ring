@@ -203,6 +203,7 @@ export default function GenericCrud({
       )}
 
       <ModelForm
+        key={`${resourceName}:${editingItem?.id ?? "create"}`} // remount per identity
         meta={meta}
         initialData={editingItem || {}}
         onSubmit={async (formData) => {
@@ -214,6 +215,10 @@ export default function GenericCrud({
           } catch (err) {
             setError(err.message);
           }
+        }}
+        onCancel={() => {
+          // leave Edit without clearing the form in-place
+          setEditingItem(null);
         }}
         uiConfig={uiConfig}
       />
