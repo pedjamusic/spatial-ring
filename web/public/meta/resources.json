@@ -9,20 +9,22 @@
     "icon": "Warehouse"
   },
   {
-    "title": "Asset Categories",
-    "modelName": "AssetCategory",
-    "resourceName": "assetCategories",
-    "path": "assetCategories",
-    "order": 20,
-    "enabled": true
-  },
-  {
     "title": "Asset",
     "modelName": "Asset",
     "resourceName": "assets",
     "path": "assets",
+    "order": 20,
+    "enabled": true,
+    "icon": "Package"
+  },
+  {
+    "title": "Asset Categories",
+    "modelName": "AssetCategory",
+    "resourceName": "assetCategories",
+    "path": "assetCategories",
     "order": 30,
-    "enabled": true
+    "enabled": true,
+    "icon": "FolderTree"
   },
   {
     "title": "Event",
@@ -30,7 +32,8 @@
     "resourceName": "events",
     "path": "events",
     "order": 40,
-    "enabled": true
+    "enabled": true,
+    "icon": "Calendar"
   },
   {
     "title": "Event Locations",
@@ -38,7 +41,8 @@
     "resourceName": "eventLocations",
     "path": "eventLocations",
     "order": 50,
-    "enabled": true
+    "enabled": true,
+    "icon": "MapPin"
   },
   {
     "title": "Movement",
@@ -46,6 +50,7 @@
     "resourceName": "movements",
     "path": "movements",
     "order": 60,
-    "enabled": true
+    "enabled": true,
+    "icon": "ArrowRightLeft"
   }
 ]

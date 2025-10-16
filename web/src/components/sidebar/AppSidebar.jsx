@@ -13,6 +13,7 @@ import { SidebarSeparator } from "./SidebarSeparator";
 import { useSidebar } from "./useSidebar";
 import { useCrudResources } from "./useCrudResources";
 import { iconRegistry } from "./iconRegistry";
+import { getIconByKey } from "./iconUtils";
 
 // Import your icons (adjust based on your icon library)
 import {
@@ -72,9 +73,21 @@ export function AppSidebar() {
               {/* API-driven items */}
               {!loading &&
                 resources.map((item) => {
-                  const Icon = item.icon ? iconRegistry[item.icon] : null; // enable when icons added
+                  // Prefer item.icon; fall back to modelName (nice default if generator omitted icon)
+                  // const Icon = item.icon ? iconRegistry[item.icon] : null; // enable when icons added
+                  const key = (item.icon ?? item.modelName ?? "")
+                    .toString()
+                    .trim();
+                  const Icon = getIconByKey(key, iconRegistry);
+                  // if (!Icon) return null; // Skip items without a valid icon HIDDES WHOLE LINK, STUPID LINE
+
+                  // Determine if this item is active based on current location
+                  // Assumes item.path is like "products", "categories", etc.
+                  // Adjust as needed based on your routing structure
+                  // const active = location.pathname.startsWith(`/admin/${item.path}`);
                   const to = `/admin/${item.path}`;
                   const active = location.pathname.startsWith(to);
+
                   return (
                     <SidebarMenuItem key={item.path}>
                       <SidebarMenuButton to={to} isActive={active} icon={Icon}>
