@@ -1,31 +1,29 @@
 import { Link } from "react-router-dom";
 
-type StatCardProps = {
-  label: string;
-  value: number | string;
-  to: string; // CRUD route
-  size?: "sm" | "md" | "lg";
-  icon?: React.ReactNode;
-};
-
-const sizeMap = {
-  sm: "p-4",
-  md: "p-5",
-  lg: "p-6",
-};
-
-export function StatCard({
+/**
+ * Preline default card: white bg, subtle border, shadow, rounded corners, with focus ring.
+ * Size maps mimic Preline “Small/Default/Large” padding variants.
+ */
+export default function StatCard({
   label,
   value,
   to,
   size = "md",
-  icon,
-}: StatCardProps) {
+  icon = null,
+}) {
+  const sizeMap = {
+    sm: "p-4",
+    md: "p-5",
+    lg: "p-6",
+  };
+
   return (
     <Link
       to={to}
       className={[
-        "block rounded-xl border bg-white shadow-sm transition-shadow hover:shadow-md focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 focus:outline-none",
+        "block rounded-xl border bg-white shadow-sm",
+        "transition-shadow hover:shadow-md",
+        "focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 focus:outline-none",
         sizeMap[size],
       ].join(" ")}
       aria-label={`${label}: ${value}`}
