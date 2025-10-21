@@ -8,9 +8,9 @@ export function DashboardLayout() {
     <SidebarProvider defaultOpen={true}>
       <div className="dashboard-layout flex gap-8">
         <AppSidebar />
-        <main className="dashboard-main w-full">
-          <header className="dashboard-header border border-red-500">
-            <SidebarTrigger />
+        <main className="dashboard-main w-full py-4">
+          <header className="dashboard-header">
+            {/* <SidebarTrigger /> */}
             {/* User menu will go here on the right side */}
           </header>
           <div className="dashboard-content">

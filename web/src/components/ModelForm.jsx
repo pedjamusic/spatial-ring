@@ -279,7 +279,7 @@ export default function ModelForm({
                 : e.target.value,
             )
           }
-          className="block min-w-full rounded-md border border-gray-200 bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 duration-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:border-neutral-700/25 dark:bg-neutral-800/50 dark:text-white dark:outline-white/5 dark:placeholder:text-gray-500 dark:hover:outline-gray-600 dark:focus:outline-blue-500"
+          className="block min-w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:border-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:border-neutral-700/50 dark:bg-neutral-800/50 dark:text-white dark:outline-neutral-700/50 dark:placeholder:text-gray-500 dark:hover:outline-gray-600 dark:focus:outline-blue-500"
         />
       </TextField>
     );

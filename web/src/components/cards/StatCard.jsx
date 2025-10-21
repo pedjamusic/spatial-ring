@@ -19,11 +19,10 @@ export default function StatCard({
 
   return (
     <Link
+      tabIndex={1}
       to={to}
       className={[
-        "block rounded-xl border bg-white shadow-sm",
-        "transition-shadow hover:shadow-md",
-        "focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 focus:outline-none",
+        "block rounded-md border border-gray-300 bg-white outline-1 -outline-offset-1 outline-gray-300 not-dark:shadow hover:border-gray-400 hover:outline-gray-400 focus:outline-2 focus:outline-blue-600 dark:border-neutral-700/25 dark:bg-neutral-800/50 dark:text-white dark:outline-neutral-700/25 dark:placeholder:text-gray-500 dark:hover:border-gray-700 dark:hover:outline-gray-700",
         sizeMap[size],
       ].join(" ")}
       aria-label={`${label}: ${value}`}
@@ -31,8 +30,10 @@ export default function StatCard({
       <div className="flex items-start gap-4">
         {icon ? <div className="text-gray-500">{icon}</div> : null}
         <div className="space-y-1">
-          <p className="text-sm text-gray-500">{label}</p>
-          <p className="text-2xl font-semibold text-gray-900">{value}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{label}</p>
+          <p className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+            {value}
+          </p>
         </div>
       </div>
     </Link>

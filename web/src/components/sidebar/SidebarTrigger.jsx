@@ -12,14 +12,14 @@ export function SidebarTrigger({ className = "" }) {
       onPress: toggleSidebar,
       "aria-label": open ? "Close sidebar" : "Open sidebar",
     },
-    ref
+    ref,
   );
 
   return (
     <button
       ref={ref}
       {...buttonProps}
-      className={`sidebar-trigger ${className}`}
+      className={`sidebar-trigger ${className} border border-red-600`}
     >
       <svg
         width="20"
