@@ -46,7 +46,7 @@ export function AppSidebar() {
             className={`transition-all ${open ? "h-8 w-8" : "h-6 w-6"}`}
           />
           {open && (
-            <span className="font-semibold text-lg lg:visible">
+            <span className="text-lg font-semibold lg:visible">
               Spatial Ring
             </span>
           )}
@@ -63,7 +63,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton
                   to="/admin"
-                  icon={Home}
+                  icon={LayoutDashboard}
                   isActive={isDashboardActive}
                   // isActive={location.pathname === "/admin"}
                 >

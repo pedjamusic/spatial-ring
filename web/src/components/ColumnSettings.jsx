@@ -19,7 +19,7 @@ export default function ColumnSettings({ meta, config, onToggle, onReset }) {
           const c = config[f.name] || {};
           return !(c.hidden || c.hideInTable);
         })
-        .map((f) => f.name)
+        .map((f) => f.name),
     ); // [attached_file:1]
 
   const handleSelectionChange = (keys) => {
@@ -37,22 +37,22 @@ export default function ColumnSettings({ meta, config, onToggle, onReset }) {
 
   return (
     <MenuTrigger>
-      <Button className="py-2 px-4 inline-flex items-center gap-2 text-sm font-medium rounded-md bg-white hover:bg-gray-50 focus:outline-none dark:bg-neutral-800/50 dark:border-neutral-700 dark:hover:bg-neutral-800 cursor-pointer">
+      <Button className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800/50 dark:hover:bg-neutral-800">
         Columns
         <CircleEllipsis size={16} strokeWidth={1} absoluteStrokeWidth />
       </Button>
       {/* [attached_file:1] */}
       <Popover
         placement="bottom end"
-        className="bg-gray-50 dark:bg-neutral-800 rounded-xl shadow-xl border border-gray-200 dark:border-neutral-700 min-w-[280px]"
+        className="min-w-[280px] rounded-xl border border-gray-200 bg-gray-50/50 shadow-xl backdrop-blur-sm dark:border-neutral-700 dark:bg-neutral-800/50"
       >
-        <div className="px-3 pt-3 pb-2 flex items-center justify-between border-b border-gray-200 dark:border-neutral-700">
+        <div className="flex items-center justify-between border-b border-gray-200 px-3 pt-3 pb-2 dark:border-neutral-700">
           <span className="text-sm font-semibold text-gray-900 dark:text-white">
             Show or hide columns
           </span>
           <Button
             onPress={onReset}
-            className="text-xs text-blue-600 hover:underline dark:text-blue-400 px-2 py-1 cursor-pointer focus:outline-none"
+            className="cursor-pointer px-2 py-1 text-xs text-blue-600 hover:underline focus:outline-none dark:text-blue-400"
           >
             Reset
           </Button>
@@ -71,15 +71,14 @@ export default function ColumnSettings({ meta, config, onToggle, onReset }) {
                 key={f.name}
                 id={f.name}
                 textValue={label}
-                className="px-3 py-2 rounded cursor-pointer outline-none text-sm text-gray-700 dark:text-gray-300
-                           data-[focused]:bg-gray-100 dark:data-[focused]:bg-neutral-700 flex items-center gap-2"
+                className="flex cursor-pointer items-center gap-2 rounded px-3 py-2 text-sm text-gray-700 outline-none data-[focused]:bg-gray-300/50 dark:text-gray-500 dark:data-[focused]:bg-neutral-600/25"
               >
                 {({ isSelected }) => (
                   <>
-                    <div className="w-4 h-4 border border-gray-300 dark:border-neutral-600 rounded flex items-center justify-center bg-white dark:bg-neutral-900">
+                    <div className="flex h-4 w-4 items-center justify-center rounded border border-gray-300 bg-white dark:border-neutral-600 dark:bg-neutral-900">
                       {isSelected && (
                         <svg
-                          className="w-3 h-3 text-blue-600"
+                          className="h-3 w-3 text-blue-600"
                           viewBox="0 0 12 12"
                           fill="none"
                           aria-hidden="true"

@@ -41,7 +41,7 @@ export default function ModelForm({
         hiddenFields.push(field.name);
         if (field.kind === "object" && field.isList) {
           console.log(
-            `🙈 Hiding reverse relation: ${field.name} (${field.type}[])`
+            `🙈 Hiding reverse relation: ${field.name} (${field.type}[])`,
           );
         }
       } else {
@@ -71,7 +71,7 @@ export default function ModelForm({
       if (!meta?.fields) return;
 
       const relationFields = meta.fields.filter(
-        (field) => field.kind === "object" && !field.isList && field.relation
+        (field) => field.kind === "object" && !field.isList && field.relation,
       );
 
       const endpointMap = {
@@ -87,7 +87,7 @@ export default function ModelForm({
         const endpoint = endpointMap[field.relation.to];
         if (!endpoint) {
           console.warn(
-            `⚠️ No endpoint mapping for relation: ${field.name} -> ${field.relation.to}`
+            `⚠️ No endpoint mapping for relation: ${field.name} -> ${field.relation.to}`,
           );
           return { field: field.name, options: [] };
         }
@@ -125,7 +125,7 @@ export default function ModelForm({
   // --- RENDER LOGIC ---
 
   const formFields = meta.fields.filter(
-    (field) => !isFieldHidden(field, uiConfig)
+    (field) => !isFieldHidden(field, uiConfig),
   );
 
   // EDIT: submit handler (Create/Update is decided by presence of initialData.id)
@@ -249,7 +249,7 @@ export default function ModelForm({
             required={required}
             value={value}
             onChange={(e) => handleChange(field.name, e.target.value)}
-            className="block min-w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 hover:outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-blue-500"
+            className="block min-w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-blue-500"
           />
         </Label>
       );
@@ -276,11 +276,10 @@ export default function ModelForm({
               field.name,
               inputType === "number"
                 ? Number(e.target.value) || ""
-                : e.target.value
+                : e.target.value,
             )
           }
-          className="block min-w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 hover:outline-gray-400 dark:hover:outline-gray-600 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:text-white dark:outline-white/5 dark:placeholder:text-gray-500 dark:focus:outline-blue-500
-          border border-gray-200 duration-300 dark:border-neutral-700/25 dark:bg-neutral-800/50"
+          className="block min-w-full rounded-md border border-gray-200 bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 duration-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:border-neutral-700/25 dark:bg-neutral-800/50 dark:text-white dark:outline-white/5 dark:placeholder:text-gray-500 dark:hover:outline-gray-600 dark:focus:outline-blue-500"
         />
       </TextField>
     );
@@ -290,25 +289,24 @@ export default function ModelForm({
     <>
       {/* FIXED: Moved error display to proper JSX location */}
       {formError && (
-        <div className="p-3 bg-red-200 text-red-600 border border-red-300 mb-4">
+        <div className="mb-4 border border-red-300 bg-red-200 p-3 text-red-600">
           {formError}
         </div>
       )}
 
       <Form
         onSubmit={handleSubmit}
-        className="bg-white px-6 py-4 rounded-lg border border-gray-300 not-dark:shadow dark:border-neutral-700/50 dark:bg-neutral-800/50"
+        className="rounded-lg border border-gray-300 bg-white px-6 py-4 not-dark:shadow dark:border-neutral-700/50 dark:bg-neutral-800/50"
       >
         {formFields.map(renderField)}
-        <div className="inline-flex mt-4">
+        <div className="mt-4 inline-flex">
           <Button
             type="submit"
             disabled={loading}
             isDisabled={loading}
-            className={`py-3 px-4 inline-flex items-center gap-x-2 -ms-px first:rounded-s-lg first:ms-0 last:rounded-e-lg text-sm font-medium focus:z-10 border border-blue-600 text-gray-800 shadow-2xs focus:outline-hidden focus:bg-blue-800 disabled:opacity-50 disabled:pointer-events-none hover:cursor-pointer
-            ${
+            className={`-ms-px inline-flex items-center gap-x-2 border border-blue-600 px-4 py-3 text-sm font-medium text-gray-800 shadow-2xs first:ms-0 first:rounded-s-lg last:rounded-e-lg hover:cursor-pointer focus:z-10 focus:bg-blue-800 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50 ${
               loading
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                ? "cursor-not-allowed bg-gray-300 text-gray-500"
                 : "bg-blue-600 text-white hover:bg-blue-500"
             }`}
           >
@@ -319,7 +317,7 @@ export default function ModelForm({
               type="button"
               // onClick={() => setFormData({})}
               onClick={handleCancel}
-              className="py-3 px-4 inline-flex items-center gap-x-2 -ms-px first:rounded-s-md first:ms-0 last:rounded-e-md text-sm font-medium focus:z-10 border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-200 focus:border-gray-300 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:bg-neutral-900 dark:border-neutral-700  dark:hover:bg-neutral-800 dark:focus:bg-neutral-800 hover:cursor-pointer"
+              className="-ms-px inline-flex items-center gap-x-2 border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-800 shadow-2xs first:ms-0 first:rounded-s-md last:rounded-e-md hover:cursor-pointer hover:bg-gray-50 focus:z-10 focus:border-gray-300 focus:bg-gray-200 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
             >
               Cancel
             </Button>

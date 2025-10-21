@@ -1,5 +1,7 @@
 
 import {
+  LayoutDashboard,
+  Tags,
   Box,
   Warehouse,
   Package,
@@ -10,6 +12,8 @@ import {
 } from "lucide-react";
 
 export const iconRegistry = {
+  LayoutDashboard,
+  Tags,
   Box,
   Warehouse,
   Package,

@@ -27,7 +27,7 @@
     "path": "assetCategories",
     "order": 30,
     "enabled": true,
-    "icon": "FolderTree"
+    "icon": "Tags"
   },
   {
     "title": "Events",
