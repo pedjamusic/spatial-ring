@@ -1,86 +1,145 @@
-**Spatial Rings**: In many fantasy series, a "spatial ring" or "space ring" is a ring that creates a small, separate pocket dimension. These can store items, and with advanced versions, even living beings, though common ones may not.
+<div align="center">
+  <img src="src/assets/Logo transparent.png" alt="Spatial Ring Logo" width="96"/>
 
-# Overview
+  # 🪐 Spatial Ring
 
-- Stack: Dockerized Postgres, Express API with Prisma, bcrypt for password hashing, JWT for stateless auth, React (Vite) for web, and Expo for handheld.
-- Security baseline: follow OWASP guidance for password storage, secrets, and Express hardening as the project grows.
+[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
+[![Node.js CI](https://github.com/pedjamusic/spatial-ring/actions/workflows/node.js.yml/badge.svg)](https://github.com/pedjamusic/spatial-ring/actions/workflows/node.js.yml)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
+[![Made with React](https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![Powered by Express](https://img.shields.io/badge/Express-000000?style=flat&logo=express&logoColor=white)](https://expressjs.com/)
+[![Powered by Prisma](https://img.shields.io/badge/Prisma-3982CE?style=flat&logo=Prisma&logoColor=white)](https://www.prisma.io/)
 
-# npm scripts
+A modern inventory management system with spatial organization capabilities. Inspired by fantasy series where "spatial rings" create pocket dimensions for storing items.
+</div>
 
-```js
-"dev": "nodemon src/server.js",
-"pg": "docker start pg-local",
-"db": "npx prisma studio --schema ./prisma/schema.prisma"
+## 🌟 Overview
+
+Spatial Ring is a full-stack inventory management application built with:
+
+- 🔒 **API**: Express.js + Prisma ORM with PostgreSQL
+- 🎨 **Web**: React + Vite with modern UI components
+- 🔐 **Security**: JWT authentication, bcrypt password hashing
+- 🐳 **Infrastructure**: Dockerized PostgreSQL database
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js (LTS version)
+- Docker Desktop
+- Visual Studio Code (recommended)
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/pedjamusic/spatial-ring.git
+cd spatial-ring
 ```
 
-## Step 0 — Prerequisites
+1. Start PostgreSQL with Docker:
 
-- Install Node.js LTS, VS Code, and Docker Desktop; Docker will run a local Postgres without installing it natively.
-- Create a new Git repo/folder (e.g., inventory-app) with subfolders api, web, and app for clear separation.
+```bash
+docker run -d \
+  --name pg-local \
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_DB=app \
+  -p 5432:5432 \
+  -v pg:/var/lib/postgresql/data \
+  postgres
+```
 
-  ```bash
-  cd my-app
-  git init
-  ```
+1. Set up the API:
 
-## Step 1 — Start Postgres in Docker
+```bash
+cd api
+npm install
+cp .env.example .env
+npx prisma migrate dev
+npm run dev
+```
 
-- Run an official Postgres container with a named volume so data survives restarts:
+1. Set up the web interface:
 
-  ```docker
-  docker run -d --name pg-local -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres -e POSTGRES_DB=app -p 5432:5432 -v pg/var/lib/postgresql/data postgres
-  ```
+```bash
+cd web
+npm install
+cp .env.example .env
+npm run dev
+```
 
-- Verify with `docker ps` and note that Postgres listens on _localhost:5432_ for the API.
+## 📦 Project Structure
 
-## Step 2 — Scaffold the API (Express + Prisma)
+```bash
+spatial-ring/
+├── api/                # Backend API
+│   ├── prisma/        # Database schema and migrations
+│   ├── src/           # API source code
+│   └── test/          # API tests
+├── web/               # Frontend application
+│   ├── public/        # Static assets
+│   └── src/           # React components and logic
+└── mobile/            # Mobile app (future development)
+```
 
-- In inventory-app/api: `npm init -y`; then install deps: `npm i express nodemon dotenv cors helmet prisma @prisma/client bcrypt jsonwebtoken`.
-- Initialize Prisma and set `DATABASE_URL` in api/.env: `npx prisma init` then
+## 🛠️ Development
 
-  ```
-  DATABASE_URL=“postgresql://postgres:postgres@localhost:5432/app?schema=public”
-  ```
+Start all services in development mode:
 
-- Create _api/src/server.js_ with a basic Express server and CORS/Helmet setup to prepare for routes.
+```bash
+npm run dev
+```
 
-## Step 3 — Add Prisma schema with Users
+This will concurrently run:
 
-- Edit _api/prisma/schema.prisma_ with datasource and generator, then a minimal User including passwordHash; Prisma’s guides show this flow clearly.
-- Run: `npx prisma migrate dev –name init` to create tables and generate the client; the Prisma tutorial uses this exact command for first migrations.
+- API server on <http://localhost:3000>
+- Web interface on <http://localhost:5173>
+- Prisma Studio on <http://localhost:5555> (optional, run with `npm run db`)
 
-# Rails scaffold equivalent
+## 🧪 Testing
 
-✅ Backend Architecture
+```bash
+# Run API tests
+cd api
+npm test
 
-- Prisma DMMF integration - Reads your schema and exposes clean metadata via `/api/meta/*` endpoints
-- Express API routes - RESTful CRUD endpoints for all your models
-- JWT authentication - Proper auth middleware protecting your admin routes
-- Clean separation - Public metadata, protected data operations
+# Run web tests
+cd web
+npm test
+```
 
-✅ Frontend Magic
+## 📚 API Documentation
 
-- Dynamic form generation - Forms automatically adapt to your Prisma schema changes
-- Smart field mapping - Handles different field types (text, numbers, dates, enums, relations)
-- Reverse relation filtering - Correctly hides `assets Asset[]` from Location forms
-- React Router layout - Professional admin shell with sidebar navigation
+The API provides endpoints for:
 
-## uiConfig
+- User authentication
+- Asset management
+- Category organization
+- Warehouse locations
+- Movement tracking
+- Event management
 
-- Hide columns everywhere or only in the all items table: `fieldName: { hidden: true }` or `fieldName: { hideInTable: true }`
-- Reorder columns: `columnOrder: ['field1', 'field2', ...]`
-- Limit columns: `maxColumns: 4`
-- Custom labels: `fieldName: { label: 'Custom Name' }`
-- Show relations: `relation: { path: 'relation.name' }`
+For detailed API documentation, run the development server and visit `/api/docs`.
 
-### Resources used in Spatial Ring App
+## 🔐 Security
 
-Tailwind CSS,
-Lucide,
-Dockerized Postgres,
-Express JS,
-Prisma,
-bcrypt for password hashing,
-JWT for stateless auth,
-React (Vite) for web, and
-Expo for handheld.
+- JWT-based authentication
+- Password hashing with bcrypt
+- CORS and Helmet security middleware
+- Input validation and sanitization
+- OWASP security best practices
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+ISC License - see the [LICENSE](LICENSE) file for details.
