@@ -1,0 +1,49 @@
+# .github/workflows/node.js.yml
+
+name: Node.js CI # 👈 This is the name displayed on the Actions tab
+
+# 1. Trigger: Defines when the workflow runs
+on:
+  # Run on every push to the main branch
+  push:
+    branches: [ "main" ]
+  # Allow manual triggering from the GitHub UI
+  workflow_dispatch:
+
+# 2. Jobs: A workflow is made up of one or more jobs
+jobs:
+  # The name of the job (must be unique)
+  build:
+    # Environment (e.g., Ubuntu, Windows, macOS)
+    runs-on: ubuntu-latest
+
+    # Strategy: Allows running the job with multiple versions
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x] # 👈 Test against Node 18 and 20
+
+    # Steps: A sequence of tasks to perform
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Setup Node.js environment
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          # cache: 'npm' # Uncomment if you use npm/yarn/pnpm
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # Step 4: Run tests (Crucial for CI status!)
+      # If this step fails, the entire workflow run fails, and the badge turns 'failing'
+      - name: Run tests
+        run: npm test
+
+      # Step 5: (Optional) Build the project
+      - name: Build project
+        run: npm run build --if-present
