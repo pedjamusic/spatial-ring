@@ -38,7 +38,7 @@ git clone https://github.com/pedjamusic/spatial-ring.git
 cd spatial-ring
 ```
 
-1. Start PostgreSQL with Docker:
+2. Start PostgreSQL with Docker:
 
 ```bash
 docker run -d \
@@ -51,7 +51,7 @@ docker run -d \
   postgres
 ```
 
-1. Set up the API:
+3. Set up the API:
 
 ```bash
 cd api
@@ -61,7 +61,7 @@ npx prisma migrate dev
 npm run dev
 ```
 
-1. Set up the web interface:
+4. Set up the web interface:
 
 ```bash
 cd web

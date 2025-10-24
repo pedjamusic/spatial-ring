@@ -3,15 +3,16 @@ import ModelForm from "../components/ModelForm";
 import ModelTable from "../components/ModelTable";
 import { resource } from "../lib/api";
 // import { useUiConfigWithPreferences } from "../hooks/useUiConfigWithPreferences";
-
+import { toast } from "../lib/toast"; // Import toast
 import ColumnSettings from "../components/ColumnSettings";
+
 const STORAGE_KEY_PREFIX = "uiConfig_";
 const deepMerge = (a = {}, b = {}) =>
   Object.fromEntries(
     Object.keys({ ...a, ...b }).map((k) => [
       k,
       { ...(a[k] || {}), ...(b[k] || {}) },
-    ])
+    ]),
   );
 
 export default function GenericCrud({
@@ -92,7 +93,7 @@ export default function GenericCrud({
 
       // Save to localStorage
       const currentStored = JSON.parse(
-        localStorage.getItem(storageKey) || "{}"
+        localStorage.getItem(storageKey) || "{}",
       );
       const nextStored = {
         ...currentStored,
@@ -126,7 +127,7 @@ export default function GenericCrud({
         const errorText = await metaResponse.text();
         console.error(`❌ Meta fetch failed:`, errorText);
         throw new Error(
-          `Meta fetch failed: ${metaResponse.status} ${errorText}`
+          `Meta fetch failed: ${metaResponse.status} ${errorText}`,
         );
       }
 
@@ -160,13 +161,18 @@ export default function GenericCrud({
     try {
       if (editingItem) {
         await api.update(editingItem.id, formData);
+        toast.success(`${singular} updated successfully!`);
       } else {
         await api.create(formData);
+        toast.success(`${singular} created successfully!`);
       }
       setEditingItem(null);
       await loadData();
     } catch (err) {
-      setError(err.message);
+      const errorMessage = err.message || "Operation failed";
+      setError(errorMessage);
+      toast.error(`Failed to save ${singular}: ${errorMessage}`);
+      throw err; // Re-throw so ModelForm can handle it
     }
   };
 
@@ -179,9 +185,11 @@ export default function GenericCrud({
 
     try {
       await api.remove(id);
+      toast.info(`${singular} deleted successfully!`);
       await loadData();
     } catch (err) {
       setError(err.message);
+      toast.error(`⚠️ Failed to delete ${singular}: ${err.message}`);
     }
   };
 
@@ -197,7 +205,7 @@ export default function GenericCrud({
       </div>
 
       {error && (
-        <div className="p-4 bg-red-200 text-red-600 border border-red-300">
+        <div className="border border-red-300 bg-red-200 p-4 text-red-600">
           {error}
         </div>
       )}
@@ -206,16 +214,17 @@ export default function GenericCrud({
         key={`${resourceName}:${editingItem?.id ?? "create"}`} // remount per identity
         meta={meta}
         initialData={editingItem || {}}
-        onSubmit={async (formData) => {
-          try {
-            if (editingItem) await api.update(editingItem.id, formData);
-            else await api.create(formData);
-            setEditingItem(null);
-            await loadData();
-          } catch (err) {
-            setError(err.message);
-          }
-        }}
+        onSubmit={handleSave}
+        // onSubmit={async (formData) => {
+        //   try {
+        //     if (editingItem) await api.update(editingItem.id, formData);
+        //     else await api.create(formData);
+        //     setEditingItem(null);
+        //     await loadData();
+        //   } catch (err) {
+        //     setError(err.message);
+        //   }
+        // }}
         onCancel={() => {
           // leave Edit without clearing the form in-place
           setEditingItem(null);

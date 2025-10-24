@@ -6,12 +6,16 @@ import {
   isFieldRequired,
 } from "../lib/fieldMapping";
 import { authFetch } from "../lib/api";
+import { useFormValidation } from "../lib/useFormValidation";
+import ValidatedFormField from "./ValidatedFormField";
+
 import {
   Button,
   Form,
   TextField,
   Label,
   Input,
+  Select,
   TextArea,
 } from "react-aria-components";
 
@@ -26,6 +30,19 @@ export default function ModelForm({
   const [relationOptions, setRelationOptions] = useState({});
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState("");
+
+  // Initialize validation hook
+  const {
+    fieldErrors,
+    touchedFields,
+    validateField,
+    validateForm,
+    touchField,
+    touchAllFields,
+    resetValidation,
+    updateFieldError,
+    isFieldRequired,
+  } = useFormValidation(meta, uiConfig);
 
   // Effect 1: Log metadata analysis when meta changes
   useEffect(() => {
@@ -63,7 +80,8 @@ export default function ModelForm({
   useEffect(() => {
     // setFormData(initialData);
     setFormData(initialData ?? {});
-  }, [initialData]);
+    resetValidation();
+  }, [initialData, resetValidation]);
 
   // Effect 3: Load data for relation dropdowns when meta changes
   useEffect(() => {
@@ -104,8 +122,10 @@ export default function ModelForm({
             : [];
           return { field: field.name, options };
         } catch (error) {
-          console.error(`Failed to load options for ${field.name}:`, error);
-          setFormError(`Failed to load ${field.relation.to}: ${error.message}`);
+          console.error(`⚠️ Failed to load options for ${field.name}:`, error);
+          setFormError(
+            `⚠️ Failed to load ${field.relation.to}: ${error.message}`,
+          );
           return { field: field.name, options: [] };
         }
       });
@@ -134,10 +154,31 @@ export default function ModelForm({
     setLoading(true);
     setFormError("");
 
+    // Mark all fields as touched
+    touchAllFields(formFields);
+
+    // Validate form
+    const { isValid, errors } = validateForm(formData, formFields);
+
+    if (!isValid) {
+      setLoading(false);
+      setFormError("Please correct the errors below");
+      console.log("❌ Form validation failed:", errors);
+
+      // Focus first invalid field
+      const firstErrorField = Object.keys(errors)[0];
+      if (firstErrorField) {
+        document.getElementById(firstErrorField)?.focus();
+      }
+
+      return;
+    }
+
     console.log("🚀 About to submit form ", formData);
 
     try {
       await onSubmit(formData);
+      resetValidation();
     } catch (error) {
       setFormError(error?.message || "⚠️ Failed to submit form");
     } finally {
@@ -145,8 +186,19 @@ export default function ModelForm({
     }
   };
 
-  const handleChange = (fieldName, value) => {
+  const handleChange = (fieldName, value, field) => {
     setFormData((prev) => ({ ...prev, [fieldName]: value }));
+
+    // Validate on change if field was touched
+    if (touchedFields[fieldName]) {
+      const error = validateField(field, value);
+      updateFieldError(fieldName, error);
+    }
+  };
+  const handleBlur = (field) => {
+    touchField(field.name);
+    const error = validateField(field, formData[field.name]);
+    updateFieldError(field.name, error);
   };
 
   // CANCEL: restore original initialData and notify parent to exit Edit mode
@@ -161,8 +213,10 @@ export default function ModelForm({
     const label = getFieldLabel(field, uiConfig);
     const required = isFieldRequired(field);
     const value = formData[field.name] ?? "";
+    const error = fieldErrors[field.name];
+    const touched = touchedFields[field.name];
 
-    // Handle relation fields
+    // Handle relation fields (dropdowns)
     if (field.kind === "object" && !field.isList) {
       const options = relationOptions[field.name] || [];
 
@@ -172,15 +226,25 @@ export default function ModelForm({
         : `${field.name}Id`;
 
       return (
-        <label key={field.name}>
-          <div>
-            {label} {required && <span className="text-red-600">*</span>}
-          </div>
+        <>
+          <Label
+            key={field.name}
+            htmlFor={field.name}
+            className="block text-sm leading-6 font-medium text-gray-900 dark:text-white"
+          >
+            {label} {required && <span className="ml-1 text-red-600">*</span>}
+          </Label>
           <select
+            id={field.name}
             required={required}
             value={formData[foreignKeyFieldName] || ""}
             onChange={(e) => handleChange(foreignKeyFieldName, e.target.value)}
-            style={{ width: "100%", padding: "8px", border: "1px solid #ccc" }}
+            onBlur={() => handleBlur(field)}
+            className={`mt-2 block w-full rounded-md border-0 px-3 py-2 shadow-sm ring-1 ring-inset focus:ring-2 focus:outline-hidden focus:ring-inset sm:text-sm dark:bg-gray-800 dark:text-white ${
+              touched && error
+                ? "ring-red-500 focus:ring-red-500"
+                : "ring-gray-300 focus:ring-blue-600 dark:ring-gray-700"
+            }`}
           >
             <option value="">Select...</option>
             {options.map((opt) => (
@@ -189,22 +253,37 @@ export default function ModelForm({
               </option>
             ))}
           </select>
-        </label>
+          {touched && error && (
+            <p className="mt-2 text-xs text-red-600 dark:text-red-400">
+              {error}
+            </p>
+          )}
+        </>
       );
     }
 
     // Enum select
     if (inputType === "select" && field.enumValues?.length) {
       return (
-        <label key={field.name}>
-          <div>
+        <>
+          <Label
+            key={field.name}
+            htmlFor={field.name}
+            className="block text-sm leading-6 font-medium text-gray-900 dark:text-white"
+          >
             {label} {required && <span className="text-red-600">*</span>}
-          </div>
+          </Label>
           <select
+            id={field.name}
             required={required}
             value={value}
             onChange={(e) => handleChange(field.name, e.target.value)}
-            style={{ width: "100%", padding: "8px", border: "1px solid #ccc" }}
+            onBlur={() => handleBlur(field)}
+            className={`mt-2 block w-full rounded-md border-0 px-3 py-2 shadow-sm ring-1 ring-inset focus:ring-2 focus:outline-hidden focus:ring-inset sm:text-sm dark:bg-gray-800 dark:text-white ${
+              touched && error
+                ? "ring-red-500 focus:ring-red-500"
+                : "ring-gray-300 focus:ring-blue-600 dark:ring-gray-700"
+            }`}
           >
             <option value="">Choose...</option>
             {field.enumValues.map((val) => (
@@ -213,7 +292,12 @@ export default function ModelForm({
               </option>
             ))}
           </select>
-        </label>
+          {touched && error && (
+            <p className="mt-2 text-xs text-red-600 dark:text-red-400">
+              {error}
+            </p>
+          )}
+        </>
       );
     }
 
@@ -222,14 +306,19 @@ export default function ModelForm({
       return (
         <label
           key={field.name}
-          style={{ display: "flex", alignItems: "center", gap: "8px" }}
+          className="mb-4 flex items-center gap-2"
+          htmlFor={field.name}
         >
           <input
+            id={field.name}
             type="checkbox"
+            name={field.name}
             checked={Boolean(value)}
             onChange={(e) => handleChange(field.name, e.target.checked)}
           />
-          <span>{label}</span>
+          <span className="text-sm font-medium text-gray-900 dark:text-white">
+            {label}
+          </span>
         </label>
       );
     }
@@ -242,15 +331,26 @@ export default function ModelForm({
           htmlFor={label}
           className="block text-sm/6 font-medium text-gray-900 dark:text-gray-100"
         >
-          <div>
-            {label} {required && <span style={{ color: "red" }}>*</span>}
-          </div>
-          <textarea
+          {label} {required && <span style={{ color: "red" }}>*</span>}
+          <TextArea
+            id={field.name}
             required={required}
             value={value}
             onChange={(e) => handleChange(field.name, e.target.value)}
-            className="block min-w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-blue-500"
+            onBlur={() => handleBlur(field)}
+            rows={4}
+            // className="block min-w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-blue-500"
+            className={`mt-2 block w-full rounded-md border-0 px-3 py-2 shadow-sm ring-1 ring-inset focus:ring-2 focus:outline-hidden focus:ring-inset sm:text-sm dark:bg-gray-800 dark:text-white ${
+              touched && error
+                ? "ring-red-500 focus:ring-red-500"
+                : "ring-gray-300 focus:ring-blue-600 dark:ring-gray-700"
+            }`}
           />
+          {touched && error && (
+            <p className="mt-2 text-xs text-red-600 dark:text-red-400">
+              {error}
+            </p>
+          )}
         </Label>
       );
     }
@@ -258,30 +358,50 @@ export default function ModelForm({
     // Default input
     return (
       // <TextField {{required ? isRequired : ""}}>
-      <TextField>
-        <Label
-          key={field.name}
-          htmlFor={label}
-          className="block text-sm/6 font-medium text-gray-900 dark:text-gray-100"
-        >
-          {label} {required && <span className={"text-red-600"}>*</span>}
-        </Label>
-        <Input
-          id={label}
-          type={inputType}
-          required={required}
-          value={value}
-          onChange={(e) =>
-            handleChange(
-              field.name,
-              inputType === "number"
-                ? Number(e.target.value) || ""
-                : e.target.value,
-            )
-          }
-          className="block min-w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:border-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:border-neutral-700/50 dark:bg-neutral-800/50 dark:text-white dark:outline-neutral-700/50 dark:placeholder:text-gray-500 dark:hover:outline-gray-600 dark:focus:outline-blue-500"
-        />
-      </TextField>
+      // <TextField>
+      //   <Label
+      //     key={field.name}
+      //     htmlFor={label}
+      //     className="block text-sm/6 font-medium text-gray-900 dark:text-gray-100"
+      //   >
+      //     {label} {required && <span className={"text-red-600"}>*</span>}
+      //     <Input
+      //       id={label}
+      //       type={inputType}
+      //       required={required}
+      //       value={value}
+      //       onChange={(e) =>
+      //         handleChange(
+      //           field.name,
+      //           inputType === "number"
+      //             ? Number(e.target.value) || ""
+      //             : e.target.value,
+      //         )
+      //       }
+      //       className="block min-w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:border-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:border-neutral-700/50 dark:bg-neutral-800/50 dark:text-white dark:outline-neutral-700/50 dark:placeholder:text-gray-500 dark:hover:outline-gray-600 dark:focus:outline-blue-500"
+      //     />
+      //   </Label>
+      // </TextField>
+      <ValidatedFormField
+        key={field.name}
+        id={field.name}
+        label={label}
+        type={inputType}
+        required={required}
+        value={value}
+        onChange={(e) =>
+          handleChange(
+            field.name,
+            inputType === "number"
+              ? Number(e.target.value) || ""
+              : e.target.value,
+            field,
+          )
+        }
+        onBlur={() => handleBlur(field)}
+        error={error}
+        touched={touched}
+      />
     );
   };
 
