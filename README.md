@@ -1,10 +1,9 @@
 <div align="center">
-  <img src="src/assets/Logo transparent.png" alt="Spatial Ring Logo" width="96"/>
+  <img src="web/src/assets/Logo transparent.png" alt="Spatial Ring Logo" width="96"/>
 
   # 🪐 Spatial Ring
 
 [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
-[![Node.js CI](https://github.com/pedjamusic/spatial-ring/actions/workflows/node.js.yml/badge.svg)](https://github.com/pedjamusic/spatial-ring/actions/workflows/node.js.yml)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 [![Made with React](https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB)](https://reactjs.org/)
 [![Powered by Express](https://img.shields.io/badge/Express-000000?style=flat&logo=express&logoColor=white)](https://expressjs.com/)
