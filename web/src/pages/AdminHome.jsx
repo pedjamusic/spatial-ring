@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import DashboardStatsContainer from "@/containers/DashboardStatsContainer";
 import { resource } from "@/lib/api";
 
+import { H1 } from "@/components/typography/H1";
+
 export default function AdminHome() {
   const [totals, setTotals] = useState({
     assetsUnique: 0,
@@ -77,9 +79,12 @@ export default function AdminHome() {
   }
 
   return (
-    <div className="space-y-6">
-      <DashboardStatsContainer totals={totals} />
-      {/* Place your global search component below this line */}
-    </div>
+    <>
+      <H1>Dashboard</H1>
+      <div className="space-y-6">
+        <DashboardStatsContainer totals={totals} />
+        {/* Place your global search component below this line */}
+      </div>
+    </>
   );
 }

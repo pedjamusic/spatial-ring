@@ -2,6 +2,8 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 // Import Routers and Middleware
 import apiRouter from './routes/index.js';
@@ -9,10 +11,30 @@ import authRouter from './routes/auth.js';
 import metaRouter from './routes/meta.js';
 import { authenticateToken } from './middleware/auth.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 export const app = express();
 app.use(helmet());
 app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 app.use(express.json());
+
+
+// Serve uploaded photos as static files (PUBLIC - no auth needed for viewing)
+const assetsDir = path.resolve(__dirname, '../uploads/assets')
+// app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+app.use(
+  '/uploads/assets',
+  express.static(assetsDir,{
+    index: false,
+    // Optional: cache headers
+    setHeaders(res, filePath) {
+      if (/\.(png|jpe?g|webp|gif|svg)$/i.test(filePath)) {
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
+      }
+    },
+  })
+)
 
 // Authentication routes are public and should not be protected by requiring a token
 // public

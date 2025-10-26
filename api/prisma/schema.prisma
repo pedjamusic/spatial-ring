@@ -68,7 +68,7 @@ model Asset {
   make       String?
   model      String?
   dimensions String?
-  photoUrl   String?
+  photoUrl   String? // Stores filename of uploaded photo (not full URL)
   assetTag   String?     @unique
   // serialRequired Boolean     @default(false)
   serial     String?

@@ -3,11 +3,12 @@ import {
   getInputType,
   getFieldLabel,
   isFieldHidden,
-  isFieldRequired,
+  // isFieldRequired,
 } from "../lib/fieldMapping";
 import { authFetch } from "../lib/api";
 import { useFormValidation } from "../lib/useFormValidation";
 import ValidatedFormField from "./ValidatedFormField";
+import PhotoUpload from "./PhotoUpload";
 
 import {
   Button,
@@ -30,6 +31,7 @@ export default function ModelForm({
   const [relationOptions, setRelationOptions] = useState({});
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState("");
+  const [pendingPhotoFile, setPendingPhotoFile] = useState(null);
 
   // Initialize validation hook
   const {
@@ -177,7 +179,8 @@ export default function ModelForm({
     console.log("🚀 About to submit form ", formData);
 
     try {
-      await onSubmit(formData);
+      await onSubmit(formData, { pendingPhotoFile });
+      setPendingPhotoFile(null);
       resetValidation();
     } catch (error) {
       setFormError(error?.message || "⚠️ Failed to submit form");
@@ -215,6 +218,52 @@ export default function ModelForm({
     const value = formData[field.name] ?? "";
     const error = fieldErrors[field.name];
     const touched = touchedFields[field.name];
+
+    // Special handling for photo upload field / widget for Asset.photoUrl
+    if (uiConfig[field.name]?.widget === "photo" || field.name === "photoUrl") {
+      // if (uiConfig[field.name]?.widget === "photo") {
+      return (
+        <div key={field.name} className="mb-4">
+          <Label className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+            {label}
+          </Label>
+          <PhotoUpload
+            assetId={initialData?.id}
+            // currentPhotoUrl={formData.photoUrl}
+            // initialFilename={formData.photoUrl || null}
+            initialFilename={formData[field.name] || null}
+            onUploaded={({ asset }) => {
+              // when edited, server returns updated asset with filename
+              // if (asset?.photoUrl) {
+              //   setFormData((p) => ({ ...p, photoUrl: asset.photoUrl }));
+              // }
+              // Use returned asset or reply payload to update the same field
+              const next = asset?.[field.name] ?? asset?.photoUrl;
+              if (next) setFormData((p) => ({ ...p, [field.name]: next }));
+            }}
+            onPendingFile={(file) => {
+              setPendingPhotoFile(file);
+            }}
+            // onDeleted={() => setFormData((p) => ({ ...p, photoUrl: null }))}
+            onDeleted={() => setFormData((p) => ({ ...p, [field.name]: null }))}
+
+            // onPhotoUploaded={(data) => {
+            //   console.log("Photo uploaded:", data);
+            //   // Reload data or update form state if needed
+            //   if (data.asset) {
+            //     setFormData((prev) => ({
+            //       ...prev,
+            //       photoUrl: data.asset.photoUrl,
+            //     }));
+            //   }
+            // }}
+            // onPhotoDeleted={() => {
+            //   setFormData((prev) => ({ ...prev, photoUrl: null }));
+            // }}
+          />
+        </div>
+      );
+    }
 
     // Handle relation fields (dropdowns)
     if (field.kind === "object" && !field.isList) {

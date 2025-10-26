@@ -2,7 +2,6 @@ import { useEffect, useState, useMemo } from "react";
 import ModelForm from "../components/ModelForm";
 import ModelTable from "../components/ModelTable";
 import { resource } from "../lib/api";
-// import { useUiConfigWithPreferences } from "../hooks/useUiConfigWithPreferences";
 import { toast } from "../lib/toast"; // Import toast
 import ColumnSettings from "../components/ColumnSettings";
 
@@ -157,13 +156,38 @@ export default function GenericCrud({
   // if (loading) return <div>Loading...</div>;
   // if (!meta) return <div>Model not found</div>;
 
-  const handleSave = async (formData) => {
+  // const handleSave = async (formData) => {
+  const handleSave = async (formData, extras = {}) => {
     try {
       if (editingItem) {
         await api.update(editingItem.id, formData);
         toast.success(`${singular} updated successfully!`);
       } else {
-        await api.create(formData);
+        // await api.create(formData);
+
+        // Create first… (when above await api.create(formData) is NOT commented out)
+        // Create once (when above await api.create(formData) has been commented out)
+        const created = await api.create(formData);
+        // …then upload pending photo, if any
+        if (extras.pendingPhotoFile && created?.id) {
+          const token = localStorage.getItem("token");
+          const fd = new FormData();
+          fd.append("photo", extras.pendingPhotoFile);
+          await fetch(
+            `http://localhost:3000/api/${resourceName}/${created.id}/photo`,
+            {
+              method: "POST",
+              headers: token ? { Authorization: `Bearer ${token}` } : {},
+              body: fd,
+            },
+          ).then(async (r) => {
+            if (!r.ok)
+              throw new Error(
+                (await r.json().catch(() => ({}))).error || "Upload failed",
+              );
+          });
+        }
+
         toast.success(`${singular} created successfully!`);
       }
       setEditingItem(null);
@@ -181,7 +205,7 @@ export default function GenericCrud({
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this item?")) return;
+    if (!confirm("‼️ Are you sure you want to delete this item?")) return;
 
     try {
       await api.remove(id);
@@ -189,7 +213,7 @@ export default function GenericCrud({
       await loadData();
     } catch (err) {
       setError(err.message);
-      toast.error(`⚠️ Failed to delete ${singular}: ${err.message}`);
+      toast.error(`Failed to delete ${singular}: ${err.message}`);
     }
   };
 
