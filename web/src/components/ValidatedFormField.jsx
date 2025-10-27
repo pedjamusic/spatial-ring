@@ -24,7 +24,7 @@ export default function ValidatedFormField({
       "block w-full rounded-md border bg-white px-3 py-1.5  text-base text-gray-900 outline-1 -outline-offset-1 placeholder:text-gray-400 not-dark:shadow-sm  placeholder:text-gray-400 sm:text-sm sm:leading-6  dark:bg-neutral-800/50 dark:text-white";
 
     if (showError) {
-      return `${base} border-red-600 outline-red-600`;
+      return `${base} border-red-600 outline-red-600 focus:outline-2 focus:-outline-offset-2`;
     }
     return `${base} border-gray-300 outline-gray-300 hover:border-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:border-neutral-700/50 dark:outline-neutral-700/50 dark:bg-neutral-800 dark:placeholder:text-gray-500 dark:hover:border-neutral-600 dark:hover:outline-neutral-600 dark:focus:outline-blue-500`;
   };

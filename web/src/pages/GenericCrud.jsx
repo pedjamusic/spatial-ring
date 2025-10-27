@@ -265,7 +265,7 @@ export default function GenericCrud({
           onReset={handleResetPrefs}
         />
       </div>
-      <div>
+      <div className="w-full min-w-0">
         <ModelTable
           meta={meta}
           data={data}
