@@ -1,0 +1,80 @@
+/* Sidebar responsive styles */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  transition: width 0.3s ease;
+}
+
+.sidebar-open {
+  width: 16rem; /* 64 * 0.25rem = 16rem */
+}
+
+.sidebar-collapsed {
+  width: 4rem; /* 16 * 0.25rem = 4rem */
+}
+
+/* Mobile: drawer overlay mode */
+.sidebar-mobile {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 50;
+}
+
+.sidebar-mobile.sidebar-collapsed {
+  transform: translateX(-100%);
+}
+
+.sidebar-mobile.sidebar-open {
+  transform: translateX(0);
+  width: 16rem;
+}
+
+/* Desktop: always visible */
+.sidebar-desktop {
+  position: sticky;
+}
+
+.sidebar-inner {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Hide labels when collapsed */
+.sidebar-collapsed .sidebar-label {
+  display: none;
+}
+
+/* Center icons when collapsed */
+.sidebar-collapsed .sidebar-menu-button {
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+/* Hide group labels when collapsed */
+.sidebar-collapsed .sidebar-group-label {
+  display: none;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .sidebar-desktop {
+    width: 4rem;
+  }
+  
+  .sidebar-desktop .sidebar-label {
+    display: none;
+  }
+  
+  .sidebar-desktop .sidebar-group-label {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .sidebar-desktop {
+    width: 16rem;
+  }
+}
