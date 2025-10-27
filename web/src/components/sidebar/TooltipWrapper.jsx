@@ -35,13 +35,13 @@ export function TooltipWrapper({ children, content, delay = 700 }) {
       {shouldShowTooltip && (
         <div
           {...tooltipProps}
-          className="fixed left-[4.5rem] z-50 rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium whitespace-nowrap text-white shadow-lg dark:bg-gray-700"
+          className="fixed left-[4.5rem] z-50 rounded-lg bg-gray-900/75 px-3 py-2 text-sm font-medium whitespace-nowrap text-white backdrop-blur-sm not-dark:shadow-lg dark:bg-gray-700"
           style={{
             top: `${tooltipPosition.top}px`,
           }}
         >
           {content}
-          <div className="absolute top-1/2 right-full -translate-y-1/2 border-4 border-transparent border-r-gray-900 dark:border-r-gray-700" />
+          <div className="absolute top-1/2 right-full -translate-y-1/2 border-4 border-transparent border-r-gray-900/75 dark:border-r-gray-700" />
         </div>
       )}
     </div>

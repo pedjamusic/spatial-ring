@@ -43,18 +43,19 @@ export function AppSidebar() {
     <Sidebar>
       {/* Logo Header w/ burger menu */}
       <SidebarHeader>
-        <div className="mb-4 flex items-center gap-2 pt-3">
+        <div className="mb-4 grid items-center gap-2 pt-3">
           <img
             src="/src/assets/Logo transparent.png"
             alt="Spatial Ring App"
-            className="h-8 w-8 flex-shrink-0"
+            className={` ${shouldCollapse ? "mx-auto h-8 w-8" : "mx-0 h-16 w-16"}`}
           />
-          {!shouldCollapse && (
+          {/* {!shouldCollapse && (
             <span className="text-md truncate font-black uppercase">
               Spatial Ring
             </span>
-          )}
-          {isMobile && <BurgerMenu />}
+          )} */}
+          {/* {isMobile && <BurgerMenu />} */}
+          {shouldCollapse && <BurgerMenu />}
         </div>
       </SidebarHeader>
 
