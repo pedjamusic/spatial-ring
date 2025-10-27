@@ -465,7 +465,7 @@ export default function ModelForm({
 
       <Form
         onSubmit={handleSubmit}
-        className="rounded-lg border border-gray-300 bg-white px-6 py-4 not-dark:shadow dark:border-neutral-700/50 dark:bg-neutral-800/50"
+        className="grid grid-cols-1 gap-4 rounded-lg border border-gray-300 bg-white px-6 py-4 not-dark:shadow sm:grid-cols-2 md:gap-2 dark:border-neutral-700/50 dark:bg-neutral-800/50"
       >
         {formFields.map(renderField)}
         <div className="mt-4 inline-flex">

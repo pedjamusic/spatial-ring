@@ -127,7 +127,7 @@ export default function PhotoUpload({
         >
           <Button
             isDisabled={uploading}
-            className="focus:border-2focus:outline-solid inline-flex items-center gap-2 rounded-md border border-dashed border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-500 outline-1 outline-gray-200 outline-dashed not-dark:shadow-sm hover:cursor-pointer hover:bg-gray-50 focus:z-10 focus:border-solid focus:border-blue-600 focus:bg-gray-50 focus:outline-blue-600 focus:outline-solid disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700/50 dark:bg-neutral-800/50 dark:text-neutral-400 dark:outline-neutral-700/50 dark:hover:bg-neutral-800 dark:hover:text-gray-400 dark:hover:outline-neutral-600 dark:focus:bg-neutral-800"
+            className="focus:border-2focus:outline-solid inline-flex items-center gap-2 rounded-md border border-dashed border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-500 outline-1 outline-gray-200 outline-dashed not-dark:shadow-sm hover:cursor-pointer hover:border-gray-400 hover:bg-gray-50 hover:text-gray-600 focus:z-10 focus:border-solid focus:border-blue-600 focus:bg-gray-50 focus:outline-blue-600 focus:outline-solid disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700/50 dark:bg-neutral-800/50 dark:text-neutral-400 dark:outline-neutral-700/50 dark:hover:bg-neutral-800 dark:hover:text-gray-400 dark:hover:outline-neutral-600 dark:focus:bg-neutral-800"
           >
             {uploading
               ? "Uploading…"

@@ -9,21 +9,46 @@ export function SidebarProvider({
 }) {
   const [open, setOpen] = useState(defaultOpen);
   const [isMobile, setIsMobile] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [showMobileDrawer, setShowMobileDrawer] = useState(false);
+
+  // useEffect(() => {
+  //   const checkMobile = () => {
+  //     setIsMobile(window.innerWidth < 768);
+  //   };
+
+  //   checkMobile();
+  //   window.addEventListener("resize", checkMobile);
+  //   return () => window.removeEventListener("resize", checkMobile);
+  // }, []);
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+    const checkScreenSize = () => {
+      const mobile = window.innerWidth < 768;
+      const collapsed = window.innerWidth >= 768 && window.innerWidth < 1024;
+
+      setIsMobile(mobile);
+      setIsCollapsed(collapsed);
+
+      // Auto-close drawer on desktop
+      if (!mobile && showMobileDrawer) {
+        setShowMobileDrawer(false);
+      }
     };
 
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+    checkScreenSize();
+    window.addEventListener("resize", checkScreenSize);
+    return () => window.removeEventListener("resize", checkScreenSize);
+  }, [showMobileDrawer]);
 
   const toggleSidebar = () => {
     const newState = !open;
     setOpen(newState);
     onOpenChange?.(newState);
+  };
+
+  const toggleMobileDrawer = () => {
+    setShowMobileDrawer(!showMobileDrawer);
   };
 
   return (
@@ -33,6 +58,9 @@ export function SidebarProvider({
         setOpen,
         toggleSidebar,
         isMobile,
+        isCollapsed,
+        showMobileDrawer,
+        toggleMobileDrawer,
         state: open ? "expanded" : "collapsed",
       }}
     >

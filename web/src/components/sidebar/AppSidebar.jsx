@@ -15,6 +15,8 @@ import { useCrudResources } from "./useCrudResources";
 import { iconRegistry } from "./iconRegistry";
 import { getIconByKey } from "./iconUtils";
 
+import { BurgerMenu } from "./BurgerMenu";
+
 // Import your icons (adjust based on your icon library)
 import {
   Home,
@@ -29,27 +31,30 @@ import {
 } from "lucide-react";
 
 export function AppSidebar() {
-  const { open } = useSidebar();
+  // const { open } = useSidebar();
+  const { isCollapsed, isMobile, showMobileDrawer } = useSidebar();
   const { resources, loading } = useCrudResources();
   const location = useLocation();
 
   const isDashboardActive = location.pathname === "/admin";
+  const shouldCollapse = isCollapsed || (isMobile && !showMobileDrawer);
 
   return (
     <Sidebar>
-      {/* Logo Header */}
+      {/* Logo Header w/ burger menu */}
       <SidebarHeader>
-        <div className="flex items-center gap-3 p-4">
+        <div className="mb-4 flex items-center gap-2 pt-3">
           <img
             src="/src/assets/Logo transparent.png"
             alt="Spatial Ring App"
-            className={`transition-all ${open ? "h-8 w-8" : "h-6 w-6"}`}
+            className="h-8 w-8 flex-shrink-0"
           />
-          {open && (
-            <span className="text-lg font-semibold lg:visible">
+          {!shouldCollapse && (
+            <span className="text-md truncate font-black uppercase">
               Spatial Ring
             </span>
           )}
+          {isMobile && <BurgerMenu />}
         </div>
       </SidebarHeader>
 
@@ -57,7 +62,7 @@ export function AppSidebar() {
       <SidebarContent>
         {/* CRUD Pages Group */}
         <SidebarGroup>
-          <SidebarGroupLabel>Management</SidebarGroupLabel>
+          {!shouldCollapse && <SidebarGroupLabel>Management</SidebarGroupLabel>}
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
@@ -104,7 +109,9 @@ export function AppSidebar() {
 
         {/* Settings Group (Placeholder for future) */}
         <SidebarGroup>
-          <SidebarGroupLabel>Configuration</SidebarGroupLabel>
+          {!shouldCollapse && (
+            <SidebarGroupLabel>Configuration</SidebarGroupLabel>
+          )}
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
