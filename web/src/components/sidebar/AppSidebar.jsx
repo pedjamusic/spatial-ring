@@ -40,7 +40,7 @@ export function AppSidebar() {
   const shouldCollapse = isCollapsed || (isMobile && !showMobileDrawer);
 
   return (
-    <Sidebar>
+    <Sidebar className="flex-1 lg:flex-2">
       {/* Logo Header w/ burger menu */}
       <SidebarHeader>
         <div className="mb-4 grid items-center gap-2 pt-3">
