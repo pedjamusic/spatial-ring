@@ -7,3 +7,11 @@
 body {
   color: light-dark(var(--light), var(--dark));
 }
+
+img {
+  vertical-align: middle;
+  max-width: 100%;
+
+  font-style: italic;
+  shape-margin: 1rem;
+}

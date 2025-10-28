@@ -47,7 +47,7 @@ export function AppSidebar() {
           <img
             src="/src/assets/Logo transparent.png"
             alt="Spatial Ring App"
-            className={` ${shouldCollapse ? "mx-auto h-8 w-8" : "mx-0 mx-auto h-16 w-16"}`}
+            className={` ${shouldCollapse ? "h-8 w-8" : "mx-0 h-16 w-16"}`}
           />
           {/* {!shouldCollapse && (
             <span className="text-md truncate font-black uppercase">
