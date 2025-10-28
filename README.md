@@ -9,7 +9,7 @@
 [![Powered by Express](https://img.shields.io/badge/Express-000000?style=flat&logo=express&logoColor=white)](https://expressjs.com/)
 [![Powered by Prisma](https://img.shields.io/badge/Prisma-3982CE?style=flat&logo=Prisma&logoColor=white)](https://www.prisma.io/)
 
-A modern inventory management system with spatial organization capabilities. Inspired by fantasy series where "spatial rings" create pocket dimensions for storing items.
+A ~~modern~~ simple inventory management system with spatial organization capabilities. Inspired by fantasy series where "spatial rings" create pocket dimensions for storing items.
 </div>
 
 ## 🌟 Overview
