@@ -31,9 +31,8 @@ export function SidebarMenuButton({
         <Icon
           className="sidebar-icon"
           aria-hidden="true"
-          size={16}
-          strokeWidth={1}
-          absoluteStrokeWidth
+          size={!shouldCollapse ? 16 : 24}
+          strokeWidth={!shouldCollapse ? 1 : 1.5}
         />
       )}
       {!shouldCollapse && (
