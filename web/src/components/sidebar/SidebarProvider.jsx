@@ -31,9 +31,9 @@ export function SidebarProvider({
       setIsCollapsed(collapsed);
 
       // Auto-close drawer on desktop
-      // if (!mobile && showMobileDrawer) {
-      //   setShowMobileDrawer(false);
-      // }
+      if (!mobile && !collapsed) {
+        setShowMobileDrawer(false);
+      }
       // ^^^ Do NOT auto-close the drawer on desktop; allow overlay while collapsed
     };
 

@@ -90,7 +90,6 @@ export function AppSidebar() {
                   // Determine if this item is active based on current location
                   // Assumes item.path is like "products", "categories", etc.
                   // Adjust as needed based on your routing structure
-                  // const active = location.pathname.startsWith(`/admin/${item.path}`);
                   const to = `/admin/${item.path}`;
                   const active = location.pathname.startsWith(to);
 

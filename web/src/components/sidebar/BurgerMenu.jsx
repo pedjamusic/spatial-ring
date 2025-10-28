@@ -5,7 +5,8 @@ import { Button } from "react-aria-components";
 import { Menu } from "lucide-react";
 
 export function BurgerMenu({ className = "" }) {
-  const { toggleMobileDrawer, isMobile, isCollapsed } = useSidebar();
+  const { toggleMobileDrawer, isMobile, isCollapsed, showMobileDrawer } =
+    useSidebar();
   const ref = React.useRef(null);
 
   const { buttonProps } = useButton(
@@ -23,9 +24,9 @@ export function BurgerMenu({ className = "" }) {
     <Button
       ref={ref}
       {...buttonProps}
-      className={`rounded-lg p-2 hover:cursor-pointer hover:bg-gray-100 dark:hover:bg-neutral-700/50 ${className}`}
+      className={`rounded-lg p-2 text-gray-700 hover:cursor-pointer hover:bg-gray-200 dark:text-gray-100/75 dark:hover:bg-neutral-700/50 ${className} ${showMobileDrawer ? "text-gray-100" : ""}`}
     >
-      <Menu size={24} className="text-gray-700 dark:text-gray-300" />
+      <Menu size={24} />
     </Button>
   );
 }
