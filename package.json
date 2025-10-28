@@ -1,7 +1,12 @@
 {
   "name": "inventory-app",
-  "version": "1.0.0",
-  "description": "**Spatial Rings**: In many fantasy series, a \"spatial ring\" or \"space ring\" is a ring that creates a small, separate pocket dimension. These can store items, and with advanced versions, even living beings, though common ones may not.",
+  "workspaces": [
+    "api",
+    "web",
+    "mobile"
+  ],
+  "version": "0.2.0",
+  "description": "A simple inventory management system with spatial organization capabilities. Inspired by fantasy series where \"spatial rings\" create pocket dimensions for storing items.",
   "homepage": "https://github.com/pedjamusic/spatial-ring#readme",
   "bugs": {
     "url": "https://github.com/pedjamusic/spatial-ring/issues"
@@ -11,14 +16,24 @@
     "url": "git+https://github.com/pedjamusic/spatial-ring.git"
   },
   "license": "ISC",
-  "author": "",
+  "author": "Predrag Drljača",
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "dev": "npm run dev --prefix api & npm run dev --prefix web",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "npm run dev --workspace=api & npm run dev --workspace=web",
+    "dev:api": "npm run dev --workspace=api",
+    "dev:web": "npm run dev --workspace=web",
+    "build": "npm run build --workspace=api && npm run build --workspace=web",
+    "db": "npm run db --workspace=api",
+    "db:generate": "npm run db:generate --workspace=api",
+    "scaffold": "npm run scaffold --workspace=api",
+    "test": "npm run test --workspace=api",
+    "lint": "npm run lint --workspace=web",
+    "preview": "npm run preview --workspace=web"
   },
-  "dependencies": {
-    "lucide-react": "^0.545.0"
+  "devDependencies": {
+    "cross-env": "^10.1.0",
+    "dotenv-cli": "^10.0.0",
+    "prettier": "^3.6.2"
   }
 }
