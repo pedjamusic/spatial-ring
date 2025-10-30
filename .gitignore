@@ -15,6 +15,7 @@ prisma/client/
 .idea
 .tmp/
 tmp/
+*.code-workspace
 
 # Ignore build output directories
 dist/
@@ -23,8 +24,7 @@ out/
 .vite/
 coverage/
 
-#
-.code-workspace
 
 api/uploads/
 Dockerfile
+data/
