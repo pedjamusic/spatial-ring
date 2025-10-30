@@ -9,10 +9,18 @@ generator client {
   // output   = "../generated/prisma"
 }
 
+// ----------------------------------------------------
+// ONLY ONE DATASOURCE BLOCK IS ALLOWED AT A TIME.
+// The setup script will replace the values below.
+// ----------------------------------------------------
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
+  // 'provider' will be replaced by 'postgresql' or remain 'sqlite' (default) by the setup script (scripts/setup-db-interactive.js)
   url      = env("DATABASE_URL")
 }
+
+// *** IMPORTANT: The `generator client` block needs to know which datasource to use.
+// We will set this dynamically using a dedicated environment variable (e.g., SELECTED_DATASOURCE).
 
 // --- Data Models ---
 
