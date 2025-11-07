@@ -5,7 +5,7 @@
     "web",
     "mobile"
   ],
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A simple inventory management system with spatial organization capabilities. Inspired by fantasy series where \"spatial rings\" create pocket dimensions for storing items.",
   "homepage": "https://github.com/pedjamusic/spatial-ring#readme",
   "bugs": {
