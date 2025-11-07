@@ -14,7 +14,7 @@ generator client {
 // The setup script will replace the values below.
 // ----------------------------------------------------
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   // 'provider' will be replaced by 'postgresql' or remain 'sqlite' (default) by the setup script (scripts/setup-db-interactive.js)
   url      = env("DATABASE_URL")
 }

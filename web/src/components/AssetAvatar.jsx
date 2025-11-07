@@ -14,7 +14,7 @@ export default function AssetAvatar({
   if (!filename) {
     return (
       <div
-        className={`flex ${dim} items-center justify-center ${radius} border border-gray-300 bg-gray-100 not-dark:shadow-lg dark:bg-neutral-700`}
+        className={`flex ${dim} items-center justify-center ${radius} not-dark:shadow-lg border border-gray-300 bg-gray-100 dark:bg-neutral-700`}
       >
         <ImageIcon className="h-6 w-6 text-gray-400/75 dark:text-neutral-500" />
       </div>
@@ -29,7 +29,7 @@ export default function AssetAvatar({
     <img
       src={imageUrl}
       alt={alt || "Asset"}
-      className={`h-12 w-12 ${radius} border border-gray-300 object-cover outline -outline-offset-1 outline-gray-300 not-dark:shadow-lg dark:border-neutral-700`}
+      className={`h-12 w-12 ${radius} not-dark:shadow-lg border border-gray-300 object-cover outline -outline-offset-1 outline-gray-300 dark:border-neutral-700`}
       loading="lazy"
       onError={(e) => {
         // Fallback if image fails to load
