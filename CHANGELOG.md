@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.2](https://github.com/pedjamusic/spatial-ring/compare/v0.5.0...v0.5.2) (2025-11-07)
+
+
+### Bug Fixes
+
+* **ModelTable:** improve AssetAvatar visibility logic and related data handling ([6e746a3](https://github.com/pedjamusic/spatial-ring/commit/6e746a359bb794c34e1a2148324109fd41cd178f))
+
 ### [0.5.1](https://github.com/pedjamusic/spatial-ring/compare/v0.5.0...v0.5.1) (2025-11-07)
 
 ## 0.2.0 (20251107)
