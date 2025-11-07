@@ -2,16 +2,14 @@ name: Release
 
 on:
   push:
-    # run when branch name starts with release/
-    branches:
-      - 'release/**'
+    branches: [ main ]
   workflow_dispatch: {}
 
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout (full)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -22,11 +20,44 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
+      - name: Determine release label on merged PR
+        id: pr_label
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const headSha = process.env.GITHUB_SHA;
+            const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: headSha
+            });
+            const pr = prs.find(p => p.merged_at);
+            if (!pr) {
+              core.info('No merged PR found for this commit.');
+              return { release_label: '' };
+            }
+            const labels = pr.labels.map(l => l.name.toLowerCase());
+            core.info(`Found PR #${pr.number} - labels: ${labels.join(', ')}`);
+            const releaseLabel = labels.find(l => l.startsWith('release:')) || '';
+            return { release_label: releaseLabel };
+
       - name: Install dependencies
+        if: ${{ steps.pr_label.outputs.release_label || github.event_name == 'workflow_dispatch' }}
         run: npm ci
 
-      - name: Run standard-version
-        run: npm run release
+      - name: Run standard-version (label-driven)
+        if: ${{ steps.pr_label.outputs.release_label || github.event_name == 'workflow_dispatch' }}
+        run: |
+          RELEASE_LABEL="${{ steps.pr_label.outputs.release_label }}"
+          if [ -n "$RELEASE_LABEL" ]; then
+            BASENAME=${RELEASE_LABEL#release:}
+            echo "Forcing release-as=$BASENAME"
+            npm run release -- --release-as $BASENAME
+          else
+            echo "No release label found — running standard-version normally to infer changes"
+            npm run release
+          fi
 
       - name: Commit changelog and package bumps
         run: |
