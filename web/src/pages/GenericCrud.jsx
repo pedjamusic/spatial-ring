@@ -5,13 +5,35 @@ import { resource } from "../lib/api";
 import { toast } from "../lib/toast"; // Import toast
 import ColumnSettings from "../components/ColumnSettings";
 
+// Below commented out section rendered AssetAvatars across model CRUD pages' "all items" tables
+// const STORAGE_KEY_PREFIX = "uiConfig_";
+// const deepMerge = (a = {}, b = {}) =>
+//   Object.fromEntries(
+//     Object.keys({ ...a, ...b }).map((k) => [
+//       k,
+//       { ...(a[k] || {}), ...(b[k] || {}) },
+//     ]),
+//   );
 const STORAGE_KEY_PREFIX = "uiConfig_";
 const deepMerge = (a = {}, b = {}) =>
   Object.fromEntries(
-    Object.keys({ ...a, ...b }).map((k) => [
-      k,
-      { ...(a[k] || {}), ...(b[k] || {}) },
-    ]),
+    Object.keys({ ...a, ...b }).map((k) => {
+      const aVal = a[k];
+      const bVal = b[k];
+      // Only merge if both values are plain objects, otherwise preserve the value
+      if (
+        aVal &&
+        bVal &&
+        typeof aVal === "object" &&
+        typeof bVal === "object" &&
+        !Array.isArray(aVal) &&
+        !Array.isArray(bVal)
+      ) {
+        return [k, { ...aVal, ...bVal }];
+      }
+      // For primitive values (strings, numbers, booleans), use b if present, otherwise a
+      return [k, bVal !== undefined ? bVal : aVal];
+    }),
   );
 
 export default function GenericCrud({
@@ -272,6 +294,7 @@ export default function GenericCrud({
           onEdit={handleEdit}
           onDelete={handleDelete}
           uiConfig={uiConfig}
+          modelName={modelName}
         />
       </div>
     </div>
