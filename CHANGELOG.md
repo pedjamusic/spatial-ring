@@ -1,8 +1,8 @@
 # Changelog
 
-All notable changes to this project are documented in this file.
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-The entries are grouped by version. Each version shows the release date in (YYYYMMDD) format.
+### [0.0.1](https://github.com/pedjamusic/spatial-ring/compare/v0.2.0...v0.0.1) (2025-11-07)
 
 ## 0.2.0 (20251107)
 
@@ -86,4 +86,3 @@ Full list of commits (newest → oldest in this release)
 - Authentication, route refacto (2025-09-14) — 0fd655e / https://github.com/pedjamusic/spatial-ring/commit/0fd655e6c877deb50fe3a51cc48c7b72c6593739
 - Initial push :) (2025-09-12) — 15c0ace / https://github.com/pedjamusic/spatial-ring/commit/15c0ace867fb5f1f5355ab3e0a661fb0d7928950
 - Initial push (2025-09-12) — bca77e2 / https://github.com/pedjamusic/spatial-ring/commit/bca77e21fa8d1bf2e64341e579a075510b666dd7
-
