@@ -1,15 +1,16 @@
 {
   "folders": [
     {
-      "path": "."
-    }
+      "path": ".",
+    },
   ],
   "settings": {
     "tailwindCSS.experimental.classRegex": [
       ["clsx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
       ["twMerge\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
       ["className(?:Container)?(?:\\w+)?\\s*:\\s*`([^`]*)`", "([^`]*)"],
-      ["const\\s+\\w+\\s*=\\s*`([^`]*)`", "([^`]*)"] // This line targets template literals assigned to constants
-    ]
-  }
+      ["const\\s+\\w+\\s*=\\s*`([^`]*)`", "([^`]*)"], // This line targets template literals assigned to constants
+    ],
+    "workbench.colorCustomizations": {},
+  },
 }
