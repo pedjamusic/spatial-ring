@@ -3,7 +3,7 @@ import GenericCrud from "./GenericCrud";
 export default function Assets() {
   const uiConfig = {
     // Photo configuration
-    photoField: "photoUrl", // Enable photo column in table
+    // photoField: "photoUrl", // Enable photo column in table
     photoUrl: {
       widget: "photo", // Use photo upload widget in form
       hideInTable: true, // Don't show photoUrl as text column

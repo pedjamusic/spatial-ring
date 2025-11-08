@@ -221,50 +221,28 @@ export default function ModelForm({
 
     // Special handling for photo upload field / widget for Asset.photoUrl
     if (uiConfig[field.name]?.widget === "photo" || field.name === "photoUrl") {
-      // if (uiConfig[field.name]?.widget === "photo") {
       return (
-        <div key={field.name} className="mb-4">
+        <div key={field.name}>
           <Label className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
             {label}
           </Label>
           <PhotoUpload
             assetId={initialData?.id}
-            // currentPhotoUrl={formData.photoUrl}
-            // initialFilename={formData.photoUrl || null}
             initialFilename={formData[field.name] || null}
             onUploaded={({ asset }) => {
-              // when edited, server returns updated asset with filename
-              // if (asset?.photoUrl) {
-              //   setFormData((p) => ({ ...p, photoUrl: asset.photoUrl }));
-              // }
-              // Use returned asset or reply payload to update the same field
               const next = asset?.[field.name] ?? asset?.photoUrl;
               if (next) setFormData((p) => ({ ...p, [field.name]: next }));
             }}
             onPendingFile={(file) => {
               setPendingPhotoFile(file);
             }}
-            // onDeleted={() => setFormData((p) => ({ ...p, photoUrl: null }))}
             onDeleted={() => setFormData((p) => ({ ...p, [field.name]: null }))}
-
-            // onPhotoUploaded={(data) => {
-            //   console.log("Photo uploaded:", data);
-            //   // Reload data or update form state if needed
-            //   if (data.asset) {
-            //     setFormData((prev) => ({
-            //       ...prev,
-            //       photoUrl: data.asset.photoUrl,
-            //     }));
-            //   }
-            // }}
-            // onPhotoDeleted={() => {
-            //   setFormData((prev) => ({ ...prev, photoUrl: null }));
-            // }}
           />
         </div>
       );
     }
 
+    // DIVINE REALIZATION - appearance: none resets <select> to look same-ish across browsers + use tailwindcss-forms (D'oh!)
     // Handle relation fields (dropdowns)
     if (field.kind === "object" && !field.isList) {
       const options = relationOptions[field.name] || [];
@@ -275,21 +253,19 @@ export default function ModelForm({
         : `${field.name}Id`;
 
       return (
-        <>
-          <Label
-            key={field.name}
-            htmlFor={field.name}
-            className="block text-sm leading-6 font-medium text-gray-900 dark:text-white"
-          >
-            {label} {required && <span className="ml-1 text-red-600">*</span>}
-          </Label>
+        <Label
+          key={field.name}
+          htmlFor={field.name}
+          className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
+        >
+          {label} {required && <span className="ml-1 text-red-600">*</span>}
           <select
             id={field.name}
             required={required}
             value={formData[foreignKeyFieldName] || ""}
             onChange={(e) => handleChange(foreignKeyFieldName, e.target.value)}
             onBlur={() => handleBlur(field)}
-            className={`mt-2 block w-full rounded-md border-0 px-3 py-2 shadow-sm ring-1 ring-inset focus:ring-2 focus:outline-hidden focus:ring-inset sm:text-sm dark:bg-gray-800 dark:text-white ${
+            className={`not-dark:shadow-sm block min-w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:border-gray-400 hover:outline-gray-400 focus:border-blue-600 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 sm:leading-6 dark:border-neutral-700/50 dark:bg-neutral-800/50 dark:text-white dark:outline-neutral-700/50 dark:placeholder:text-gray-500 dark:hover:border-neutral-600 dark:hover:outline-neutral-600 ${
               touched && error
                 ? "ring-red-500 focus:ring-red-500"
                 : "ring-gray-300 focus:ring-blue-600 dark:ring-gray-700"
@@ -307,28 +283,26 @@ export default function ModelForm({
               {error}
             </p>
           )}
-        </>
+        </Label>
       );
     }
 
-    // Enum select
+    // Enum select (non-relational aka predefined in database)
     if (inputType === "select" && field.enumValues?.length) {
       return (
-        <>
-          <Label
-            key={field.name}
-            htmlFor={field.name}
-            className="block text-sm leading-6 font-medium text-gray-900 dark:text-white"
-          >
-            {label} {required && <span className="text-red-600">*</span>}
-          </Label>
+        <Label
+          key={field.name}
+          htmlFor={field.name}
+          className="block text-sm/6 font-medium text-gray-900 dark:text-gray-100"
+        >
+          {label} {required && <span className="text-red-600">*</span>}
           <select
             id={field.name}
             required={required}
             value={value}
             onChange={(e) => handleChange(field.name, e.target.value)}
             onBlur={() => handleBlur(field)}
-            className={`mt-2 block w-full rounded-md border-0 px-3 py-2 shadow-sm ring-1 ring-inset focus:ring-2 focus:outline-hidden focus:ring-inset sm:text-sm dark:bg-gray-800 dark:text-white ${
+            className={`not-dark:shadow-sm block min-w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:border-gray-400 hover:outline-gray-400 focus:border-blue-600 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:border-white/10 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:border-blue-500 dark:focus:outline-blue-500 ${
               touched && error
                 ? "ring-red-500 focus:ring-red-500"
                 : "ring-gray-300 focus:ring-blue-600 dark:ring-gray-700"
@@ -346,7 +320,7 @@ export default function ModelForm({
               {error}
             </p>
           )}
-        </>
+        </Label>
       );
     }
 
@@ -388,8 +362,7 @@ export default function ModelForm({
             onChange={(e) => handleChange(field.name, e.target.value)}
             onBlur={() => handleBlur(field)}
             rows={4}
-            // className="block min-w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-blue-500"
-            className={`mt-2 block w-full rounded-md border-0 px-3 py-2 shadow-sm ring-1 ring-inset focus:ring-2 focus:outline-hidden focus:ring-inset sm:text-sm dark:bg-gray-800 dark:text-white ${
+            className={`not-dark:shadow-sm block min-w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:border-gray-400 hover:outline-gray-400 focus:border-blue-600 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:border-white/10 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:border-blue-500 dark:focus:outline-blue-500 ${
               touched && error
                 ? "ring-red-500 focus:ring-red-500"
                 : "ring-gray-300 focus:ring-blue-600 dark:ring-gray-700"
@@ -406,31 +379,6 @@ export default function ModelForm({
 
     // Default input
     return (
-      // <TextField {{required ? isRequired : ""}}>
-      // <TextField>
-      //   <Label
-      //     key={field.name}
-      //     htmlFor={label}
-      //     className="block text-sm/6 font-medium text-gray-900 dark:text-gray-100"
-      //   >
-      //     {label} {required && <span className={"text-red-600"}>*</span>}
-      //     <Input
-      //       id={label}
-      //       type={inputType}
-      //       required={required}
-      //       value={value}
-      //       onChange={(e) =>
-      //         handleChange(
-      //           field.name,
-      //           inputType === "number"
-      //             ? Number(e.target.value) || ""
-      //             : e.target.value,
-      //         )
-      //       }
-      //       className="block min-w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:border-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:border-neutral-700/50 dark:bg-neutral-800/50 dark:text-white dark:outline-neutral-700/50 dark:placeholder:text-gray-500 dark:hover:outline-gray-600 dark:focus:outline-blue-500"
-      //     />
-      //   </Label>
-      // </TextField>
       <ValidatedFormField
         key={field.name}
         id={field.name}
@@ -456,7 +404,7 @@ export default function ModelForm({
 
   return (
     <>
-      {/* FIXED: Moved error display to proper JSX location */}
+      {/* Form error notification, TODO: move to toast */}
       {formError && (
         <div className="mb-4 border border-red-300 bg-red-200 p-3 text-red-600">
           {formError}
@@ -465,15 +413,15 @@ export default function ModelForm({
 
       <Form
         onSubmit={handleSubmit}
-        className="grid grid-cols-1 gap-4 rounded-lg border border-gray-300 bg-white px-6 py-4 not-dark:shadow sm:grid-cols-2 dark:border-neutral-700/50 dark:bg-neutral-800/50"
+        className="not-dark:shadow grid grid-cols-1 gap-4 rounded-lg border border-gray-300 bg-white px-6 py-4 sm:grid-cols-2 dark:border-neutral-700/50 dark:bg-neutral-800/50"
       >
         {formFields.map(renderField)}
-        <div className="mt-4 inline-flex">
+        <div className="col-span-full mt-4 inline-flex">
           <Button
             type="submit"
             disabled={loading}
             isDisabled={loading}
-            className={`-ms-px inline-flex items-center gap-x-2 border border-blue-600 px-4 py-3 text-sm font-medium text-gray-800 shadow-2xs first:ms-0 first:rounded-s-lg last:rounded-e-lg hover:cursor-pointer focus:z-10 focus:bg-blue-800 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50 ${
+            className={`shadow-2xs focus:outline-hidden -ms-px inline-flex items-center gap-x-2 border border-blue-600 px-4 py-3 text-sm font-medium text-gray-800 first:ms-0 first:rounded-s-lg last:rounded-e-lg hover:cursor-pointer focus:z-10 focus:bg-blue-800 disabled:pointer-events-none disabled:cursor-not-allowed disabled:border-gray-500 disabled:bg-gray-600 disabled:text-gray-300 disabled:opacity-50 ${
               loading
                 ? "cursor-not-allowed bg-gray-300 text-gray-500"
                 : "bg-blue-600 text-white hover:bg-blue-500"
@@ -486,7 +434,7 @@ export default function ModelForm({
               type="button"
               // onClick={() => setFormData({})}
               onClick={handleCancel}
-              className="-ms-px inline-flex items-center gap-x-2 border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-800 shadow-2xs first:ms-0 first:rounded-s-md last:rounded-e-md hover:cursor-pointer hover:bg-gray-50 focus:z-10 focus:border-gray-300 focus:bg-gray-200 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+              className="shadow-2xs focus:outline-hidden -ms-px inline-flex items-center gap-x-2 border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-800 first:ms-0 first:rounded-s-md last:rounded-e-md hover:cursor-pointer hover:bg-gray-50 focus:z-10 focus:border-gray-300 focus:bg-gray-200 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
             >
               Cancel
             </Button>

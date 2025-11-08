@@ -33,7 +33,7 @@ export default function ValidatedFormField({
     <TextField>
       <Label
         htmlFor={id}
-        className="block text-sm leading-6 font-medium text-gray-900 dark:text-white"
+        className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
       >
         {label}
         {required && <span className="ml-1 text-red-600">*</span>}
@@ -44,7 +44,12 @@ export default function ValidatedFormField({
           value={value}
           onChange={onChange}
           onBlur={onBlur}
-          className={getInputClasses()}
+          // className={getInputClasses()}
+          className={`not-dark:shadow-sm block w-full rounded-md border bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 ring-0 focus:outline-2 focus:-outline-offset-2 sm:text-sm sm:leading-6 dark:bg-neutral-800/50 dark:text-white ${
+            showError
+              ? "border-red-600 outline-red-600 focus:border-red-600 focus:outline-red-600"
+              : "border-gray-300 outline-gray-300 hover:border-gray-400 hover:outline-gray-400 focus:border-blue-600 focus:outline-blue-600 dark:border-neutral-700/50 dark:outline-neutral-700/50 dark:hover:border-neutral-600 dark:hover:outline-neutral-600"
+          }`}
           {...inputProps}
         />
       </Label>
