@@ -40,7 +40,7 @@
     "preview": "npm run preview --workspace=web",
     "tags": "git push --follow-tags origin main",
     "changelog:preview": "npx conventional-changelog -p angular",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -a",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -a && git add CHANGELOG.md",
     "prepare": "husky install"
   },
   "devDependencies": {

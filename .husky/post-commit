@@ -1,2 +1,0 @@
-#!/bin/sh
-npm run changelog && git add CHANGELOG.md && git commit --amend --no-edit
