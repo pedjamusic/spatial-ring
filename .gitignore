@@ -27,4 +27,4 @@ coverage/
 
 api/uploads/
 Dockerfile
-data/
+data/.changelog.lock

@@ -1,21 +1,22 @@
 #!/bin/sh
 
-# Get list of files that are about to be committed
-FILES_CHANGED=$(git diff --cached --name-only)
-
-# Count number of files changed
-NUM_FILES=$(echo "$FILES_CHANGED" | wc -l)
-
-# Check if CHANGELOG.md is the only file staged
-if [ "$NUM_FILES" = "1" ] && [ "$FILES_CHANGED" = "CHANGELOG.md" ]; then
-    echo "Only CHANGELOG.md is staged - skipping changelog generation"
+# Check for the lock file
+if [ -f ".changelog.lock" ]; then
+    rm .changelog.lock
     exit 0
 fi
 
-# Generate changelog only if CHANGELOG.md is not already staged
-if ! echo "$FILES_CHANGED" | grep -q "^CHANGELOG.md$"; then
-    echo "Generating changelog..."
-    exec < /dev/tty
-    npm run changelog
+# Create the lock file
+touch .changelog.lock
+
+# Run changelog
+exec < /dev/tty
+npm run changelog
+
+# Add CHANGELOG.md if it was modified
+if git diff --name-only | grep -q "^CHANGELOG.md$"; then
     git add CHANGELOG.md
 fi
+
+# Clean up lock file
+rm .changelog.lock
