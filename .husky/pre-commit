@@ -1,15 +1,20 @@
 #!/bin/sh
 
-# Get the list of staged files
-STAGED_FILES=$(git diff --cached --name-only)
+# Get list of files that are about to be committed
+FILES_CHANGED=$(git diff --cached --name-only)
 
-# If CHANGELOG.md is the only staged file, exit early
-if [ "$STAGED_FILES" = "CHANGELOG.md" ]; then
+# Count number of files changed
+NUM_FILES=$(echo "$FILES_CHANGED" | wc -l)
+
+# Check if CHANGELOG.md is the only file staged
+if [ "$NUM_FILES" = "1" ] && [ "$FILES_CHANGED" = "CHANGELOG.md" ]; then
+    echo "Only CHANGELOG.md is staged - skipping changelog generation"
     exit 0
 fi
 
-# If CHANGELOG.md is not staged at all, proceed with changelog generation
-if ! echo "$STAGED_FILES" | grep -q "CHANGELOG.md"; then
+# Generate changelog only if CHANGELOG.md is not already staged
+if ! echo "$FILES_CHANGED" | grep -q "^CHANGELOG.md$"; then
+    echo "Generating changelog..."
     exec < /dev/tty
     npm run changelog
     git add CHANGELOG.md
