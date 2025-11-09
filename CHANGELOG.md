@@ -2,8 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-### [0.5.2](https://github.com/pedjamusic/spatial-ring/compare/v0.5.0...v0.5.2) (2025-11-07)
+## [0.5.3](https://github.com/pedjamusic/spatial-ring/commit/c034dc1b8cda92d581be26bb9bfdd234512d6dcf) (2025-11-08)
 
+### Bug Fixes
+
+- Tailwindcss Forms plugin fixes height of select element, but affects validation formatting
+- Validation fixed by setting ring-0 in ValidatedFormField
+- TODO: Make all form elements style and behave the same
+
+## [0.5.2](https://github.com/pedjamusic/spatial-ring/compare/v0.5.0...v0.5.2) (2025-11-07)
 
 ### Bug Fixes
 
