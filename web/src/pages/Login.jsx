@@ -131,20 +131,6 @@ export default function Login() {
     }
   };
 
-  // Dynamic border color classes based on validation state
-  // const getInputClasses = (validationState) => {
-  //   const baseClasses =
-  //     "block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 dark:bg-gray-800 dark:text-white focus:outline-hidden";
-
-  //   if (validationState === "invalid") {
-  //     return `${baseClasses} ring-red-500 focus:ring-red-500 dark:ring-red-500`;
-  //   }
-  //   if (validationState === "valid") {
-  //     return `${baseClasses} ring-green-500 focus:ring-green-500 dark:ring-green-500`;
-  //   }
-  //   return `${baseClasses} ring-gray-300 focus:ring-indigo-600 dark:ring-gray-700`;
-  // };
-
   return (
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -156,9 +142,9 @@ export default function Login() {
         <img
           src="src/assets/Logo full.png"
           alt="Spatial Ring logo"
-          className="mx-auto h-32 w-auto not-dark:hidden"
+          className="not-dark:hidden mx-auto h-32 w-auto"
         />
-        <h2 className="mt-10 text-center text-2xl leading-9 font-bold tracking-tight text-gray-900 dark:text-white">
+        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 dark:text-white">
           Sign in to your account
         </h2>
       </div>
@@ -200,7 +186,8 @@ export default function Login() {
           <div>
             <Button
               type="submit"
-              className="flex w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm leading-6 font-semibold text-white shadow-lg hover:bg-blue-800  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 focus:outline-hidden"
+              // className="focus:outline-hidden flex w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-lg hover:cursor-pointer hover:bg-blue-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+              className="not-dark:shadow focus:outline-hidden -ms-px inline-flex items-center gap-x-2 border border-blue-600 bg-blue-600 px-4 py-3 text-sm font-medium text-gray-800 text-white first:ms-0 first:rounded-s-lg last:rounded-e-lg hover:cursor-pointer hover:bg-blue-500 focus:z-10 focus:bg-blue-800 disabled:pointer-events-none disabled:cursor-not-allowed disabled:border-gray-500 disabled:bg-gray-600 disabled:text-gray-300 disabled:opacity-50"
             >
               Sign in
             </Button>
