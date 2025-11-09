@@ -1,4 +1,16 @@
 #!/bin/sh
-exec < /dev/tty
-npm run changelog
-git add CHANGELOG.md
+
+# Get the list of staged files
+STAGED_FILES=$(git diff --cached --name-only)
+
+# If CHANGELOG.md is the only staged file, exit early
+if [ "$STAGED_FILES" = "CHANGELOG.md" ]; then
+    exit 0
+fi
+
+# If CHANGELOG.md is not staged at all, proceed with changelog generation
+if ! echo "$STAGED_FILES" | grep -q "CHANGELOG.md"; then
+    exec < /dev/tty
+    npm run changelog
+    git add CHANGELOG.md
+fi
