@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+
+## [0.5.4]
+
+- Added Logout to the sidebar
+- Added disable for submit button, on submit (D'oh!) (on wrong Login inputs and entry conditions not met)
+- Button consistency (hopefully), styling and behaviour (Login and CRUD forms)
+
 ## [0.5.3](https://github.com/pedjamusic/spatial-ring/commit/c034dc1b8cda92d581be26bb9bfdd234512d6dcf) (2025-11-08)
 
 ### Bug Fixes

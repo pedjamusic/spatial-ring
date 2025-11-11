@@ -25,6 +25,7 @@ import {
   FolderTree, // Categories
   Calendar, // Events
   Settings, // Settings
+  LogOut,
   LayoutDashboard, // Dashboard (if needed)
   BarChart3, // Reports (if needed)
   Users, // Users (if needed)
@@ -40,7 +41,7 @@ export function AppSidebar() {
   const shouldCollapse = isCollapsed || (isMobile && !showMobileDrawer);
 
   return (
-    <Sidebar className="flex-1 lg:flex-2">
+    <Sidebar className="lg:flex-2 flex-1">
       {/* Logo Header w/ burger menu */}
       <SidebarHeader>
         <div className="mb-4 grid items-center gap-2 pt-3">
@@ -117,6 +118,11 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton to="#" icon={Settings}>
                   Settings
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton to="/logout" icon={LogOut}>
+                  Logout
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

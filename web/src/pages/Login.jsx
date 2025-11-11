@@ -10,23 +10,11 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
-  // const [emailTouched, setEmailTouched] = useState(false);
-  // const [passwordTouched, setPasswordTouched] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/admin";
-
-  // Validation states for each field
-  // const [emailValidation, setEmailValidation] = useState({
-  //   state: "none", // 'none' | 'valid' | 'invalid'
-  //   message: "",
-  // });
-  // const [passwordValidation, setPasswordValidation] = useState({
-  //   state: "none",
-  //   message: "",
-  // });
 
   // Email validation function
   const validateEmail = (value) => {
@@ -35,6 +23,7 @@ export default function Login() {
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(value)) {
+      setLoading(true);
       return {
         state: "invalid",
         message: "Please enter a valid email address",
@@ -46,9 +35,11 @@ export default function Login() {
   // Password validation function
   const validatePassword = (value) => {
     if (!value) {
+      setLoading(true);
       return { state: "invalid", message: "Password is required" };
     }
     if (value.length < 4) {
+      setLoading(true);
       return {
         state: "invalid",
         message: "Password must be at least 4 characters",
@@ -65,6 +56,7 @@ export default function Login() {
   const handleEmailChange = (e) => {
     const value = e.target.value;
     setEmail(value);
+    setLoading(false);
     if (emailField.touched) {
       emailField.validate(value);
     }
@@ -73,6 +65,7 @@ export default function Login() {
   const handlePasswordChange = (e) => {
     const value = e.target.value;
     setPassword(value);
+    setLoading(false);
     if (passwordField.touched) {
       passwordField.validate(value);
     }
@@ -95,6 +88,7 @@ export default function Login() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     setError("");
 
     // Validate both fields before submission
@@ -118,6 +112,7 @@ export default function Login() {
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         const msg = data?.error || "Login failed";
+        setLoading(true);
         toast.error(msg);
         throw new Error(msg);
       }
@@ -186,8 +181,9 @@ export default function Login() {
           <div>
             <Button
               type="submit"
-              // className="focus:outline-hidden flex w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-lg hover:cursor-pointer hover:bg-blue-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-              className="not-dark:shadow focus:outline-hidden -ms-px inline-flex items-center gap-x-2 border border-blue-600 bg-blue-600 px-4 py-3 text-sm font-medium text-gray-800 text-white first:ms-0 first:rounded-s-lg last:rounded-e-lg hover:cursor-pointer hover:bg-blue-500 focus:z-10 focus:bg-blue-800 disabled:pointer-events-none disabled:cursor-not-allowed disabled:border-gray-500 disabled:bg-gray-600 disabled:text-gray-300 disabled:opacity-50"
+              isDisabled={loading}
+              disabled={loading}
+              className="not-dark:shadow focus:outline-hidden -ms-px w-full items-center gap-x-2 rounded-md border border-blue-600 bg-blue-600 px-4 py-3 text-sm font-medium text-white hover:cursor-pointer hover:bg-blue-500 focus:z-10 focus:bg-blue-800 disabled:pointer-events-none disabled:border-gray-500 disabled:bg-gray-600 disabled:text-gray-300 disabled:opacity-50"
             >
               Sign in
             </Button>

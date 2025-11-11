@@ -62,22 +62,6 @@ export default function GenericCrud({
     }
   });
 
-  // Use preferences hook with default config
-  // const { config, updatePreferences, resetPreferences } =
-  //   useUiConfigWithPreferences(modelName, defaultUiConfig);
-
-  // Listen for preference changes to trigger re-render
-  // useEffect(() => {
-  //   const handler = (e) => {
-  //     if (e.detail.modelName === modelName) {
-  //       // Force re-render by updating a dummy state
-  //       setData((prev) => [...prev]);
-  //     }
-  //   };
-  //   window.addEventListener("uiConfigChanged", handler);
-  //   return () => window.removeEventListener("uiConfigChanged", handler);
-  // }, [modelName]);
-
   // Re-merge when model or defaults change
   useEffect(() => {
     try {
@@ -175,9 +159,6 @@ export default function GenericCrud({
     loadData();
   }, [modelName]); // eslint-disable-line
 
-  // if (loading) return <div>Loading...</div>;
-  // if (!meta) return <div>Model not found</div>;
-
   // const handleSave = async (formData) => {
   const handleSave = async (formData, extras = {}) => {
     try {
@@ -261,16 +242,6 @@ export default function GenericCrud({
         meta={meta}
         initialData={editingItem || {}}
         onSubmit={handleSave}
-        // onSubmit={async (formData) => {
-        //   try {
-        //     if (editingItem) await api.update(editingItem.id, formData);
-        //     else await api.create(formData);
-        //     setEditingItem(null);
-        //     await loadData();
-        //   } catch (err) {
-        //     setError(err.message);
-        //   }
-        // }}
         onCancel={() => {
           // leave Edit without clearing the form in-place
           setEditingItem(null);
