@@ -24,7 +24,5 @@ out/
 .vite/
 coverage/
 
-
 api/uploads/
 Dockerfile
-data/.changelog.lock
