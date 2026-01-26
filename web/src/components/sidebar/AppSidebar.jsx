@@ -1,5 +1,7 @@
 import { useLocation } from "react-router-dom";
 
+import { GlobalSearchContainer } from "@/containers/GlobalSearchContainer";
+
 import { Sidebar } from "./Sidebar";
 import { SidebarHeader } from "./SidebarHeader";
 import { SidebarContent } from "./SidebarContent";
@@ -59,6 +61,13 @@ export function AppSidebar() {
           {shouldCollapse && <BurgerMenu />}
         </div>
       </SidebarHeader>
+
+      {/* Global Search - Only show when NOT on dashboard AND sidebar is NOT collapsed */}
+      {!isDashboardActive && !shouldCollapse && (
+        <div className="px-3 pb-4">
+          <GlobalSearchContainer />
+        </div>
+      )}
 
       {/* Scrollable Content */}
       <SidebarContent>

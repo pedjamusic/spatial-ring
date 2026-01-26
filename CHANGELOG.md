@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.6]
+
+- Added live search
+
+### Bug fixes
+
+- Corrected React crashing on SidebarMenuButton.jsx by destructuring all needed values from the single hook call
 
 ## [0.5.4]
 
@@ -21,17 +28,19 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Bug Fixes
 
-* **ModelTable:** improve AssetAvatar visibility logic and related data handling ([6e746a3](https://github.com/pedjamusic/spatial-ring/commit/6e746a359bb794c34e1a2148324109fd41cd178f))
+- **ModelTable:** improve AssetAvatar visibility logic and related data handling ([6e746a3](https://github.com/pedjamusic/spatial-ring/commit/6e746a359bb794c34e1a2148324109fd41cd178f))
 
 ### [0.5.1](https://github.com/pedjamusic/spatial-ring/compare/v0.5.0...v0.5.1) (2025-11-07)
 
 ## 0.2.0 (20251107)
 
 Highlights
+
 - Automated changelogs added.
 - Documentation updates, dashboard and data improvements, multi-environment and DB setup.
 
 Full list of commits (newest → oldest in this release)
+
 - feat: automated changelogs (2025-11-07) — 117ebd2 / https://github.com/pedjamusic/spatial-ring/commit/117ebd2a622dabaa657d20f516b28a6311d1446c
 - Prettier config file location corrected (2025-10-31) — 2e4fe24 / https://github.com/pedjamusic/spatial-ring/commit/2e4fe247be1fd1e71bc66ec9161a7c580e81c9cf
 - sqlite .db file added to .gitignore (2025-10-31) — 7bb9e19 / https://github.com/pedjamusic/spatial-ring/commit/7bb9e198b09595b10aee2c0a317d9d01c4cea9da
@@ -58,10 +67,12 @@ Full list of commits (newest → oldest in this release)
 ## 0.1.1 (20251021)
 
 Highlights
+
 - Major UI work: login, sidebar, model forms and tables, dashboard cards and column settings.
 - Multiple styling and layout fixes; CRUD Edit/Cancel stabilized.
 
 Full list of commits (newest → oldest in this release)
+
 - Dashboard card styling (2025-10-21) — 64b16c0 / https://github.com/pedjamusic/spatial-ring/commit/64b16c00132f9560afa017aec14fe84fa762ccf9
 - Alias @ set in Vite config. Dashboard info cards added. (2025-10-21) — 0f2f362 / https://github.com/pedjamusic/spatial-ring/commit/0f2f362806f94c58b8e6c259ed7c6c302b6e33b2
 - ColumnSettings transparent+blur and Dashboard kick off (2025-10-21) — e10cfe9 / https://github.com/pedjamusic/spatial-ring/commit/e10cfe98cf63a0d2e9830fd5f7783fd5bb9c19fa
@@ -88,9 +99,11 @@ Full list of commits (newest → oldest in this release)
 ## 0.1.0 (20250930)
 
 Highlights
+
 - Project initialization, authentication and route refactor, Prisma library work and early CRUD/UI scaffolding.
 
 Full list of commits (newest → oldest in this release)
+
 - React Aria plus Tailwind CSS styling of Login.jsx (2025-09-30) — b1085a2 / https://github.com/pedjamusic/spatial-ring/commit/b1085a26ee1f6ada0a7941d2c79974016d52c243
 - React Aria plus Tailwind CSS styling of Login.jsx (2025-09-29) — 81fcab1 / https://github.com/pedjamusic/spatial-ring/commit/81fcab10ec60cd7b31bbf35a040d4c4f3a1dd876
 - Adding tests (2025-09-26) — bd9725c / https://github.com/pedjamusic/spatial-ring/commit/bd9725cfcbb2e773f17b9831ba96c351fc73e75f

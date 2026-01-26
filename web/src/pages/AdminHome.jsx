@@ -4,6 +4,8 @@ import { resource } from "@/lib/api";
 
 import { H1 } from "@/components/typography/H1";
 
+import { GlobalSearchContainer } from "@/containers/GlobalSearchContainer";
+
 export default function AdminHome() {
   const [totals, setTotals] = useState({
     assetsUnique: 0,
@@ -83,7 +85,10 @@ export default function AdminHome() {
       <H1>Dashboard</H1>
       <div className="space-y-6">
         <DashboardStatsContainer totals={totals} />
-        {/* Place your global search component below this line */}
+        {/* Global Search */}
+        <div className="mt-8">
+          <GlobalSearchContainer />
+        </div>
       </div>
     </>
   );
