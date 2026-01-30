@@ -1,21 +1,25 @@
-const BASE_URL = '/api';
+const API_HOST = import.meta.env.VITE_API_BASE_URL || "";
+// Use absolute URL in prod, relative '/api' (proxy) in local dev
+const BASE_URL = API_HOST ? `${API_HOST}/api` : "/api";
 
 // This is a robust helper to handle all fetch responses.
 async function handleResponse(response) {
   // If the server returns a 401 Unauthorized, the token is bad.
   // Clear the token and redirect to the login page.
   if (response.status === 401) {
-    localStorage.removeItem('token');
-    window.location.href = '/login';
+    localStorage.removeItem("token");
+    window.location.href = "/login";
     // Throw an error to stop further processing
-    throw new Error('Unauthorized');
+    throw new Error("Unauthorized");
   }
 
   if (!response.ok) {
     // Try to parse the error message from the JSON body
     const errorData = await response.json().catch(() => ({}));
     // Throw an error with the server's message or a generic one
-    throw new Error(errorData.error || `Request failed: ${response.statusText}`);
+    throw new Error(
+      errorData.error || `Request failed: ${response.statusText}`,
+    );
   }
 
   // If the response is 204 No Content (e.g., from a DELETE request), return an empty object.
@@ -29,7 +33,7 @@ async function handleResponse(response) {
 
 // A helper to construct the authorization headers.
 function getAuthHeaders() {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
   // const headers = {
   //   'Content-Type': 'application/json',
   // };
@@ -38,9 +42,9 @@ function getAuthHeaders() {
   // }
   // return headers;
   return {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  }
+  };
 }
 
 // The main function for making API requests.
@@ -65,17 +69,20 @@ async function makeRequest(endpoint, options = {}) {
 export const resource = (name) => ({
   list: () => makeRequest(`/${name}`),
   get: (id) => makeRequest(`/${name}/${id}`),
-  create: (data) => makeRequest(`/${name}`, {
-    method: 'POST',
-    body: JSON.stringify(data),
-  }),
-  update: (id, data) => makeRequest(`/${name}/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify(data),
-  }),
-  remove: (id) => makeRequest(`/${name}/${id}`, {
-    method: 'DELETE',
-  }),
+  create: (data) =>
+    makeRequest(`/${name}`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  update: (id, data) =>
+    makeRequest(`/${name}/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
+  remove: (id) =>
+    makeRequest(`/${name}/${id}`, {
+      method: "DELETE",
+    }),
 });
 
 // This function is used for fetching relation options.
