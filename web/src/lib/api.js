@@ -1,6 +1,6 @@
 const API_HOST = import.meta.env.VITE_API_BASE_URL || "";
 // Use absolute URL in prod, relative '/api' (proxy) in local dev
-const BASE_URL = API_HOST ? `${API_HOST}/api` : "/api";
+const BASE_URL = API_HOST ? `${API_HOST}` : "/api";
 
 // This is a robust helper to handle all fetch responses.
 async function handleResponse(response) {
