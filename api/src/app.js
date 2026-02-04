@@ -10,9 +10,11 @@ import apiRouter from "./routes/index.js";
 import authRouter from "./routes/auth.js";
 import metaRouter from "./routes/meta.js";
 import { authenticateToken } from "./middleware/auth.js";
+import { getAllowedOrigins } from "./config/corsOrigins.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const allowedOrigins = getAllowedOrigins();
 
 export const app = express();
 app.use(helmet());
@@ -20,13 +22,14 @@ app.use(helmet());
 app.use(
   cors({
     origin: (origin, callback) => {
-      const allowedOrigins = ["http://localhost:5173"];
+      // const allowedOrigins = ["http://localhost:5173"];
       // Allow requests with no origin (like mobile apps or curl)
-      if (!origin) return callback(null, true);
+      if (!origin) return callback(null, true); //cURL, mobile apps, etc.
 
       // Allow localhost, your specific production domain, or any sslip.io subdomain
-      if (allowedOrigins.includes(origin) || origin.endsWith(".sslip.io")) {
-        callback(null, true);
+      // if (allowedOrigins.includes(origin) || origin.endsWith(".sslip.io")) {
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
       }
