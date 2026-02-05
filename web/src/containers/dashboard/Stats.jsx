@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import StatGrid from "@/components/cards/StatGrid";
+import StatGrid from "@/components/cards/StatCardGrid";
 import { useCrudResources } from "@/components/sidebar/useCrudResources";
 
 /**

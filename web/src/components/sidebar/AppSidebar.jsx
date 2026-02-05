@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
 
-import { GlobalSearchContainer } from "@/containers/GlobalSearchContainer";
+import { GlobalSearchContainer } from "@/containers/search/GlobalSearch";
 
 import { Sidebar } from "./Sidebar";
 import { SidebarHeader } from "./SidebarHeader";
