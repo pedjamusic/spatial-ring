@@ -26,6 +26,7 @@
     "dev:local": "npm run dev:local --workspace=api & npm run dev --workspace=web",
     "dev:prod": "npm run dev:prod --workspace=api & npm run dev --workspace=web",
     "build": "npm run build --workspace=api && npm run build --workspace=web",
+    "setup": "npm run setup --workspace=api",
     "env:setup": "npm run env:setup --workspace=api",
     "db:setup": "npm run db:setup --workspace=api",
     "db": "npm run db --workspace=api",

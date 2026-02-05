@@ -10,7 +10,7 @@ import apiRouter from "./routes/index.js";
 import authRouter from "./routes/auth.js";
 import metaRouter from "./routes/meta.js";
 import { authenticateToken } from "./middleware/auth.js";
-import { getAllowedOrigins } from "./config/corsOrigins.js";
+import { getAllowedOrigins } from "../config/corsOrigins.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

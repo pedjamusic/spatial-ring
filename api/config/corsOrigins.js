@@ -12,6 +12,7 @@ export function getAllowedOrigins() {
   // Sensible defaults for OSS:
   const defaults = [
     "http://localhost:5173", // Vite dev
+    "http://localhost:4173", // Vite preview
   ];
 
   // De‑duplicate

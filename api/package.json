@@ -8,6 +8,7 @@
     "dev:prod": "dotenv -e .env.production -- nodemon src/server.js",
     "dev:local": "dotenv -e .env -- nodemon src/server.js",
     "pg": "docker start pg-local",
+    "setup": "npm run db:setup && npm run env:setup",
     "env:setup": "node scripts/setup-env.mjs",
     "db:setup": "node scripts/setup-db.mjs --workspace=api",
     "db": "dotenv -e .env -- npx prisma studio",
@@ -24,7 +25,6 @@
     "scaffold": "npm run scaffold:resources && npm run scaffold:ui-configs",
     "scaffold:resources": "node scripts/generate-resources.mjs",
     "scaffold:ui-configs": "node scripts/generate-ui-configs.mjs",
-    "setup": "npm run db:setup && npm run env:setup",
     "build": "exit 1"
   },
   "keywords": [],
