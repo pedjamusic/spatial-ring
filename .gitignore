@@ -26,3 +26,6 @@ coverage/
 
 api/uploads/
 Dockerfile
+
+AGENTS.md
+CLAUDE.md
