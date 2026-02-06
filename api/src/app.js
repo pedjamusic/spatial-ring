@@ -19,25 +19,41 @@ const allowedOrigins = getAllowedOrigins();
 export const app = express();
 app.use(helmet());
 // app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // const allowedOrigins = ["http://localhost:5173"];
-      // Allow requests with no origin (like mobile apps or curl)
-      if (!origin) return callback(null, true); //cURL, mobile apps, etc.
+// app.use(
+//   cors({
+//     origin: (origin, callback) => {
+//       // const allowedOrigins = ["http://localhost:5173"];
+//       // Allow requests with no origin (like mobile apps or curl)
+//       if (!origin) return callback(null, true); //cURL, mobile apps, etc.
 
-      // Allow localhost, your specific production domain, or any sslip.io subdomain
-      // if (allowedOrigins.includes(origin) || origin.endsWith(".sslip.io")) {
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  }),
-);
+//       // Allow localhost, your specific production domain, or any sslip.io subdomain
+//       // if (allowedOrigins.includes(origin) || origin.endsWith(".sslip.io")) {
+//       if (allowedOrigins.includes(origin)) {
+//         return callback(null, true);
+//       } else {
+//         callback(new Error("Not allowed by CORS"));
+//       }
+//     },
+//     credentials: true,
+//   }),
+// );
 app.use(express.json());
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error("Not allowed by CORS"));
+  },
+  credentials: true,
+};
+app.use(cors(corsOptions));
+app.options("/auth/login", cors(corsOptions));
+app.options("/auth/logout", cors(corsOptions));
+app.options(
+  [/^\/auth(\/|$)/, /^\/api(\/|$)/, /^\/uploads(\/|$)/],
+  cors(corsOptions),
+); // Enable pre-flight CORS for all routes
 
 // Serve uploaded photos as static files (PUBLIC - no auth needed for viewing)
 const assetsDir = path.resolve(__dirname, "../uploads/assets");
