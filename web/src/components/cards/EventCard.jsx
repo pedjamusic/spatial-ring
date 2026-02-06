@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Calendar, MapPin } from "lucide-react";
+import Badge from "../ui/Badge";
 
 export default function EventCard({ event, to, size = "md" }) {
   const sizeMap = {
@@ -60,13 +61,17 @@ export default function EventCard({ event, to, size = "md" }) {
 
         {/* Days until badge */}
         {daysUntil !== null && daysUntil >= 0 && (
-          <div className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+          <Badge
+            variant={
+              daysUntil <= 3 ? "red" : daysUntil <= 7 ? "yellow" : "blue"
+            }
+          >
             {daysUntil === 0
               ? "Today"
               : daysUntil === 1
                 ? "Tomorrow"
                 : `In ${daysUntil} days`}
-          </div>
+          </Badge>
         )}
       </div>
     </Link>
