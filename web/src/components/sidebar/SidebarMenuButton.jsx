@@ -15,13 +15,9 @@ export function SidebarMenuButton({
   const location = useLocation();
   const active = isActive ?? location.pathname.startsWith(to);
   const { isFocusVisible, focusProps } = useFocusRing();
-  // const { isCollapsed, isMobile } = useSidebar();
-  // Destructure all needed values from the single hook call
-  const { isCollapsed, isMobile, showMobileDrawer } = useSidebar();
+  const { isCollapsed } = useSidebar();
 
-  const shouldCollapse =
-    // isCollapsed || (isMobile && !useSidebar().showMobileDrawer);
-    isCollapsed || (isMobile && !showMobileDrawer);
+  const shouldCollapse = isCollapsed;
 
   const buttonContent = (
     <Link

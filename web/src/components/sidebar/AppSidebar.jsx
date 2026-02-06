@@ -1,7 +1,5 @@
 import { useLocation } from "react-router-dom";
 
-import { GlobalSearchContainer } from "@/containers/search/GlobalSearch";
-
 import { Sidebar } from "./Sidebar";
 import { SidebarHeader } from "./SidebarHeader";
 import { SidebarContent } from "./SidebarContent";
@@ -18,6 +16,8 @@ import { iconRegistry } from "./iconRegistry";
 import { getIconByKey } from "./iconUtils";
 
 import { BurgerMenu } from "./BurgerMenu";
+import { SidebarClose } from "./SidebarClose";
+import { SidebarToggle } from "./SidebarToggle";
 
 // Import your icons (adjust based on your icon library)
 import {
@@ -34,54 +34,34 @@ import {
 } from "lucide-react";
 
 export function AppSidebar() {
-  // const { open } = useSidebar();
-  const { isCollapsed, isMobile, showMobileDrawer } = useSidebar();
+  const { isCollapsed } = useSidebar();
   const { resources, loading } = useCrudResources();
   const location = useLocation();
 
-  const isDashboardActive = location.pathname === "/admin";
-  const shouldCollapse = isCollapsed || (isMobile && !showMobileDrawer);
+  const shouldHideLabels = isCollapsed;
 
   return (
-    <Sidebar className="lg:flex-2 flex-1">
-      {/* Logo Header w/ burger menu */}
+    <Sidebar>
+      {/* Sidebar Header with close/toggle buttons */}
       <SidebarHeader>
-        <div className="mb-4 grid items-center gap-2 pt-3">
-          <img
-            src="/src/assets/Logo transparent.png"
-            alt="Spatial Ring App"
-            className={` ${shouldCollapse ? "h-8 w-8" : "mx-0 h-16 w-16"}`}
-          />
-          {/* {!shouldCollapse && (
-            <span className="text-md truncate font-black uppercase">
-              Spatial Ring
-            </span>
-          )} */}
-          {/* {isMobile && <BurgerMenu />} */}
-          {shouldCollapse && <BurgerMenu />}
+        <div className="flex items-center justify-end gap-2 pt-3 px-3 pb-4">
+          <SidebarClose />
+          <SidebarToggle />
         </div>
       </SidebarHeader>
-
-      {/* Global Search - Only show when NOT on dashboard AND sidebar is NOT collapsed */}
-      {!isDashboardActive && !shouldCollapse && (
-        <div className="px-3 pb-4">
-          <GlobalSearchContainer />
-        </div>
-      )}
 
       {/* Scrollable Content */}
       <SidebarContent>
         {/* CRUD Pages Group */}
         <SidebarGroup>
-          {!shouldCollapse && <SidebarGroupLabel>Management</SidebarGroupLabel>}
+          {!shouldHideLabels && <SidebarGroupLabel>Management</SidebarGroupLabel>}
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
                   to="/admin"
                   icon={LayoutDashboard}
-                  isActive={isDashboardActive}
-                  // isActive={location.pathname === "/admin"}
+                  isActive={location.pathname === "/admin"}
                 >
                   Dashboard
                 </SidebarMenuButton>
@@ -119,7 +99,7 @@ export function AppSidebar() {
 
         {/* Settings Group (Placeholder for future) */}
         <SidebarGroup>
-          {!shouldCollapse && (
+          {!shouldHideLabels && (
             <SidebarGroupLabel>Configuration</SidebarGroupLabel>
           )}
           <SidebarGroupContent>

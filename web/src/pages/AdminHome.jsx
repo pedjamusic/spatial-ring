@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { resource } from "@/lib/api";
 
-import { H1 } from "@/components/typography/H1";
 import { H2 } from "@/components/typography/H2";
+import { PageHeader } from "@/components/layout/PageHeader";
 
 import DashboardStatsContainer from "@/containers/dashboard/Stats";
 import { UpcomingEventsContainer } from "@/containers/dashboard/UpcomingEvents";
-import { GlobalSearchContainer } from "@/containers/search/GlobalSearch";
 
 export default function AdminHome() {
   const [totals, setTotals] = useState({
@@ -84,7 +83,7 @@ export default function AdminHome() {
 
   return (
     <>
-      <H1>Dashboard</H1>
+      <PageHeader title="Dashboard" />
 
       <div className="space-y-6">
         <H2>Overview</H2>
@@ -94,11 +93,6 @@ export default function AdminHome() {
             Upcoming Events
           </H2>
           <UpcomingEventsContainer />
-        </div>
-        {/* Global Search */}
-        <div className="mt-8">
-          <H2>Global search</H2>
-          <GlobalSearchContainer />
         </div>
       </div>
     </>

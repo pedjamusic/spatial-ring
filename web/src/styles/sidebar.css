@@ -1,39 +1,9 @@
-/* Sidebar responsive styles */
+/* Sidebar base styles */
 .sidebar {
-  position: sticky;
-  top: 0;
   height: 100vh;
-  transition: width 0.3s ease;
-}
-
-.sidebar-open {
-  width: 16rem; /* 64 * 0.25rem = 16rem */
-}
-
-.sidebar-collapsed {
-  width: 4rem; /* 16 * 0.25rem = 4rem */
-}
-
-/* Mobile: drawer overlay mode */
-.sidebar-mobile {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 50;
-}
-
-.sidebar-mobile.sidebar-collapsed {
-  transform: translateX(-100%);
-}
-
-.sidebar-mobile.sidebar-open {
-  transform: translateX(0);
-  width: 16rem;
-}
-
-/* Desktop: always visible */
-.sidebar-desktop {
-  position: sticky;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: var(--color-background);
+  border-right: 1px solid var(--color-border);
 }
 
 .sidebar-inner {
@@ -43,38 +13,52 @@
   overflow: hidden;
 }
 
-/* Hide labels when collapsed */
+/* Mobile/Tablet sidebar (< 1024px) - overlay drawer */
+.sidebar-mobile {
+  width: 16rem;
+  background-color: var(--color-surface);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Desktop sidebar (≥ 1024px) - sticky inline */
+.sidebar-desktop {
+  position: sticky;
+  top: 0;
+  flex-shrink: 0;
+}
+
+.sidebar-desktop.sidebar-expanded {
+  width: 16rem !important;
+}
+
+.sidebar-desktop.sidebar-collapsed {
+  width: 4rem !important;
+}
+
+/* Hide labels and text when collapsed */
 .sidebar-collapsed .sidebar-label {
-  display: none;
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 /* Center icons when collapsed */
 .sidebar-collapsed .sidebar-menu-button {
   justify-content: center;
-  padding: 0.5rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
 }
 
 /* Hide group labels when collapsed */
 .sidebar-collapsed .sidebar-group-label {
-  display: none;
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
 }
 
-@media (min-width: 768px) and (max-width: 1023px) {
-  .sidebar-desktop {
-    width: 4rem;
-  }
-  
-  .sidebar-desktop .sidebar-label {
-    display: none;
-  }
-  
-  .sidebar-desktop .sidebar-group-label {
-    display: none;
-  }
-}
-
-@media (min-width: 1024px) {
-  .sidebar-desktop {
-    width: 16rem;
-  }
+/* Smooth transitions for content */
+.sidebar-label,
+.sidebar-group-label {
+  transition: opacity 0.2s ease, width 0.2s ease, height 0.2s ease;
 }

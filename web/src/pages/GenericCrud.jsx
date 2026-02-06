@@ -4,6 +4,7 @@ import ModelTable from "../components/ModelTable";
 import { resource } from "../lib/api";
 import { toast } from "../lib/toast"; // Import toast
 import ColumnSettings from "../components/ColumnSettings";
+import { PageHeader } from "../components/layout/PageHeader";
 
 // Below commented out section rendered AssetAvatars across model CRUD pages' "all items" tables
 // const STORAGE_KEY_PREFIX = "uiConfig_";
@@ -225,6 +226,8 @@ export default function GenericCrud({
 
   return (
     <div className="grid gap-y-4">
+      <PageHeader title={plural} />
+
       <div className="flex items-center justify-between">
         <h2 className="text font-bold uppercase">
           {editingItem ? `Edit ${singular}` : `Create ${singular}`}
