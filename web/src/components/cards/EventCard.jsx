@@ -19,15 +19,34 @@ export default function EventCard({ event, to, size = "md" }) {
     });
   };
 
-  const getDaysUntil = (dateString) => {
-    if (!dateString) return null;
+  const getEventStatus = () => {
     const now = new Date();
-    const eventDate = new Date(dateString);
-    const days = Math.ceil((eventDate - now) / (1000 * 60 * 60 * 24));
-    return days;
+    const startsAt = event.startsAt ? new Date(event.startsAt) : null;
+    const endsAt = event.endsAt ? new Date(event.endsAt) : null;
+
+    if (!startsAt) return null;
+
+    // Event is ongoing if it has started but not yet ended
+    if (startsAt < now && endsAt && endsAt >= now) {
+      return { type: "ongoing", variant: "green" };
+    }
+
+    // Event hasn't started yet - calculate days until
+    if (startsAt >= now) {
+      const days = Math.ceil((startsAt - now) / (1000 * 60 * 60 * 24));
+      const variant = days <= 3 ? "red" : days <= 7 ? "yellow" : "blue";
+
+      return {
+        type: "upcoming",
+        days,
+        variant,
+      };
+    }
+
+    return null;
   };
 
-  const daysUntil = getDaysUntil(event.startsAt);
+  const eventStatus = getEventStatus();
 
   return (
     <Link
@@ -59,18 +78,16 @@ export default function EventCard({ event, to, size = "md" }) {
           </div>
         )}
 
-        {/* Days until badge */}
-        {daysUntil !== null && daysUntil >= 0 && (
-          <Badge
-            variant={
-              daysUntil <= 3 ? "red" : daysUntil <= 7 ? "yellow" : "blue"
-            }
-          >
-            {daysUntil === 0
-              ? "Today"
-              : daysUntil === 1
-                ? "Tomorrow"
-                : `In ${daysUntil} days`}
+        {/* Event status badge */}
+        {eventStatus && (
+          <Badge variant={eventStatus.variant}>
+            {eventStatus.type === "ongoing"
+              ? "Ongoing"
+              : eventStatus.days === 0
+                ? "Today"
+                : eventStatus.days === 1
+                  ? "Tomorrow"
+                  : `In ${eventStatus.days} days`}
           </Badge>
         )}
       </div>

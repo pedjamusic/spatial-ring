@@ -18,7 +18,20 @@ export function UpcomingEventsContainer() {
         if (active) {
           const now = new Date();
           const upcoming = allEvents
-            .filter((e) => e.startsAt && new Date(e.startsAt) >= now)
+            .filter((e) => {
+              // Include events that haven't started yet OR are currently ongoing
+              const startsAt = e.startsAt ? new Date(e.startsAt) : null;
+              const endsAt = e.endsAt ? new Date(e.endsAt) : null;
+
+              // Future event: startsAt is in the future
+              if (startsAt && startsAt >= now) return true;
+
+              // Ongoing event: startsAt is in the past but endsAt is in the future
+              if (startsAt && startsAt < now && endsAt && endsAt >= now)
+                return true;
+
+              return false;
+            })
             .sort((a, b) => new Date(a.startsAt) - new Date(b.startsAt))
             .slice(0, 4);
 
