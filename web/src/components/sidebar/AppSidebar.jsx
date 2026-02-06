@@ -44,7 +44,7 @@ export function AppSidebar() {
     <Sidebar>
       {/* Sidebar Header with close/toggle buttons */}
       <SidebarHeader>
-        <div className="flex items-center justify-end gap-2 pt-3 px-3 pb-4">
+        <div className="flex items-center justify-start gap-2 pb-4 pt-3">
           <SidebarClose />
           <SidebarToggle />
         </div>
@@ -54,7 +54,9 @@ export function AppSidebar() {
       <SidebarContent>
         {/* CRUD Pages Group */}
         <SidebarGroup>
-          {!shouldHideLabels && <SidebarGroupLabel>Management</SidebarGroupLabel>}
+          {!shouldHideLabels && (
+            <SidebarGroupLabel>Management</SidebarGroupLabel>
+          )}
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>

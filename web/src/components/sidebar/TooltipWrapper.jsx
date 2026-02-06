@@ -7,7 +7,7 @@ export function TooltipWrapper({ children, content, delay = 700 }) {
   const { isCollapsed, isMobile, showMobileDrawer } = useSidebar();
   const state = useTooltipTriggerState({ delay });
   const ref = useRef(null);
-  const [tooltipPosition, setTooltipPosition] = useState({ top: 0 });
+  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
 
   const { triggerProps, tooltipProps } = useTooltipTrigger(
     { delay },
@@ -23,7 +23,7 @@ export function TooltipWrapper({ children, content, delay = 700 }) {
   React.useEffect(() => {
     if (state.isOpen && ref.current) {
       const rect = ref.current.getBoundingClientRect();
-      setTooltipPosition({ top: rect.top });
+      setTooltipPosition({ top: rect.top, left: rect.right + 8 });
     }
   }, [state.isOpen]);
 
@@ -35,9 +35,10 @@ export function TooltipWrapper({ children, content, delay = 700 }) {
       {shouldShowTooltip && (
         <div
           {...tooltipProps}
-          className="fixed left-[4.5rem] z-50 rounded-lg bg-gray-900/75 px-3 py-2 text-sm font-medium whitespace-nowrap text-white backdrop-blur-sm not-dark:shadow-lg dark:bg-gray-700/50"
+          className="fixed z-50 rounded-lg bg-gray-900/75 px-3 py-2 text-sm font-medium whitespace-nowrap text-white backdrop-blur-sm not-dark:shadow-lg dark:bg-gray-700/50"
           style={{
             top: `${tooltipPosition.top}px`,
+            left: `${tooltipPosition.left}px`,
           }}
         >
           {content}
