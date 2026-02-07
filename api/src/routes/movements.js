@@ -3,15 +3,9 @@ import prisma from '../lib/prisma.js';
 
 const router = express.Router();
 
-// MOVEMENTS routes
-// Note: The base path for this router is /movements,
-// so a GET on '/' here corresponds to GET /api/movements
-
 // GET /api/movements
 router.get('/', async (req, res) => {
   try {
-    // console.log('👤 Request user:', req.user) // Debug log
-    
     const movements = await prisma.movement.findMany({
       include: { asset: true, event: true, performedBy: { select: { id: true, name: true } } },
       orderBy: { performedAt: 'desc' },
@@ -19,9 +13,10 @@ router.get('/', async (req, res) => {
     })
     res.json(movements)
   } catch (error) {
-    res.status(500).json({ error: '[API routes] ⚠️ Failed to fetch movements' })
+    res.status(500).json({ error: 'Failed to fetch movements' })
   }
 })
+
 // POST /api/movements
 router.post('/', async (req, res) => {
   try {
@@ -31,7 +26,7 @@ router.post('/', async (req, res) => {
     })
     res.status(201).json(movement)
   } catch (error) {
-    res.status(400).json({ error: '[API routes] ⚠️ Failed to create movement' })
+    res.status(400).json({ error: 'Failed to create movement' })
   }
 })
 

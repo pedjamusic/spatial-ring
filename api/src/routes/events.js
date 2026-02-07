@@ -3,24 +3,19 @@ import prisma from '../lib/prisma.js';
 
 const router = express.Router();
 
-// EVENTS routes
-// Note: The base path for this router is /events,
-// so a GET on '/' here corresponds to GET /api/events
-
 // GET /api/events
 router.get('/', async (req, res) => {
   try {
-    // console.log('👤 Request user:', req.user) // Debug log
-    
     const events = await prisma.event.findMany({
       include: { location: { select: { name: true } } },
       orderBy: { startsAt: 'asc' }
     })
     res.json(events)
   } catch (error) {
-    res.status(500).json({ error: '[API routes] ⚠️ Failed to fetch events' })
+    res.status(500).json({ error: 'Failed to fetch events' })
   }
 })
+
 // POST /api/events
 router.post('/', async (req, res) => {
   try {
@@ -30,9 +25,10 @@ router.post('/', async (req, res) => {
     })
     res.status(201).json(event)
   } catch (error) {
-    res.status(400).json({ error: '[API routes] ⚠️ Failed to create event' })
+    res.status(400).json({ error: 'Failed to create event' })
   }
 })
+
 // PUT /api/events/:id
 router.put('/:id', async (req, res) => {
   try {
@@ -43,9 +39,10 @@ router.put('/:id', async (req, res) => {
     })
     res.json(event)
   } catch (error) {
-    res.status(400).json({ error: '[API routes] ⚠️ Failed to update event' })
+    res.status(400).json({ error: 'Failed to update event' })
   }
 })
+
 // DELETE /api/events/:id
 router.delete('/:id', async (req, res) => {
   try {
@@ -54,7 +51,7 @@ router.delete('/:id', async (req, res) => {
     })
     res.status(204).send()
   } catch (error) {
-    res.status(400).json({ error: '[API routes] ⚠️ Failed to delete event' })
+    res.status(400).json({ error: 'Failed to delete event' })
   }
 })
 

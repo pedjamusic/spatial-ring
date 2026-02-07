@@ -3,22 +3,15 @@ import prisma from '../lib/prisma.js';
 
 const router = express.Router();
 
-// EVENTLOCATIONS routes
-// Note: The base path for this router is /eventLocations,
-// so a GET on '/' here corresponds to GET /api/eventLocations
-
 // GET /api/eventLocations
 router.get('/', async (req, res) => {
   try {
-    // console.log('👤 Request user:', req.user) // Debug log
-    
     const eventLocations = await prisma.eventLocation.findMany({
       orderBy: { name: 'asc' }
     })
-    res.status(200).json(eventLocations)
-    console.log('[API routes] ✅ Fetched event locations successfully')
+    res.json(eventLocations)
   } catch (error) {
-    res.status(500).json({ error: '[API routes] ❌ Failed to fetch event locations' })
+    res.status(500).json({ error: 'Failed to fetch event locations' })
   }
 })
 
@@ -30,9 +23,8 @@ router.post('/', async (req, res) => {
       data: { name, address, notes }
     })
     res.status(201).json(eventLocation)
-    console.log('✅ Created', eventLocation, 'successfully')
   } catch (error) {
-    res.status(400).json({ error: '[API routes] ❌ Failed to create event location' })
+    res.status(400).json({ error: 'Failed to create event location' })
   }
 })
 
@@ -48,8 +40,8 @@ router.put('/:id', async (req, res) => {
     })
     res.json(eventLocation)
   } catch (error) {
-    console.error('[API routes] ❌ Failed to update event location:', error)
-    res.status(400).json({ error: '[API routes] ❌ Failed to update event location' })
+    console.error('Failed to update event location:', error.message)
+    res.status(400).json({ error: 'Failed to update event location' })
   }
 })
 
@@ -63,10 +55,9 @@ router.delete('/:id', async (req, res) => {
     })
 
     res.status(204).send()
-    console.log('[API routes] ✅ Deleted event location successfully')
   } catch (error) {
-    console.error('[API routes] ❌ Failed to delete event location:', error)
-    res.status(400).json({ error: '[API routes] ❌ Failed to delete event location' })
+    console.error('Failed to delete event location:', error.message)
+    res.status(400).json({ error: 'Failed to delete event location' })
   }
 })
 
