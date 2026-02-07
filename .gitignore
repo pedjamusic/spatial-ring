@@ -29,3 +29,5 @@ Dockerfile
 
 AGENTS.md
 CLAUDE.md
+
+web/*.sh
