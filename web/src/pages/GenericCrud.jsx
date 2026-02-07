@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import ModelForm from "../components/ModelForm";
 import ModelTable from "../components/ModelTable";
 import { resource } from "../lib/api";
+import { config } from "../config";
 import { toast } from "../lib/toast"; // Import toast
 import ColumnSettings from "../components/ColumnSettings";
 import { PageHeader } from "../components/layout/PageHeader";
@@ -177,8 +178,9 @@ export default function GenericCrud({
           const token = localStorage.getItem("token");
           const fd = new FormData();
           fd.append("photo", extras.pendingPhotoFile);
+          const photoBaseUrl = config.apiUrl ? `${config.apiUrl}/api` : "/api";
           await fetch(
-            `http://localhost:3000/api/${resourceName}/${created.id}/photo`,
+            `${photoBaseUrl}/${resourceName}/${created.id}/photo`,
             {
               method: "POST",
               headers: token ? { Authorization: `Bearer ${token}` } : {},

@@ -69,20 +69,8 @@ router.post('/login', async (req, res) => {
   }
 })
 
-// LOGOUT - Updated to revoke refresh token
 router.post('/logout', async (req, res) => {
-  try {
-    const { refreshToken } = req.body
-    
-    if (refreshToken) {
-      await revokeRefreshToken(refreshToken)
-    }
-
-    res.json({ message: '[API routes auth] ✅ Logged out successfully' })
-  } catch (error) {
-    console.error('[API routes auth] ⚠️ Logout error:', error)
-    res.status(500).json({ error: '[API routes auth] ❌ Logout failed' })
-  }
+  res.json({ message: '[API routes auth] ✅ Logged out successfully' })
 })
 
 export default router
