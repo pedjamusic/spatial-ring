@@ -1,6 +1,14 @@
-const API_HOST = import.meta.env.VITE_API_BASE_URL || "";
+// const API_HOST = import.meta.env.VITE_API_BASE_URL || "";
 // Use absolute URL in prod, relative '/api' (proxy) in local dev
-const BASE_URL = API_HOST ? `${API_HOST}` : "/api";
+// const BASE_URL = API_HOST ? `${API_HOST}` : "/api";
+
+import { config } from "../config"; // Import the helper
+
+// If config.apiUrl is "" (local), this becomes "/api/endpoint"
+// If config.apiUrl is "https://..." (prod), this becomes "https://.../api/endpoint"
+const BASE_URL = config.apiUrl ? `${config.apiUrl}/api` : "/api";
+// ^ Wait, if your prod API is `api.domain.com`, does it have an /api prefix?
+// Usually yes. If not, adjust accordingly.
 
 // This is a robust helper to handle all fetch responses.
 async function handleResponse(response) {
