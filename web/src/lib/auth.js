@@ -1,6 +1,8 @@
 const API_HOST = import.meta.env.VITE_API_BASE_URL || "";
 // In prod: http://.../auth/login. In local: /api/auth/login (proxied)
-const LOGIN_URL = API_HOST ? `${API_HOST}/auth/login` : "/api/auth/login";
+// const LOGIN_URL = API_HOST ? `${API_HOST}/auth/login` : "/api/auth/login";
+const LOGIN_URL = "/auth/login";
+// ^ const LOGIN_URL HARD FIX for Coolify deployment; Always use relative URL to leverage proxy in development and avoid CORS issues in production. This works in local dev because your Vite dev proxy already forwards /auth → http://localhost:3000.This works in prod because your API mounts authRouter at /auth (app.use("/auth", authRouter)) and the router defines POST /login.
 
 export const login = async (credentials) => {
   const response = await fetch(LOGIN_URL, {
