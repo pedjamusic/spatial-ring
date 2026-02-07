@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { FileTrigger, Button } from "react-aria-components";
 import { X } from "lucide-react";
+import { config } from "../config";
 
-// Use environment variable with fallback
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
+const API_BASE = config.apiUrl ? `${config.apiUrl}/api` : "/api";
 
 // Image upload constraints
 const fileSize = 2; // MB

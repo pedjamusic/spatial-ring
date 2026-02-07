@@ -1,8 +1,5 @@
 import { Image as ImageIcon } from "lucide-react";
 
-// Use relative URLs that work with Vite proxy
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
-
 export default function AssetAvatar({
   filename,
   alt,
