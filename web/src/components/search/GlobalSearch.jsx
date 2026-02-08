@@ -14,6 +14,7 @@ export function GlobalSearch({
 }) {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const containerRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -47,6 +48,7 @@ export function GlobalSearch({
   }, []);
 
   const handleFocus = () => {
+    setIsFocused(true);
     if (query.length >= minSearchLength) setIsOpen(true);
   };
 
@@ -57,7 +59,6 @@ export function GlobalSearch({
 
   const handleKeyDown = (e) => {
     if (e.key === "Escape") {
-      onQueryChange("");
       setIsOpen(false);
       inputRef.current?.blur();
     }
@@ -89,6 +90,7 @@ export function GlobalSearch({
           value={query}
           onChange={handleChange}
           onFocus={handleFocus}
+          onBlur={() => setIsFocused(false)}
           onKeyDown={handleKeyDown}
           className="w-full rounded-lg border border-gray-300 bg-white py-2 pe-8 ps-10 text-gray-900 placeholder:text-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           placeholder="Search…"
@@ -108,7 +110,7 @@ export function GlobalSearch({
             />
           </svg>
         </span>
-        {query ? (
+        {query && (
           <button
             onClick={() => {
               onQueryChange("");
@@ -132,7 +134,12 @@ export function GlobalSearch({
               <path d="m6 6 12 12" />
             </svg>
           </button>
-        ) : (
+        )}
+        {isFocused ? (
+          <kbd className={`pointer-events-none absolute inset-y-0 right-0 my-auto ${query ? "me-9" : "me-2"} flex h-5 items-center rounded border border-gray-300 bg-gray-100 px-1.5 font-sans text-xs text-gray-400`}>
+            ESC
+          </kbd>
+        ) : !query && (
           <kbd className="pointer-events-none absolute inset-y-0 right-0 my-auto me-2 hidden h-5 items-center rounded border border-gray-300 bg-gray-100 px-1.5 font-sans text-xs text-gray-400 sm:flex">
             {isMac ? "⌘" : "Ctrl"} K
           </kbd>
