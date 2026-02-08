@@ -22,6 +22,11 @@
     "createdAt": {
       "hidden": true
     },
+    "photoUrl": {
+      "widget": "photo",
+      "label": "Photo",
+      "hideInTable": true
+    },
     "category": {
       "label": "Category",
       "path": "category.name"

@@ -18,6 +18,7 @@ export default function PhotoUpload({
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [filename, setFilename] = useState(initialFilename || null);
+  const [previewUrl, setPreviewUrl] = useState(null); // blob URL for create flow
 
   const validate = (file) => {
     if (!file.type.startsWith("image/"))
@@ -55,6 +56,10 @@ export default function PhotoUpload({
     setError("");
     if (!assetId) {
       onPendingFile?.(file);
+      // Show local preview and update button text
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(URL.createObjectURL(file));
+      setFilename(file.name); // triggers "Change photo" button text
       return;
     }
 
@@ -71,8 +76,18 @@ export default function PhotoUpload({
   };
 
   const remove = async () => {
-    if (!assetId || !filename) return;
+    if (!filename) return;
     if (!confirm("Delete photo?")) return;
+
+    // Create flow: just clear local state
+    if (!assetId) {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(null);
+      setFilename(null);
+      onPendingFile?.(null);
+      onDeleted?.();
+      return;
+    }
 
     setUploading(true);
     try {
@@ -98,7 +113,7 @@ export default function PhotoUpload({
       {filename && (
         <div className="relative inline-block">
           <img
-            src={`/uploads/assets/${filename}`}
+            src={previewUrl || `/uploads/assets/${filename}`}
             alt="Asset"
             className="h-24 w-24 rounded-md border border-gray-300 object-cover shadow-sm dark:border-neutral-700"
             loading="lazy"
