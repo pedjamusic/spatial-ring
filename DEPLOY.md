@@ -61,9 +61,9 @@ Browser → your-domain.com
 
 ---
 
-## Option B: Git Source (Separate Services)
+## Option B: Coolify Git Source (Separate Services)
 
-Frontend and API run as separate services on different domains or ports. This is common with platforms like Coolify, Railway, or Vercel that build from your Git repo. CORS configuration is required.
+Frontend and API run as separate nixpacks applications from the same Git repo, with nginx proxying API calls between containers. For a complete step-by-step Coolify setup guide, see **[COOLIFY.md](COOLIFY.md)**.
 
 ### Environment Variables — API
 

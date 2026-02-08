@@ -2,6 +2,8 @@
 
 Deploy Spatial Ring on [Coolify](https://coolify.io) as two separate applications built from the same Git repo. The web app's nginx reverse-proxies API calls to the API container over Docker's internal network — everything stays on a single public domain with no CORS complexity.
 
+For the single-container Docker deployment option, see **[DEPLOY.md](DEPLOY.md)**.
+
 ---
 
 ## Architecture
