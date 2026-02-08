@@ -16,6 +16,7 @@ export default function PhotoUpload({
   onDeleted,
 }) {
   const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState(0); // 0–100
   const [error, setError] = useState("");
   const [filename, setFilename] = useState(initialFilename || null);
   const [previewUrl, setPreviewUrl] = useState(null); // blob URL for create flow
@@ -27,24 +28,33 @@ export default function PhotoUpload({
     return "";
   };
 
-  const uploadNow = async (file) => {
-    const token = localStorage.getItem("token");
-    const body = new FormData();
-    body.append("photo", file);
+  const uploadNow = (file) =>
+    new Promise((resolve, reject) => {
+      const token = localStorage.getItem("token");
+      const body = new FormData();
+      body.append("photo", file);
 
-    const res = await fetch(`${API_BASE}/assets/${assetId}/photo`, {
-      method: "POST",
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
-      body,
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", `${API_BASE}/assets/${assetId}/photo`);
+      if (token) xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+
+      xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable) setProgress(Math.round((e.loaded / e.total) * 100));
+      };
+
+      xhr.onload = () => {
+        try {
+          const data = JSON.parse(xhr.responseText);
+          if (xhr.status >= 200 && xhr.status < 300) resolve(data);
+          else reject(new Error(data.error || "Upload failed"));
+        } catch {
+          reject(new Error("Upload failed"));
+        }
+      };
+
+      xhr.onerror = () => reject(new Error("Upload failed"));
+      xhr.send(body);
     });
-
-    if (!res.ok) {
-      throw new Error(
-        (await res.json().catch(() => ({}))).error || "Upload failed",
-      );
-    }
-    return res.json();
-  };
 
   const onSelect = async (fl) => {
     const file = Array.from(fl || [])[0];
@@ -64,6 +74,7 @@ export default function PhotoUpload({
     }
 
     setUploading(true);
+    setProgress(0);
     try {
       const data = await uploadNow(file);
       setFilename(data.filename);
@@ -72,6 +83,7 @@ export default function PhotoUpload({
       setError(e.message || "Upload failed");
     } finally {
       setUploading(false);
+      setProgress(0);
     }
   };
 
@@ -155,6 +167,16 @@ export default function PhotoUpload({
           JPEG/PNG/WebP, up to 2MB
         </span>
       </div>
+
+      {/* progress bar */}
+      {uploading && (
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-neutral-700">
+          <div
+            className="h-full rounded-full bg-blue-600 transition-all duration-200"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      )}
 
       {error && (
         <p className="text-xs text-red-600 dark:text-red-400">{error}</p>
