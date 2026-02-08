@@ -15,9 +15,9 @@ export function SidebarMenuButton({
   const location = useLocation();
   const active = isActive ?? location.pathname.startsWith(to);
   const { isFocusVisible, focusProps } = useFocusRing();
-  const { isCollapsed } = useSidebar();
+  const { shouldHideLabels } = useSidebar();
 
-  const shouldCollapse = isCollapsed;
+  const shouldCollapse = shouldHideLabels;
 
   const buttonContent = (
     <Link

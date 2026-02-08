@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { BurgerMenu } from "../sidebar/BurgerMenu";
 import { GlobalSearchContainer } from "@/containers/search/GlobalSearch";
 
 import { H1 } from "../typography/H1";
@@ -13,7 +12,7 @@ export function PageHeader({
 }) {
   return (
     <div
-      className={`mb-6 flex items-center gap-4 border-b border-gray-200 pb-4 dark:border-gray-800 ${className}`}
+      className={`page-header mb-6 flex items-center gap-4 border-b border-gray-200 pb-4 dark:border-gray-800 ${className}`}
     >
       {/* Left: Logo + Title */}
       <div className="flex min-w-0 items-center gap-1">
@@ -40,12 +39,6 @@ export function PageHeader({
           <GlobalSearchContainer />
         </div>
       )}
-
-      {/* Right: Burger menu (mobile/tablet only) */}
-      <div className="ml-auto flex gap-2">
-        <BurgerMenu />
-        {/* User menu can go here later */}
-      </div>
     </div>
   );
 }

@@ -4,6 +4,7 @@
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   background-color: var(--color-background);
   border-right: 1px solid var(--color-border);
+  flex-shrink: 0;
 }
 
 .sidebar-inner {
@@ -13,30 +14,56 @@
   overflow: hidden;
 }
 
-/* Mobile/Tablet sidebar (< 1024px) - overlay drawer */
-.sidebar-mobile {
-  width: 16rem;
-  background-color: var(--color-surface);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+/* Sidebar header row — match PageHeader height */
+.sidebar-header-row {
+  height: 58px;
+  border-bottom: 1px solid var(--color-border);
 }
 
-/* Desktop sidebar (≥ 1024px) - sticky inline */
+/* Desktop sidebar (≥ 1024px) — sticky inline */
 .sidebar-desktop {
   position: sticky;
   top: 0;
-  flex-shrink: 0;
 }
 
 .sidebar-desktop.sidebar-expanded {
-  width: 16rem !important;
+  width: 16rem;
 }
 
 .sidebar-desktop.sidebar-collapsed {
-  width: 4rem !important;
+  width: 4rem;
+}
+
+/* Mobile sidebar (< 1024px) — always visible as icon-only */
+.sidebar-mobile-inline {
+  position: sticky;
+  top: 0;
+  width: 4rem;
+  z-index: 10;
+}
+
+/* Mobile overlay open — expand over content */
+.sidebar-mobile-inline.sidebar-overlay-open {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 16rem;
+  z-index: 50;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Backdrop for mobile overlay */
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
 }
 
 /* Hide labels and text when collapsed */
-.sidebar-collapsed .sidebar-label {
+.sidebar-collapsed:not(.sidebar-overlay-open) .sidebar-label {
   opacity: 0;
   width: 0;
   overflow: hidden;
@@ -44,17 +71,28 @@
 }
 
 /* Center icons when collapsed */
-.sidebar-collapsed .sidebar-menu-button {
+.sidebar-collapsed:not(.sidebar-overlay-open) .sidebar-menu-button {
   justify-content: center;
   padding-left: 0.5rem;
   padding-right: 0.5rem;
 }
 
 /* Hide group labels when collapsed */
-.sidebar-collapsed .sidebar-group-label {
+.sidebar-collapsed:not(.sidebar-overlay-open) .sidebar-group-label {
   opacity: 0;
   height: 0;
   overflow: hidden;
+}
+
+/* Show labels when overlay is open on mobile */
+.sidebar-overlay-open .sidebar-label {
+  opacity: 1;
+  width: auto;
+}
+
+.sidebar-overlay-open .sidebar-group-label {
+  opacity: 1;
+  height: auto;
 }
 
 /* Smooth transitions for content */

@@ -1,45 +1,22 @@
 // web/src/components/sidebar/SidebarProvider.jsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { SidebarContext } from "./SidebarContext";
 
 export function SidebarProvider({ children }) {
-  // Viewport detection
-  const [viewportSize, setViewportSize] = useState("desktop");
-
-  // Mobile drawer state (overlay)
-  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
-
-  // Collapsed state for tablet/desktop (toggleable)
+  const [isMobile, setIsMobile] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isOverlayOpen, setIsOverlayOpen] = useState(false);
 
-  // Detect viewport size and set default collapsed state
   useEffect(() => {
     const checkScreenSize = () => {
-      const width = window.innerWidth;
-
-      let newViewportSize;
-      let defaultCollapsed;
-
-      if (width < 1024) {
-        // Mobile + Tablet: use overlay drawer
-        newViewportSize = "mobile";
-        defaultCollapsed = false; // Doesn't matter for mobile/tablet
-      } else {
-        // Desktop: inline sidebar with toggle
-        newViewportSize = "desktop";
-        defaultCollapsed = false; // Expanded by default on desktop
-      }
-
-      // Only update collapsed state when viewport size changes
-      setViewportSize((prev) => {
-        if (prev !== newViewportSize) {
-          setIsCollapsed(defaultCollapsed);
-          // Close mobile drawer when switching to desktop
-          if (newViewportSize === "desktop") {
-            setIsMobileDrawerOpen(false);
-          }
+      const mobile = window.innerWidth < 1024;
+      setIsMobile((prev) => {
+        if (prev !== mobile) {
+          // Reset states on viewport change
+          setIsCollapsed(mobile ? true : false);
+          setIsOverlayOpen(false);
         }
-        return newViewportSize;
+        return mobile;
       });
     };
 
@@ -48,43 +25,32 @@ export function SidebarProvider({ children }) {
     return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
-  const toggleCollapsed = () => {
-    if (viewportSize !== "mobile") {
+  const toggleSidebar = useCallback(() => {
+    if (isMobile) {
+      setIsOverlayOpen((prev) => !prev);
+    } else {
       setIsCollapsed((prev) => !prev);
     }
-  };
+  }, [isMobile]);
 
-  const openMobileDrawer = () => {
-    if (viewportSize === "mobile") {
-      setIsMobileDrawerOpen(true);
-    }
-  };
+  const closeOverlay = useCallback(() => {
+    setIsOverlayOpen(false);
+  }, []);
 
-  const closeMobileDrawer = () => {
-    setIsMobileDrawerOpen(false);
-  };
-
-  const toggleMobileDrawer = () => {
-    if (viewportSize === "mobile") {
-      setIsMobileDrawerOpen((prev) => !prev);
-    }
-  };
-
-  const isMobile = viewportSize === "mobile";
+  // On mobile, sidebar is always collapsed inline; overlay controls the expanded state
+  // On desktop, isCollapsed controls expanded/collapsed
+  const shouldHideLabels = isMobile ? !isOverlayOpen : isCollapsed;
 
   return (
     <SidebarContext.Provider
       value={{
-        viewportSize,
         isMobile,
-        isCollapsed,
-        isMobileDrawerOpen,
-        toggleCollapsed,
-        openMobileDrawer,
-        closeMobileDrawer,
-        toggleMobileDrawer,
-        // Computed state for convenience
-        state: isCollapsed ? "collapsed" : "expanded",
+        isCollapsed: isMobile ? true : isCollapsed,
+        isOverlayOpen,
+        shouldHideLabels,
+        toggleSidebar,
+        closeOverlay,
+        state: shouldHideLabels ? "collapsed" : "expanded",
       }}
     >
       {children}

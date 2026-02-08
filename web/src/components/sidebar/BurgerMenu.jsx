@@ -3,20 +3,23 @@ import { Menu } from "lucide-react";
 import { useSidebar } from "./useSidebar";
 
 export function BurgerMenu({ className = "" }) {
-  const { isMobile, toggleMobileDrawer } = useSidebar();
+  const { toggleSidebar, isOverlayOpen, isCollapsed, isMobile } = useSidebar();
 
-  // Only show on mobile/tablet (< 1024px)
-  if (!isMobile) {
-    return null;
-  }
+  const label = isMobile
+    ? isOverlayOpen
+      ? "Close navigation menu"
+      : "Open navigation menu"
+    : isCollapsed
+      ? "Expand sidebar"
+      : "Collapse sidebar";
 
   return (
     <Button
-      onPress={toggleMobileDrawer}
-      className={`rounded-lg p-2 text-gray-700 hover:cursor-pointer hover:bg-gray-200 dark:text-gray-100/75 dark:hover:bg-neutral-700/50 ${className}`}
-      aria-label="Open navigation menu"
+      onPress={toggleSidebar}
+      className={`flex h-8 w-8 items-center justify-center rounded-md hover:cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${className}`}
+      aria-label={label}
     >
-      <Menu size={24} />
+      <Menu size={20} />
     </Button>
   );
 }

@@ -4,7 +4,7 @@ import { useTooltipTriggerState } from "react-stately";
 import { useSidebar } from "./useSidebar";
 
 export function TooltipWrapper({ children, content, delay = 700 }) {
-  const { isCollapsed, isMobile, showMobileDrawer } = useSidebar();
+  const { shouldHideLabels } = useSidebar();
   const state = useTooltipTriggerState({ delay });
   const ref = useRef(null);
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
@@ -15,9 +15,8 @@ export function TooltipWrapper({ children, content, delay = 700 }) {
     ref,
   );
 
-  // Only show tooltips when collapsed and not showing mobile drawer
-  const shouldShowTooltip =
-    (isCollapsed || isMobile) && !showMobileDrawer && state.isOpen;
+  // Only show tooltips when labels are hidden (collapsed state)
+  const shouldShowTooltip = shouldHideLabels && state.isOpen;
 
   // Update tooltip position when it opens
   React.useEffect(() => {

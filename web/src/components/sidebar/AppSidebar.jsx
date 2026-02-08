@@ -16,8 +16,6 @@ import { iconRegistry } from "./iconRegistry";
 import { getIconByKey } from "./iconUtils";
 
 import { BurgerMenu } from "./BurgerMenu";
-import { SidebarClose } from "./SidebarClose";
-import { SidebarToggle } from "./SidebarToggle";
 
 // Import your icons (adjust based on your icon library)
 import {
@@ -34,19 +32,16 @@ import {
 } from "lucide-react";
 
 export function AppSidebar() {
-  const { isCollapsed } = useSidebar();
+  const { shouldHideLabels } = useSidebar();
   const { resources, loading } = useCrudResources();
   const location = useLocation();
 
-  const shouldHideLabels = isCollapsed;
-
   return (
     <Sidebar>
-      {/* Sidebar Header with close/toggle buttons */}
+      {/* Sidebar Header with burger toggle */}
       <SidebarHeader>
-        <div className="flex items-center justify-start gap-2 pb-4 pt-3">
-          <SidebarClose />
-          <SidebarToggle />
+        <div className="sidebar-header-row flex items-center justify-start pl-2">
+          <BurgerMenu />
         </div>
       </SidebarHeader>
 

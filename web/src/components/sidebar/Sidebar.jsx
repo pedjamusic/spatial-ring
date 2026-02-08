@@ -1,52 +1,43 @@
-import { Modal, ModalOverlay, Dialog } from "react-aria-components";
+import { useEffect } from "react";
 import { useSidebar } from "./useSidebar";
 
 export function Sidebar({ children, side = "left", className = "" }) {
-  const {
-    isMobile,
-    isCollapsed,
-    isMobileDrawerOpen,
-    closeMobileDrawer,
-  } = useSidebar();
+  const { isMobile, isCollapsed, isOverlayOpen, closeOverlay } = useSidebar();
 
-  // Mobile/Tablet (< 1024px): Render as Modal overlay
-  if (isMobile) {
-    return (
-      <ModalOverlay
-        isOpen={isMobileDrawerOpen}
-        onOpenChange={(isOpen) => {
-          if (!isOpen) closeMobileDrawer();
-        }}
-        className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
-        isDismissable
-      >
-        <Modal className="fixed inset-y-0 left-0 w-64 outline-none">
-          <Dialog className="h-full outline-none">
-            {({ close }) => (
-              <aside
-                className={`sidebar sidebar-mobile ${className}`}
-                aria-label="Main navigation"
-                data-state="expanded"
-                data-side={side}
-              >
-                <div className="sidebar-inner">{children}</div>
-              </aside>
-            )}
-          </Dialog>
-        </Modal>
-      </ModalOverlay>
-    );
-  }
+  // Close overlay on ESC key
+  useEffect(() => {
+    if (!isOverlayOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") closeOverlay();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isOverlayOpen, closeOverlay]);
 
-  // Desktop (≥ 1024px): Render as sticky sidebar
+  const sidebarClasses = [
+    "sidebar",
+    isMobile ? "sidebar-mobile-inline" : "sidebar-desktop",
+    isCollapsed ? "sidebar-collapsed" : "sidebar-expanded",
+    isOverlayOpen ? "sidebar-overlay-open" : "",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <aside
-      className={`sidebar sidebar-desktop ${isCollapsed ? "sidebar-collapsed" : "sidebar-expanded"} ${className}`}
-      aria-label="Main navigation"
-      data-state={isCollapsed ? "collapsed" : "expanded"}
-      data-side={side}
-    >
-      <div className="sidebar-inner">{children}</div>
-    </aside>
+    <>
+      {/* Backdrop for mobile overlay */}
+      {isMobile && isOverlayOpen && (
+        <div className="sidebar-backdrop" onClick={closeOverlay} />
+      )}
+      <aside
+        className={sidebarClasses}
+        aria-label="Main navigation"
+        data-state={isCollapsed && !isOverlayOpen ? "collapsed" : "expanded"}
+        data-side={side}
+      >
+        <div className="sidebar-inner">{children}</div>
+      </aside>
+    </>
   );
 }
