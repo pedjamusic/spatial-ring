@@ -108,9 +108,14 @@ export function GlobalSearch({
         )}
       </div>
 
-      {/* Results Dropdown */}
+      {/* Backdrop + Results Dropdown */}
       {isOpen && query.length >= minSearchLength && (
-        <div className="absolute z-50 mt-1 w-full overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
+        <>
+        <div
+          className="fixed inset-0 z-40 bg-black/30"
+          onMouseDown={() => setIsOpen(false)}
+        />
+        <div className="fixed inset-x-4 z-50 mt-1 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg sm:absolute sm:inset-x-auto sm:w-full">
           {loading ? (
             <div className="p-4 text-center text-sm text-gray-500">
               Loading...
@@ -147,6 +152,7 @@ export function GlobalSearch({
             </div>
           )}
         </div>
+        </>
       )}
 
       {/* Hint */}
