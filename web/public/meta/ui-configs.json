@@ -1,26 +1,61 @@
 {
   "Warehouse": {
     "id": {
-      "hidden": true
+      "hidden": true,
+      "hideFromColumnSettings": true
     },
     "createdAt": {
-      "hidden": true
+      "hidden": true,
+      "hideFromColumnSettings": true
+    },
+    "assets": {
+      "hideFromColumnSettings": true
     }
   },
   "AssetCategory": {
     "id": {
-      "hidden": true
+      "hidden": true,
+      "hideFromColumnSettings": true
     },
     "createdAt": {
-      "hidden": true
+      "hidden": true,
+      "hideFromColumnSettings": true
+    },
+    "assets": {
+      "hideFromColumnSettings": true
     }
   },
   "Asset": {
     "id": {
-      "hidden": true
+      "hidden": true,
+      "hideFromColumnSettings": true
     },
     "createdAt": {
-      "hidden": true
+      "hidden": true,
+      "hideFromColumnSettings": true
+    },
+    "categoryId": {
+      "hidden": true,
+      "hideFromColumnSettings": true
+    },
+    "restingLocationId": {
+      "hidden": true,
+      "hideFromColumnSettings": true
+    },
+    "updatedAt": {
+      "hideInTable": true
+    },
+    "dimensions": {
+      "hideInTable": true
+    },
+    "serial": {
+      "hideInTable": true
+    },
+    "assetTag": {
+      "hideInTable": true
+    },
+    "shelf": {
+      "hideInTable": true
     },
     "photoUrl": {
       "widget": "photo",
@@ -38,14 +73,23 @@
     "notes": {
       "widget": "textarea",
       "hideInTable": true
+    },
+    "movements": {
+      "hideFromColumnSettings": true
     }
   },
   "Event": {
     "id": {
-      "hidden": true
+      "hidden": true,
+      "hideFromColumnSettings": true
     },
     "createdAt": {
-      "hidden": true
+      "hidden": true,
+      "hideFromColumnSettings": true
+    },
+    "locationId": {
+      "hidden": true,
+      "hideFromColumnSettings": true
     },
     "location": {
       "label": "Location",
@@ -54,14 +98,22 @@
     "notes": {
       "widget": "textarea",
       "hideInTable": true
+    },
+    "movements": {
+      "hideFromColumnSettings": true
     }
   },
   "EventLocation": {
     "id": {
-      "hidden": true
+      "hidden": true,
+      "hideFromColumnSettings": true
     },
     "createdAt": {
-      "hidden": true
+      "hidden": true,
+      "hideFromColumnSettings": true
+    },
+    "events": {
+      "hideFromColumnSettings": true
     }
   },
   "Movement": {

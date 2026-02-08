@@ -9,8 +9,11 @@ import {
 import { CircleEllipsis } from "lucide-react";
 
 export default function ColumnSettings({ meta, config, onToggle, onReset }) {
-  // include all non-Json fields so users can re-show previously hidden ones
-  const allTableFields = meta.fields.filter((f) => !["Json"].includes(f.type)); // [attached_file:1]
+  // include all non-Json fields so users can re-show previously hidden ones,
+  // but exclude fields explicitly marked as internal (IDs, foreign keys)
+  const allTableFields = meta.fields.filter(
+    (f) => !["Json"].includes(f.type) && !config[f.name]?.hideFromColumnSettings,
+  ); // [attached_file:1]
 
   const getVisibleKeys = () =>
     new Set(
