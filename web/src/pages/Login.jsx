@@ -5,6 +5,8 @@ import { toast } from "../lib/toast";
 import { useFieldValidation } from "../lib/useFieldValidation";
 import { Form, TextField, Button } from "react-aria-components";
 import ValidatedField from "../components/ValidatedField";
+import logoTransparent from "../assets/Logo transparent.png";
+import logoFull from "../assets/Logo full.png";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -130,12 +132,12 @@ export default function Login() {
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <img
-          src="src/assets/Logo transparent.png"
+          src={logoTransparent}
           alt="Spatial Ring logo"
           className="mx-auto h-32 w-auto dark:hidden"
         />
         <img
-          src="src/assets/Logo full.png"
+          src={logoFull}
           alt="Spatial Ring logo"
           className="not-dark:hidden mx-auto h-32 w-auto"
         />

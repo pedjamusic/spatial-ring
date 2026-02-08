@@ -3,6 +3,7 @@ import { BurgerMenu } from "../sidebar/BurgerMenu";
 import { GlobalSearchContainer } from "@/containers/search/GlobalSearch";
 
 import { H1 } from "../typography/H1";
+import logoTransparent from "../../assets/Logo transparent.png";
 
 export function PageHeader({
   title,
@@ -18,7 +19,7 @@ export function PageHeader({
       <div className="flex min-w-0 items-center gap-1">
         <Link to="/admin" className="flex-shrink-0">
           <img
-            src="/src/assets/Logo transparent.png"
+            src={logoTransparent}
             alt="Spatial Ring - Home"
             className="h-10 w-10"
           />
