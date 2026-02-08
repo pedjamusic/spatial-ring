@@ -1,6 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+const isMac =
+  typeof navigator !== "undefined" &&
+  /Mac|iPhone|iPad|iPod/.test(navigator.userAgent);
+
 export function GlobalSearch({
   query,
   onQueryChange,
@@ -11,6 +15,7 @@ export function GlobalSearch({
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef(null);
+  const inputRef = useRef(null);
 
   const hasResults = Object.values(grouped).some((arr) => arr.length > 0);
   const showHint = query.length > 0 && query.length < minSearchLength;
@@ -29,6 +34,18 @@ export function GlobalSearch({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Global Cmd/Ctrl+K shortcut
+  useEffect(() => {
+    function handleGlobalKeyDown(e) {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        inputRef.current?.focus();
+      }
+    }
+    document.addEventListener("keydown", handleGlobalKeyDown);
+    return () => document.removeEventListener("keydown", handleGlobalKeyDown);
+  }, []);
+
   const handleFocus = () => {
     if (query.length >= minSearchLength) setIsOpen(true);
   };
@@ -36,6 +53,14 @@ export function GlobalSearch({
   const handleChange = (e) => {
     onQueryChange(e.target.value);
     setIsOpen(true);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Escape") {
+      onQueryChange("");
+      setIsOpen(false);
+      inputRef.current?.blur();
+    }
   };
 
   const handleResultClick = (e, href) => {
@@ -59,12 +84,14 @@ export function GlobalSearch({
       {/* Simple HTML Input */}
       <div className="relative">
         <input
+          ref={inputRef}
           type="text"
           value={query}
           onChange={handleChange}
           onFocus={handleFocus}
+          onKeyDown={handleKeyDown}
           className="w-full rounded-lg border border-gray-300 bg-white py-2 pe-8 ps-10 text-gray-900 placeholder:text-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-          placeholder="Search assets, categories, warehouses…"
+          placeholder="Search…"
           aria-label="Global search"
         />
         <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center ps-3 text-gray-400">
@@ -81,7 +108,7 @@ export function GlobalSearch({
             />
           </svg>
         </span>
-        {query && (
+        {query ? (
           <button
             onClick={() => {
               onQueryChange("");
@@ -105,6 +132,10 @@ export function GlobalSearch({
               <path d="m6 6 12 12" />
             </svg>
           </button>
+        ) : (
+          <kbd className="pointer-events-none absolute inset-y-0 right-0 my-auto me-2 hidden h-5 items-center rounded border border-gray-300 bg-gray-100 px-1.5 font-sans text-xs text-gray-400 sm:flex">
+            {isMac ? "⌘" : "Ctrl"} K
+          </kbd>
         )}
       </div>
 
