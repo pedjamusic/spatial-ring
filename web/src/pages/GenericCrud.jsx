@@ -6,6 +6,7 @@ import { config } from "../config";
 import { toast } from "../lib/toast"; // Import toast
 import ColumnSettings from "../components/ColumnSettings";
 import { PageHeader } from "../components/layout/PageHeader";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 // Below commented out section rendered AssetAvatars across model CRUD pages' "all items" tables
 // const STORAGE_KEY_PREFIX = "uiConfig_";
@@ -223,7 +224,7 @@ export default function GenericCrud({
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingSpinner />;
   if (!meta) return <div>Model not found</div>;
 
   return (

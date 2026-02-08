@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { resource } from "../lib/api";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const api = resource("movements");
 
@@ -98,7 +99,7 @@ export default function Movements() {
       </form>
 
       {loading ? (
-        <div>Loading...</div>
+        <LoadingSpinner />
       ) : error ? (
         <div style={{ color: "crimson" }}>{error}</div>
       ) : (

@@ -9,6 +9,18 @@ body {
   color: light-dark(var(--light), var(--dark));
 }
 
+@keyframes indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(200%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
 img {
   vertical-align: middle;
   max-width: 100%;

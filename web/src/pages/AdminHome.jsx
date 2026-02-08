@@ -4,6 +4,7 @@ import { resource } from "@/lib/api";
 import { H2 } from "@/components/typography/H2";
 import { PageHeader } from "@/components/layout/PageHeader";
 
+import LoadingSpinner from "@/components/LoadingSpinner";
 import DashboardStatsContainer from "@/containers/dashboard/Stats";
 import { UpcomingEventsContainer } from "@/containers/dashboard/UpcomingEvents";
 
@@ -65,11 +66,7 @@ export default function AdminHome() {
   }, []);
 
   if (loading) {
-    return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <div className="text-gray-500">Loading dashboard...</div>
-      </div>
-    );
+    return <LoadingSpinner label="Loading dashboard..." />;
   }
 
   if (error) {
