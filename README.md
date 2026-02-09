@@ -70,6 +70,13 @@ cp .env.example .env
 npm run dev
 ```
 
+## 📖 Documentation
+
+- [Project Overview](docs/OVERVIEW.md)
+- [Docker Deployment](docs/DEPLOY.md)
+- [Coolify Deployment](docs/COOLIFY.md)
+- [UI Configuration](docs/UI-CONFIG.md)
+
 ## 📦 Project Structure
 
 ```bash
@@ -81,6 +88,8 @@ spatial-ring/
 ├── web/               # Frontend application
 │   ├── public/        # Static assets
 │   └── src/           # React components and logic
+├── docker/            # Docker config (nginx, supervisor, entrypoint)
+├── docs/              # Guides and documentation
 └── mobile/            # Mobile app (future development)
 ```
 
