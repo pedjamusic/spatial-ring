@@ -18,12 +18,12 @@ From generic CRUD to list + form pages with server-side pagination.
 - Branch: `feature/api-pagination-routes` — merged to main
 
 ### 0c. Update `web/src/lib/api.js`
-- [ ] `list()` accepts `{ page, limit, search }` params
-- Branch: `feature/api-js-pagination`
+- [x] `list()` accepts `{ page, limit, search }` params
+- Branch: `feature/api-js-pagination` — merged to main
 
 ### 0d. GenericCrud backward compatibility
-- [ ] Handle `{ data, meta }` envelope in GenericCrud
-- Branch: `feature/api-js-pagination`
+- [x] Handle `{ data, meta }` envelope in GenericCrud
+- Branch: `feature/api-js-pagination` — merged to main
 
 ---
 
@@ -97,3 +97,5 @@ From generic CRUD to list + form pages with server-side pagination.
 | `api/src/routes/events.js` | 0b | Paginated GET /, added GET /:id |
 | `api/src/routes/assets.js` | 0b | Paginated GET /, added GET /:id |
 | `api/src/routes/movements.js` | 0b | Paginated GET /, added GET /:id, removed hardcoded take: 50 |
+| `web/src/lib/api.js` | 0c | list() accepts { page, limit, search } params |
+| `web/src/pages/GenericCrud.jsx` | 0d | Unwrap { data, meta } envelope |
