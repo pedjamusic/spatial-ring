@@ -149,7 +149,7 @@ export default function GenericCrud({
       const dataResponse = await api.list();
       console.log(`✅ Data loaded:`, dataResponse);
 
-      setData(dataResponse);
+      setData(Array.isArray(dataResponse) ? dataResponse : dataResponse.data || []);
     } catch (err) {
       console.error("❌ LoadData error:", err);
       setError(err.message);
