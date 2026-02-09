@@ -1,0 +1,131 @@
+import { useEffect, useState, useMemo } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import ModelForm from "../components/ModelForm";
+import { PageHeader } from "../components/layout/PageHeader";
+import LoadingSpinner from "../components/LoadingSpinner";
+import { resource } from "../lib/api";
+import { config } from "../config";
+import { toast } from "../lib/toast";
+
+export default function GenericFormPage({
+  modelName,
+  resourceName,
+  uiConfig = {},
+  titles = {},
+}) {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const isEdit = Boolean(id);
+
+  const singular = titles.singular || modelName;
+  const plural = titles.plural || `${modelName}s`;
+
+  const [meta, setMeta] = useState(null);
+  const [initialData, setInitialData] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const api = useMemo(() => resource(resourceName), [resourceName]);
+
+  useEffect(() => {
+    let active = true;
+
+    (async () => {
+      setLoading(true);
+      setError("");
+      try {
+        // Load metadata
+        const metaResponse = await fetch(`/api/meta/models/${modelName}`);
+        if (!metaResponse.ok) throw new Error(`Meta fetch failed: ${metaResponse.status}`);
+        const metaData = await metaResponse.json();
+        if (!active) return;
+        setMeta(metaData);
+
+        // Load existing record for edit mode
+        if (isEdit) {
+          const record = await api.get(id);
+          if (!active) return;
+          setInitialData(record);
+        }
+      } catch (err) {
+        if (active) setError(err.message);
+      } finally {
+        if (active) setLoading(false);
+      }
+    })();
+
+    return () => { active = false; };
+  }, [modelName, id, isEdit, api]);
+
+  const handleSave = async (formData, extras = {}) => {
+    try {
+      if (isEdit) {
+        await api.update(id, formData);
+        toast.success(`${singular} updated successfully!`);
+      } else {
+        const created = await api.create(formData);
+
+        // Upload pending photo if any (same pattern as GenericCrud)
+        if (extras.pendingPhotoFile && created?.id) {
+          const token = localStorage.getItem("token");
+          const fd = new FormData();
+          fd.append("photo", extras.pendingPhotoFile);
+          const photoBaseUrl = config.apiUrl ? `${config.apiUrl}/api` : "/api";
+          const r = await fetch(`${photoBaseUrl}/${resourceName}/${created.id}/photo`, {
+            method: "POST",
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+            body: fd,
+          });
+          if (!r.ok) {
+            throw new Error((await r.json().catch(() => ({}))).error || "Upload failed");
+          }
+        }
+
+        toast.success(`${singular} created successfully!`);
+      }
+      navigate(`/admin/${resourceName}`);
+    } catch (err) {
+      const errorMessage = err.message || "Operation failed";
+      setError(errorMessage);
+      toast.error(`Failed to save ${singular}: ${errorMessage}`);
+      throw err; // Re-throw so ModelForm can handle loading state
+    }
+  };
+
+  const handleCancel = () => {
+    navigate(`/admin/${resourceName}`);
+  };
+
+  if (loading) return <LoadingSpinner />;
+  if (!meta) return <div>Model not found</div>;
+
+  return (
+    <div className="grid gap-y-4">
+      <div className="flex items-center gap-3">
+        <Link
+          to={`/admin/${resourceName}`}
+          className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+          {plural}
+        </Link>
+      </div>
+      <PageHeader title={isEdit ? `Edit ${singular}` : `Create ${singular}`} />
+
+      {error && (
+        <div className="border border-red-300 bg-red-200 p-4 text-red-600">
+          {error}
+        </div>
+      )}
+
+      <ModelForm
+        key={`${resourceName}:${id ?? "create"}`}
+        meta={meta}
+        initialData={isEdit ? initialData : {}}
+        onSubmit={handleSave}
+        onCancel={handleCancel}
+        uiConfig={uiConfig}
+      />
+    </div>
+  );
+}

@@ -1,0 +1,196 @@
+import { useEffect, useState, useMemo, useCallback } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import ModelTable from "../components/ModelTable";
+import ColumnSettings from "../components/ColumnSettings";
+import SearchInput from "../components/SearchInput";
+import Pagination from "../components/Pagination";
+import { PageHeader } from "../components/layout/PageHeader";
+import LoadingSpinner from "../components/LoadingSpinner";
+import { resource } from "../lib/api";
+import { toast } from "../lib/toast";
+
+const STORAGE_KEY_PREFIX = "uiConfig_";
+const deepMerge = (a = {}, b = {}) =>
+  Object.fromEntries(
+    Object.keys({ ...a, ...b }).map((k) => {
+      const aVal = a[k];
+      const bVal = b[k];
+      if (
+        aVal && bVal &&
+        typeof aVal === "object" && typeof bVal === "object" &&
+        !Array.isArray(aVal) && !Array.isArray(bVal)
+      ) {
+        return [k, { ...aVal, ...bVal }];
+      }
+      return [k, bVal !== undefined ? bVal : aVal];
+    }),
+  );
+
+export default function GenericListPage({
+  modelName,
+  resourceName,
+  uiConfig: defaultUiConfig = {},
+  titles = {},
+}) {
+  const navigate = useNavigate();
+  const singular = titles.singular || modelName;
+  const plural = titles.plural || `${modelName}s`;
+
+  const [meta, setMeta] = useState(null);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // Pagination state
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(25);
+  const [totalPages, setTotalPages] = useState(0);
+  const [search, setSearch] = useState("");
+
+  // uiConfig state + localStorage
+  const storageKey = `${STORAGE_KEY_PREFIX}${modelName}`;
+  const [uiConfig, setUiConfig] = useState(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem(storageKey) || "{}");
+      return deepMerge(defaultUiConfig, stored);
+    } catch {
+      return defaultUiConfig;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem(storageKey) || "{}");
+      setUiConfig(deepMerge(defaultUiConfig, stored));
+    } catch {
+      setUiConfig(defaultUiConfig);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [modelName, JSON.stringify(defaultUiConfig)]);
+
+  const handleToggleColumnPref = (fieldName, updates) => {
+    setUiConfig((prev) => {
+      const next = { ...prev, [fieldName]: { ...(prev[fieldName] || {}), ...updates } };
+      const currentStored = JSON.parse(localStorage.getItem(storageKey) || "{}");
+      const nextStored = { ...currentStored, [fieldName]: { ...(currentStored[fieldName] || {}), ...updates } };
+      localStorage.setItem(storageKey, JSON.stringify(nextStored));
+      return next;
+    });
+  };
+
+  const handleResetPrefs = () => {
+    localStorage.removeItem(storageKey);
+    setUiConfig(defaultUiConfig);
+  };
+
+  const api = useMemo(() => resource(resourceName), [resourceName]);
+
+  const loadData = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    try {
+      // Load metadata
+      const metaResponse = await fetch(`/api/meta/models/${modelName}`);
+      if (!metaResponse.ok) throw new Error(`Meta fetch failed: ${metaResponse.status}`);
+      const metaData = await metaResponse.json();
+      setMeta(metaData);
+
+      // Load paginated data
+      const res = await api.list({ page, limit, search: search || undefined });
+      setData(res.data || []);
+      setTotalPages(res.meta?.totalPages || 0);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [modelName, api, page, limit, search]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  // Reset to page 1 when search changes
+  const handleSearchChange = useCallback((val) => {
+    setSearch(val);
+    setPage(1);
+  }, []);
+
+  const handleLimitChange = useCallback((val) => {
+    setLimit(val);
+    setPage(1);
+  }, []);
+
+  const handleDelete = async (id) => {
+    if (!confirm("Are you sure you want to delete this item?")) return;
+    try {
+      await api.remove(id);
+      toast.info(`${singular} deleted.`);
+      await loadData();
+    } catch (err) {
+      setError(err.message);
+      toast.error(`Failed to delete ${singular}: ${err.message}`);
+    }
+  };
+
+  if (loading && !meta) return <LoadingSpinner />;
+  if (!meta) return <div>Model not found</div>;
+
+  return (
+    <div className="grid gap-y-4">
+      <PageHeader title={plural} />
+
+      {error && (
+        <div className="border border-red-300 bg-red-200 p-4 text-red-600">
+          {error}
+        </div>
+      )}
+
+      {/* Toolbar: search + create button */}
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <SearchInput
+          value={search}
+          onChange={handleSearchChange}
+          placeholder={`Search ${plural.toLowerCase()}...`}
+        />
+        <Link
+          to="new"
+          className="shadow-2xs focus:outline-hidden inline-flex items-center gap-x-2 rounded-md border border-blue-600 bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 focus:bg-blue-800"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+          Create {singular}
+        </Link>
+      </div>
+
+      {/* Column settings + table */}
+      <div className="flex items-center justify-end">
+        <ColumnSettings
+          meta={meta}
+          config={uiConfig}
+          onToggle={handleToggleColumnPref}
+          onReset={handleResetPrefs}
+        />
+      </div>
+
+      <div className="w-full min-w-0">
+        <ModelTable
+          meta={meta}
+          data={data}
+          onEdit={(row) => navigate(`${row.id}/edit`)}
+          onDelete={handleDelete}
+          uiConfig={uiConfig}
+          modelName={modelName}
+        />
+      </div>
+
+      {/* Pagination */}
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        limit={limit}
+        onPageChange={setPage}
+        onLimitChange={handleLimitChange}
+      />
+    </div>
+  );
+}

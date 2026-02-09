@@ -8,7 +8,8 @@ import { DashboardLayout } from "./layouts/DashboardLayout";
 import Login from "./pages/Login";
 import Logout from "./pages/Logout";
 import AdminHome from "./pages/AdminHome";
-import GenericCrud from "./pages/GenericCrud";
+import GenericListPage from "./pages/GenericListPage";
+import GenericFormPage from "./pages/GenericFormPage";
 
 import { useCrudResources } from "./components/sidebar/useCrudResources";
 
@@ -36,6 +37,14 @@ export default function App() {
     })();
   }, []);
 
+  // Shared props builder for resource pages
+  const propsFor = (r) => ({
+    modelName: r.modelName,
+    resourceName: r.resourceName,
+    uiConfig: uiConfigs[r.modelName] || {},
+    titles: { singular: r.singular || r.title, plural: r.title },
+  });
+
   return (
     <>
       <BrowserRouter>
@@ -56,21 +65,11 @@ export default function App() {
             {!loading &&
               configsLoaded &&
               resources.map((r) => (
-                <Route
-                  key={r.path}
-                  path={r.path}
-                  element={
-                    <GenericCrud
-                      modelName={r.modelName}
-                      resourceName={r.resourceName}
-                      uiConfig={uiConfigs[r.modelName] || {}}
-                      titles={{
-                        singular: r.singular || r.title,
-                        plural: r.title,
-                      }}
-                    />
-                  }
-                />
+                <Route key={r.path} path={r.path}>
+                  <Route index element={<GenericListPage {...propsFor(r)} />} />
+                  <Route path="new" element={<GenericFormPage {...propsFor(r)} />} />
+                  <Route path=":id/edit" element={<GenericFormPage {...propsFor(r)} />} />
+                </Route>
               ))}
           </Route>
           <Route path="*" element={<Navigate to="/admin" replace />} />

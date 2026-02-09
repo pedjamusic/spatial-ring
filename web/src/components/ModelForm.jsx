@@ -113,15 +113,14 @@ export default function ModelForm({
         }
 
         try {
-          const data = await authFetch(endpoint);
+          const res = await authFetch(endpoint);
+          const data = Array.isArray(res) ? res : res.data || [];
 
           // Ensure data is an array before mapping
-          const options = Array.isArray(data)
-            ? data.map((item) => ({
+          const options = data.map((item) => ({
                 value: item.id,
                 label: item.name || item.title || item.email || item.id,
-              }))
-            : [];
+              }));
           return { field: field.name, options };
         } catch (error) {
           console.error(`⚠️ Failed to load options for ${field.name}:`, error);
