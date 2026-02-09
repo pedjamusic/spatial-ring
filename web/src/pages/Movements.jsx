@@ -15,8 +15,8 @@ export default function Movements() {
     setLoading(true);
     setError("");
     try {
-      const data = await api.list();
-      setItems(data);
+      const res = await api.list();
+      setItems(res.data || []);
     } catch (e) {
       setError(e.message);
     } finally {

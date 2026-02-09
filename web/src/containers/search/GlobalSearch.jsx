@@ -27,7 +27,7 @@ export function GlobalSearchContainer() {
       try {
         setLoading(true);
         // Note: resource names here must match your API endpoints (usually camelCase)
-        const [assets, categories, warehouses, events, locations] =
+        const [assetsRes, categoriesRes, warehousesRes, eventsRes, locationsRes] =
           await Promise.all([
             resource("assets").list(),
             resource("assetCategories").list(),
@@ -38,11 +38,11 @@ export function GlobalSearchContainer() {
 
         if (active) {
           setAllData({
-            assets: assets || [],
-            categories: categories || [],
-            warehouses: warehouses || [],
-            events: events || [],
-            locations: locations || [],
+            assets: assetsRes.data || [],
+            categories: categoriesRes.data || [],
+            warehouses: warehousesRes.data || [],
+            events: eventsRes.data || [],
+            locations: locationsRes.data || [],
           });
           setDataLoaded(true);
         }

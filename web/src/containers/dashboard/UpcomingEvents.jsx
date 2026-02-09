@@ -13,7 +13,8 @@ export function UpcomingEventsContainer() {
     (async () => {
       try {
         setLoading(true);
-        const allEvents = await resource("events").list();
+        const res = await resource("events").list();
+        const allEvents = res.data || [];
 
         if (active) {
           const now = new Date();

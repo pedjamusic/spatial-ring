@@ -26,13 +26,17 @@ export default function AdminHome() {
         setLoading(true);
 
         // Fetch all resources in parallel using your existing API client
-        const [assets, categories, warehouses] = await Promise.all([
+        const [assetsRes, categoriesRes, warehousesRes] = await Promise.all([
           resource("assets").list(),
           resource("assetCategories").list(),
           resource("warehouses").list(),
         ]);
 
         if (active) {
+          const assets = assetsRes.data || [];
+          const categories = categoriesRes.data || [];
+          const warehouses = warehousesRes.data || [];
+
           // Calculate unique asset count (by ID)
           const uniqueAssetIds = new Set(assets.map((a) => a.id));
 
