@@ -1,20 +1,52 @@
 import express from 'express';
 import prisma from '../lib/prisma.js';
 import { uploadAssetPhoto, deletePhotoFile } from '../middleware/upload.js';
+import { paginateQuery, paginateResponse } from '../lib/pagination.js';
 
 const router = express.Router();
 
 // GET /api/assets
 router.get('/', async (req, res) => {
   try {
-    const assets = await prisma.asset.findMany({
-      include: { restingLocation: true, category: true },
-      orderBy: { name: 'asc' }
-    })
-    res.json(assets)
+    const { skip, take, page, limit, search } = paginateQuery(req);
+    const where = search
+      ? { OR: [
+          { name: { contains: search, mode: 'insensitive' } },
+          { make: { contains: search, mode: 'insensitive' } },
+          { model: { contains: search, mode: 'insensitive' } },
+          { assetTag: { contains: search, mode: 'insensitive' } },
+          { serial: { contains: search, mode: 'insensitive' } },
+        ] }
+      : {};
+
+    const [data, total] = await Promise.all([
+      prisma.asset.findMany({
+        where,
+        skip,
+        take,
+        include: { restingLocation: true, category: true },
+        orderBy: { name: 'asc' }
+      }),
+      prisma.asset.count({ where }),
+    ]);
+    res.json(paginateResponse(data, total, { page, limit }))
   } catch (error) {
     console.error('Failed to fetch assets:', error.message);
     res.status(500).json({ error: 'Failed to fetch assets' })
+  }
+});
+
+// GET /api/assets/:id
+router.get('/:id', async (req, res) => {
+  try {
+    const asset = await prisma.asset.findUnique({
+      where: { id: req.params.id },
+      include: { restingLocation: true, category: true }
+    });
+    if (!asset) return res.status(404).json({ error: 'Asset not found' });
+    res.json(asset)
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch asset' })
   }
 });
 

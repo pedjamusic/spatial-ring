@@ -1,22 +1,52 @@
 import express from 'express'
 import prisma from '../lib/prisma.js'
+import { paginateQuery, paginateResponse } from '../lib/pagination.js'
 
 const router = express.Router()
 
 // GET /api/assetCategories
 router.get('/', async (req, res) => {
   try {
-    const categories = await prisma.assetCategory.findMany({
-      orderBy: { name: 'asc' },
+    const { skip, take, page, limit, search } = paginateQuery(req);
+    const where = search
+      ? { name: { contains: search, mode: 'insensitive' } }
+      : {};
+
+    const [data, total] = await Promise.all([
+      prisma.assetCategory.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { name: 'asc' },
+        include: {
+          _count: {
+            select: { assets: true }
+          }
+        }
+      }),
+      prisma.assetCategory.count({ where }),
+    ]);
+    res.json(paginateResponse(data, total, { page, limit }))
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch categories' })
+  }
+})
+
+// GET /api/assetCategories/:id
+router.get('/:id', async (req, res) => {
+  try {
+    const category = await prisma.assetCategory.findUnique({
+      where: { id: req.params.id },
       include: {
         _count: {
           select: { assets: true }
         }
       }
-    })
-    res.json(categories)
+    });
+    if (!category) return res.status(404).json({ error: 'Category not found' });
+    res.json(category)
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch categories' })
+    res.status(500).json({ error: 'Failed to fetch category' })
   }
 })
 

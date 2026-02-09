@@ -1,18 +1,44 @@
 import express from 'express';
 import prisma from '../lib/prisma.js';
+import { paginateQuery, paginateResponse } from '../lib/pagination.js';
 
 const router = express.Router();
 
 // GET /api/events
 router.get('/', async (req, res) => {
   try {
-    const events = await prisma.event.findMany({
-      include: { location: { select: { name: true } } },
-      orderBy: { startsAt: 'asc' }
-    })
-    res.json(events)
+    const { skip, take, page, limit, search } = paginateQuery(req);
+    const where = search
+      ? { name: { contains: search, mode: 'insensitive' } }
+      : {};
+
+    const [data, total] = await Promise.all([
+      prisma.event.findMany({
+        where,
+        skip,
+        take,
+        include: { location: { select: { name: true } } },
+        orderBy: { startsAt: 'asc' }
+      }),
+      prisma.event.count({ where }),
+    ]);
+    res.json(paginateResponse(data, total, { page, limit }))
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch events' })
+  }
+})
+
+// GET /api/events/:id
+router.get('/:id', async (req, res) => {
+  try {
+    const event = await prisma.event.findUnique({
+      where: { id: req.params.id },
+      include: { location: { select: { name: true } } }
+    });
+    if (!event) return res.status(404).json({ error: 'Event not found' });
+    res.json(event)
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch event' })
   }
 })
 

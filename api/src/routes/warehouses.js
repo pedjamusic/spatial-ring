@@ -1,17 +1,40 @@
 import express from 'express';
 import prisma from '../lib/prisma.js';
+import { paginateQuery, paginateResponse } from '../lib/pagination.js';
 
 const router = express.Router();
 
 // GET /api/warehouses
 router.get('/', async (req, res) => {
   try {
-    const warehouses = await prisma.warehouse.findMany({
-      orderBy: { name: 'asc' }
-    })
-    res.json(warehouses)
+    const { skip, take, page, limit, search } = paginateQuery(req);
+    const where = search
+      ? { OR: [
+          { name: { contains: search, mode: 'insensitive' } },
+          { kind: { contains: search, mode: 'insensitive' } },
+        ] }
+      : {};
+
+    const [data, total] = await Promise.all([
+      prisma.warehouse.findMany({ where, skip, take, orderBy: { name: 'asc' } }),
+      prisma.warehouse.count({ where }),
+    ]);
+    res.json(paginateResponse(data, total, { page, limit }))
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch warehouses' })
+  }
+})
+
+// GET /api/warehouses/:id
+router.get('/:id', async (req, res) => {
+  try {
+    const warehouse = await prisma.warehouse.findUnique({
+      where: { id: req.params.id }
+    });
+    if (!warehouse) return res.status(404).json({ error: 'Warehouse not found' });
+    res.json(warehouse)
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch warehouse' })
   }
 })
 
