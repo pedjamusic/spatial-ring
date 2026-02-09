@@ -1,30 +1,26 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
 import { app } from '../src/app.js';
-import { login, clearData } from './_helpers.js';
+import { login } from './_helpers.js';
 
 let auth;
 
 beforeAll(async () => {
   auth = await login();
-  await clearData();
-});
-
-afterAll(async () => {
-  await clearData();
 });
 
 /*
  * Full CRUD smoke tests for the three "simple" models:
  *   Warehouse, AssetCategory, EventLocation
  *
- * Each suite: list → create → get by id → search → update → delete → confirm gone
+ * Each suite creates its own data, verifies it, and deletes it.
+ * No clearData() — tests never touch rows they didn't create.
  */
 
 describe('Warehouse CRUD', () => {
   let id;
 
-  it('GET /api/warehouses — empty list returns paginated envelope', async () => {
+  it('GET /api/warehouses — returns paginated envelope', async () => {
     const res = await request(app).get('/api/warehouses').set(auth);
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('data');
@@ -36,9 +32,9 @@ describe('Warehouse CRUD', () => {
     const res = await request(app)
       .post('/api/warehouses')
       .set(auth)
-      .send({ name: 'Main Storage', kind: 'indoor' });
+      .send({ name: 'Test_Main Storage', kind: 'indoor' });
     expect(res.status).toBe(201);
-    expect(res.body.name).toBe('Main Storage');
+    expect(res.body.name).toBe('Test_Main Storage');
     expect(res.body.kind).toBe('indoor');
     expect(res.body.id).toBeDefined();
     id = res.body.id;
@@ -48,11 +44,11 @@ describe('Warehouse CRUD', () => {
     const res = await request(app).get(`/api/warehouses/${id}`).set(auth);
     expect(res.status).toBe(200);
     expect(res.body.id).toBe(id);
-    expect(res.body.name).toBe('Main Storage');
+    expect(res.body.name).toBe('Test_Main Storage');
   });
 
   it('GET /api/warehouses?search= — finds by name', async () => {
-    const res = await request(app).get('/api/warehouses?search=Main').set(auth);
+    const res = await request(app).get('/api/warehouses?search=Test_Main').set(auth);
     expect(res.status).toBe(200);
     expect(res.body.data.length).toBeGreaterThanOrEqual(1);
     expect(res.body.data.some((w) => w.id === id)).toBe(true);
@@ -68,9 +64,9 @@ describe('Warehouse CRUD', () => {
     const res = await request(app)
       .put(`/api/warehouses/${id}`)
       .set(auth)
-      .send({ name: 'Renamed Storage', kind: 'outdoor' });
+      .send({ name: 'Test_Renamed Storage', kind: 'outdoor' });
     expect(res.status).toBe(200);
-    expect(res.body.name).toBe('Renamed Storage');
+    expect(res.body.name).toBe('Test_Renamed Storage');
     expect(res.body.kind).toBe('outdoor');
   });
 
@@ -88,7 +84,7 @@ describe('Warehouse CRUD', () => {
 describe('AssetCategory CRUD', () => {
   let id;
 
-  it('GET /api/assetCategories — empty list returns paginated envelope', async () => {
+  it('GET /api/assetCategories — returns paginated envelope', async () => {
     const res = await request(app).get('/api/assetCategories').set(auth);
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('data');
@@ -99,9 +95,9 @@ describe('AssetCategory CRUD', () => {
     const res = await request(app)
       .post('/api/assetCategories')
       .set(auth)
-      .send({ name: 'Lighting' });
+      .send({ name: 'Test_Lighting' });
     expect(res.status).toBe(201);
-    expect(res.body.name).toBe('Lighting');
+    expect(res.body.name).toBe('Test_Lighting');
     id = res.body.id;
   });
 
@@ -109,11 +105,11 @@ describe('AssetCategory CRUD', () => {
     const res = await request(app).get(`/api/assetCategories/${id}`).set(auth);
     expect(res.status).toBe(200);
     expect(res.body.id).toBe(id);
-    expect(res.body.name).toBe('Lighting');
+    expect(res.body.name).toBe('Test_Lighting');
   });
 
   it('GET /api/assetCategories?search= — finds by name', async () => {
-    const res = await request(app).get('/api/assetCategories?search=Light').set(auth);
+    const res = await request(app).get('/api/assetCategories?search=Test_Light').set(auth);
     expect(res.status).toBe(200);
     expect(res.body.data.length).toBeGreaterThanOrEqual(1);
   });
@@ -122,9 +118,9 @@ describe('AssetCategory CRUD', () => {
     const res = await request(app)
       .put(`/api/assetCategories/${id}`)
       .set(auth)
-      .send({ name: 'Stage Lighting' });
+      .send({ name: 'Test_Stage Lighting' });
     expect(res.status).toBe(200);
-    expect(res.body.name).toBe('Stage Lighting');
+    expect(res.body.name).toBe('Test_Stage Lighting');
   });
 
   it('DELETE /api/assetCategories/:id — deletes the category', async () => {
@@ -141,7 +137,7 @@ describe('AssetCategory CRUD', () => {
 describe('EventLocation CRUD', () => {
   let id;
 
-  it('GET /api/eventLocations — empty list returns paginated envelope', async () => {
+  it('GET /api/eventLocations — returns paginated envelope', async () => {
     const res = await request(app).get('/api/eventLocations').set(auth);
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('data');
@@ -152,9 +148,9 @@ describe('EventLocation CRUD', () => {
     const res = await request(app)
       .post('/api/eventLocations')
       .set(auth)
-      .send({ name: 'Convention Center', address: '123 Main St', notes: 'Big venue' });
+      .send({ name: 'Test_Convention Center', address: '123 Main St', notes: 'Big venue' });
     expect(res.status).toBe(201);
-    expect(res.body.name).toBe('Convention Center');
+    expect(res.body.name).toBe('Test_Convention Center');
     expect(res.body.address).toBe('123 Main St');
     id = res.body.id;
   });
@@ -163,11 +159,11 @@ describe('EventLocation CRUD', () => {
     const res = await request(app).get(`/api/eventLocations/${id}`).set(auth);
     expect(res.status).toBe(200);
     expect(res.body.id).toBe(id);
-    expect(res.body.name).toBe('Convention Center');
+    expect(res.body.name).toBe('Test_Convention Center');
   });
 
   it('GET /api/eventLocations?search= — finds by name', async () => {
-    const res = await request(app).get('/api/eventLocations?search=Convention').set(auth);
+    const res = await request(app).get('/api/eventLocations?search=Test_Convention').set(auth);
     expect(res.status).toBe(200);
     expect(res.body.data.length).toBeGreaterThanOrEqual(1);
   });
@@ -182,9 +178,9 @@ describe('EventLocation CRUD', () => {
     const res = await request(app)
       .put(`/api/eventLocations/${id}`)
       .set(auth)
-      .send({ name: 'Updated Venue', address: '456 Oak Ave', notes: 'Renovated' });
+      .send({ name: 'Test_Updated Venue', address: '456 Oak Ave', notes: 'Renovated' });
     expect(res.status).toBe(200);
-    expect(res.body.name).toBe('Updated Venue');
+    expect(res.body.name).toBe('Test_Updated Venue');
     expect(res.body.address).toBe('456 Oak Ave');
   });
 
@@ -200,37 +196,47 @@ describe('EventLocation CRUD', () => {
 });
 
 describe('Pagination contract', () => {
+  const createdIds = [];
+
   beforeAll(async () => {
     // Seed 3 warehouses for pagination tests
     for (let i = 1; i <= 3; i++) {
-      await request(app)
+      const res = await request(app)
         .post('/api/warehouses')
         .set(auth)
-        .send({ name: `PagTest Warehouse ${i}` });
+        .send({ name: `Test_PagWH ${i}` });
+      createdIds.push(res.body.id);
+    }
+  });
+
+  afterAll(async () => {
+    // Clean up only the rows we created
+    for (const wid of createdIds) {
+      await request(app).delete(`/api/warehouses/${wid}`).set(auth);
     }
   });
 
   it('respects ?limit= parameter', async () => {
-    const res = await request(app).get('/api/warehouses?limit=2').set(auth);
+    const res = await request(app).get('/api/warehouses?search=Test_PagWH&limit=2').set(auth);
     expect(res.status).toBe(200);
     expect(res.body.data.length).toBe(2);
     expect(res.body.meta.totalPages).toBeGreaterThanOrEqual(2);
   });
 
   it('respects ?page= parameter', async () => {
-    const p1 = await request(app).get('/api/warehouses?limit=2&page=1').set(auth);
-    const p2 = await request(app).get('/api/warehouses?limit=2&page=2').set(auth);
+    const p1 = await request(app).get('/api/warehouses?search=Test_PagWH&limit=2&page=1').set(auth);
+    const p2 = await request(app).get('/api/warehouses?search=Test_PagWH&limit=2&page=2').set(auth);
     expect(p1.status).toBe(200);
     expect(p2.status).toBe(200);
     // Pages should have different items
     const ids1 = p1.body.data.map((w) => w.id);
     const ids2 = p2.body.data.map((w) => w.id);
-    const overlap = ids1.filter((id) => ids2.includes(id));
+    const overlap = ids1.filter((wid) => ids2.includes(wid));
     expect(overlap.length).toBe(0);
   });
 
   it('meta contains page, limit, total, totalPages', async () => {
-    const res = await request(app).get('/api/warehouses?limit=2&page=1').set(auth);
+    const res = await request(app).get('/api/warehouses?search=Test_PagWH&limit=2&page=1').set(auth);
     const { meta } = res.body;
     expect(meta).toHaveProperty('page', 1);
     expect(meta).toHaveProperty('limit', 2);
