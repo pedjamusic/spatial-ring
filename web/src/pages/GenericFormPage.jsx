@@ -101,6 +101,14 @@ export default function GenericFormPage({
 
   return (
     <div className="grid gap-y-4">
+      <PageHeader title={isEdit ? `Edit ${singular}` : `Create ${singular}`} />
+
+      {error && (
+        <div className="border border-red-300 bg-red-200 p-4 text-red-600">
+          {error}
+        </div>
+      )}
+
       <div className="flex items-center gap-3">
         <Link
           to={`/admin/${resourceName}`}
@@ -110,13 +118,6 @@ export default function GenericFormPage({
           {plural}
         </Link>
       </div>
-      <PageHeader title={isEdit ? `Edit ${singular}` : `Create ${singular}`} />
-
-      {error && (
-        <div className="border border-red-300 bg-red-200 p-4 text-red-600">
-          {error}
-        </div>
-      )}
 
       <ModelForm
         key={`${resourceName}:${id ?? "create"}`}

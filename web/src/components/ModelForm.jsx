@@ -203,8 +203,19 @@ export default function ModelForm({
     updateFieldError(field.name, error);
   };
 
-  // CANCEL: restore original initialData and notify parent to exit Edit mode
+  // CANCEL: check for unsaved changes, then restore original initialData and notify parent
   const handleCancel = () => {
+    // Dirty check: compare current formData against initialData
+    const isDirty = Object.keys(formData).some((key) => {
+      const current = formData[key] ?? "";
+      const original = initialData[key] ?? "";
+      return current !== original;
+    });
+
+    if (isDirty) {
+      if (!confirm("You have unsaved changes. Discard them?")) return;
+    }
+
     setFormError("");
     setFormData(initialData ?? {}); // critical: reset to passed defaults, not {}
     onCancel?.(); // let container route back / close dialog
@@ -428,12 +439,11 @@ export default function ModelForm({
           >
             {loading ? "Saving..." : initialData.id ? "Update" : "Create"}
           </Button>
-          {initialData.id && (
+          {onCancel && (
             <Button
               type="button"
-              // onClick={() => setFormData({})}
               onClick={handleCancel}
-              className="shadow-2xs focus:outline-hidden -ms-px inline-flex items-center gap-x-2 border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-800 first:ms-0 first:rounded-s-md last:rounded-e-md hover:cursor-pointer hover:bg-gray-50 focus:z-10 focus:border-gray-300 focus:bg-gray-200 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+              className="shadow-2xs focus:outline-hidden -ms-px inline-flex items-center gap-x-2 border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-600 first:ms-0 first:rounded-s-lg last:rounded-e-lg hover:cursor-pointer hover:bg-gray-50 hover:text-gray-800 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
             >
               Cancel
             </Button>
