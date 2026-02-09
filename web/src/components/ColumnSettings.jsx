@@ -47,7 +47,7 @@ export default function ColumnSettings({ meta, config, onToggle, onReset }) {
       {/* [attached_file:1] */}
       <Popover
         placement="bottom end"
-        className="min-w-[280px] rounded-xl border border-gray-200 bg-gray-50/50 shadow-xl backdrop-blur-sm dark:border-neutral-700 dark:bg-neutral-800/50"
+        className="flex min-w-[280px] flex-col overflow-hidden rounded-xl border border-gray-200 bg-gray-50/50 shadow-xl backdrop-blur-sm dark:border-neutral-700 dark:bg-neutral-800/50"
       >
         <div className="flex items-center justify-between border-b border-gray-200 px-3 pt-3 pb-2 dark:border-neutral-700">
           <span className="text-sm font-semibold text-gray-900 dark:text-white">
@@ -65,7 +65,7 @@ export default function ColumnSettings({ meta, config, onToggle, onReset }) {
           selectionMode="multiple"
           selectedKeys={getVisibleKeys()}
           onSelectionChange={handleSelectionChange}
-          className="max-h-[400px] overflow-auto p-2"
+          className="min-h-0 flex-1 overflow-auto p-2"
         >
           {allTableFields.map((f) => {
             const label = (config[f.name] && config[f.name].label) || f.name;
