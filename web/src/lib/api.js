@@ -42,8 +42,17 @@ async function makeRequest(endpoint, options = {}) {
   return await handleResponse(response);
 }
 
+function buildQuery(params) {
+  const entries = Object.entries(params).filter(([, v]) => v != null && v !== '');
+  if (!entries.length) return '';
+  return '?' + new URLSearchParams(entries).toString();
+}
+
 export const resource = (name) => ({
-  list: () => makeRequest(`/${name}`),
+  list: (params) => {
+    const query = params ? buildQuery(params) : '';
+    return makeRequest(`/${name}${query}`);
+  },
   get: (id) => makeRequest(`/${name}/${id}`),
   create: (data) =>
     makeRequest(`/${name}`, {
