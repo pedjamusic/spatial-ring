@@ -25,6 +25,7 @@ out/
 coverage/
 
 api/uploads/
+backups/
 Dockerfile
 
 AGENTS.md
