@@ -136,11 +136,11 @@ export function GlobalSearch({
           </button>
         )}
         {isFocused ? (
-          <kbd className={`pointer-events-none absolute inset-y-0 right-0 my-auto ${query ? "me-9" : "me-2"} flex h-5 items-center rounded border border-gray-300 bg-gray-100 px-1.5 font-sans text-xs text-gray-400`}>
+          <kbd className={`pointer-events-none absolute inset-y-0 right-0 my-auto ${query ? "me-9" : "me-2"} hidden h-5 items-center rounded border border-gray-300 bg-gray-100 px-1.5 font-sans text-xs text-gray-400 pointer-fine:flex`}>
             ESC
           </kbd>
         ) : !query && (
-          <kbd className="pointer-events-none absolute inset-y-0 right-0 my-auto me-2 hidden h-5 items-center rounded border border-gray-300 bg-gray-100 px-1.5 font-sans text-xs text-gray-400 sm:flex">
+          <kbd className="pointer-events-none absolute inset-y-0 right-0 my-auto me-2 hidden h-5 items-center rounded border border-gray-300 bg-gray-100 px-1.5 font-sans text-xs text-gray-400 pointer-fine:sm:flex">
             {isMac ? "⌘" : "Ctrl"} K
           </kbd>
         )}

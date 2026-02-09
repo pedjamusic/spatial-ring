@@ -1,5 +1,11 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/forms";
+
+@custom-variant pointer-fine {
+  @media (pointer: fine) {
+    @slot;
+  }
+}
 /* @import "./sidebar.css"; */
 
 :root {
