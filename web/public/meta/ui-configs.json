@@ -79,6 +79,15 @@
     }
   },
   "Event": {
+    "_viewConfig": {
+      "calendar": {
+        "enabled": true,
+        "defaultView": "month",
+        "dateStartField": "startsAt",
+        "dateEndField": "endsAt",
+        "labelField": "name"
+      }
+    },
     "id": {
       "hidden": true,
       "hideFromColumnSettings": true

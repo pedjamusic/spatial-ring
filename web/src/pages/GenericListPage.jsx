@@ -6,6 +6,11 @@ import SearchInput from "../components/SearchInput";
 import Pagination from "../components/Pagination";
 import { PageHeader } from "../components/layout/PageHeader";
 import LoadingSpinner from "../components/LoadingSpinner";
+import ViewToggle from "../components/calendar/ViewToggle";
+import CalendarNavigation from "../components/calendar/CalendarNavigation";
+import CalendarMonthView from "../components/calendar/CalendarMonthView";
+import CalendarYearView from "../components/calendar/CalendarYearView";
+import useCalendarEvents from "../components/calendar/useCalendarEvents";
 import { resource } from "../lib/api";
 import { toast } from "../lib/toast";
 
@@ -41,6 +46,27 @@ export default function GenericListPage({
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  // Calendar config from _viewConfig
+  const calendarConfig = defaultUiConfig?._viewConfig?.calendar;
+  const calendarEnabled = calendarConfig?.enabled;
+  const viewStorageKey = `calendarView_${modelName}`;
+
+  // View state from URL → localStorage → config default → "table"
+  const view = calendarEnabled
+    ? searchParams.get("view")
+      || localStorage.getItem(viewStorageKey)
+      || calendarConfig.defaultView
+      || "table"
+    : "table";
+  const isCalendarView = view === "month" || view === "year";
+
+  // Calendar date from URL (defaults to current month)
+  const now = new Date();
+  const calYear = Number(searchParams.get("year")) || now.getFullYear();
+  const calMonth = Number(searchParams.get("month"))
+    ? Number(searchParams.get("month")) - 1 // URL is 1-based, JS is 0-based
+    : now.getMonth();
 
   // Pagination state — synced with URL search params
   const page = Number(searchParams.get("page")) || 1;
@@ -86,6 +112,16 @@ export default function GenericListPage({
 
   const api = useMemo(() => resource(resourceName), [resourceName]);
 
+  // Calendar events hook (only fetches when in calendar view)
+  const { dayMap, loading: calLoading } = useCalendarEvents({
+    resourceName,
+    dateStartField: calendarConfig?.dateStartField || "startsAt",
+    dateEndField: calendarConfig?.dateEndField || "endsAt",
+    view: isCalendarView ? view : null,
+    year: calYear,
+    month: calMonth,
+  });
+
   const loadData = useCallback(async () => {
     setLoading(true);
     setError("");
@@ -96,20 +132,65 @@ export default function GenericListPage({
       const metaData = await metaResponse.json();
       setMeta(metaData);
 
-      // Load paginated data
-      const res = await api.list({ page, limit, search: search || undefined });
-      setData(res.data || []);
-      setTotalPages(res.meta?.totalPages || 0);
+      // Load paginated data (only for table view)
+      if (!isCalendarView) {
+        const res = await api.list({ page, limit, search: search || undefined });
+        setData(res.data || []);
+        setTotalPages(res.meta?.totalPages || 0);
+      }
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  }, [modelName, api, page, limit, search]);
+  }, [modelName, api, page, limit, search, isCalendarView]);
 
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  // View switching — persist to localStorage
+  const handleViewChange = useCallback((newView) => {
+    localStorage.setItem(viewStorageKey, newView);
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set("view", newView);
+      // When switching to calendar, set year/month if not present
+      if (newView === "month" || newView === "year") {
+        if (!next.has("year")) next.set("year", String(now.getFullYear()));
+        if (newView === "month" && !next.has("month")) {
+          next.set("month", String(now.getMonth() + 1));
+        }
+        // Remove table-only params
+        next.delete("page");
+        next.delete("limit");
+        next.delete("search");
+      } else {
+        // Switching to table — remove calendar params
+        next.delete("year");
+        next.delete("month");
+      }
+      return next;
+    });
+  }, [setSearchParams, now]);
+
+  const handleCalendarNavigate = useCallback((newYear, newMonth) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set("year", String(newYear));
+      next.set("month", String(newMonth + 1)); // URL is 1-based
+      return next;
+    });
+  }, [setSearchParams]);
+
+  const handleMonthClick = useCallback((monthIndex) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set("view", "month");
+      next.set("month", String(monthIndex + 1));
+      return next;
+    });
+  }, [setSearchParams]);
 
   // Reset to page 1 when search changes
   const handleSearchChange = useCallback((val) => {
@@ -145,6 +226,9 @@ export default function GenericListPage({
   if (loading && !meta) return <LoadingSpinner />;
   if (!meta) return <div>Model not found</div>;
 
+  const labelField = calendarConfig?.labelField || "name";
+  const dateStartField = calendarConfig?.dateStartField || "startsAt";
+
   return (
     <div className="grid gap-y-4">
       <PageHeader title={plural} />
@@ -155,8 +239,13 @@ export default function GenericListPage({
         </div>
       )}
 
-      {/* Create button - outside the card */}
-      <div className="flex justify-end">
+      {/* Toolbar: ViewToggle + Create button */}
+      <div className="flex items-center justify-between">
+        <div>
+          {calendarEnabled && (
+            <ViewToggle value={view} onChange={handleViewChange} />
+          )}
+        </div>
         <Link
           to="new"
           className="shadow-2xs focus:outline-hidden inline-flex items-center gap-x-2 rounded-md border border-blue-600 bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 focus:bg-blue-800"
@@ -166,43 +255,79 @@ export default function GenericListPage({
         </Link>
       </div>
 
-      {/* Card: toolbar + table */}
+      {/* Card */}
       <div className="not-dark:shadow rounded-lg border border-gray-300 bg-white dark:border-neutral-700/50 dark:bg-neutral-800/50">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-300 px-6 py-4 dark:border-neutral-700/50">
-          <SearchInput
-            value={search}
-            onChange={handleSearchChange}
-            placeholder={`Search ${plural.toLowerCase()}...`}
-          />
-          <ColumnSettings
-            meta={meta}
-            config={uiConfig}
-            onToggle={handleToggleColumnPref}
-            onReset={handleResetPrefs}
-          />
-        </div>
-        <ModelTable
-          meta={meta}
-          data={data}
-          onEdit={(row) => navigate(`${row.id}/edit`)}
-          onDelete={handleDelete}
-          uiConfig={uiConfig}
-          modelName={modelName}
-        />
+        {isCalendarView ? (
+          <>
+            <CalendarNavigation
+              view={view}
+              year={calYear}
+              month={calMonth}
+              onNavigate={handleCalendarNavigate}
+            />
+            {calLoading ? (
+              <div className="flex justify-center py-12">
+                <LoadingSpinner />
+              </div>
+            ) : view === "month" ? (
+              <CalendarMonthView
+                year={calYear}
+                month={calMonth}
+                dayMap={dayMap}
+                labelField={labelField}
+                dateStartField={dateStartField}
+              />
+            ) : (
+              <CalendarYearView
+                year={calYear}
+                dayMap={dayMap}
+                labelField={labelField}
+                dateStartField={dateStartField}
+                onMonthClick={handleMonthClick}
+              />
+            )}
+          </>
+        ) : (
+          <>
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-300 px-6 py-4 dark:border-neutral-700/50">
+              <SearchInput
+                value={search}
+                onChange={handleSearchChange}
+                placeholder={`Search ${plural.toLowerCase()}...`}
+              />
+              <ColumnSettings
+                meta={meta}
+                config={uiConfig}
+                onToggle={handleToggleColumnPref}
+                onReset={handleResetPrefs}
+              />
+            </div>
+            <ModelTable
+              meta={meta}
+              data={data}
+              onEdit={(row) => navigate(`${row.id}/edit`)}
+              onDelete={handleDelete}
+              uiConfig={uiConfig}
+              modelName={modelName}
+            />
+          </>
+        )}
       </div>
 
-      {/* Pagination */}
-      <Pagination
-        page={page}
-        totalPages={totalPages}
-        limit={limit}
-        onPageChange={(val) => setSearchParams((prev) => {
-          const next = new URLSearchParams(prev);
-          next.set("page", String(val));
-          return next;
-        })}
-        onLimitChange={handleLimitChange}
-      />
+      {/* Pagination — table view only */}
+      {!isCalendarView && (
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          limit={limit}
+          onPageChange={(val) => setSearchParams((prev) => {
+            const next = new URLSearchParams(prev);
+            next.set("page", String(val));
+            return next;
+          })}
+          onLimitChange={handleLimitChange}
+        />
+      )}
     </div>
   );
 }

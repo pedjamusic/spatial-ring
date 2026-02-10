@@ -7,6 +7,31 @@ const router = express.Router();
 // GET /api/events
 router.get('/', async (req, res) => {
   try {
+    const { rangeStart, rangeEnd } = req.query;
+
+    // Calendar date-range mode: return all events in range (no pagination)
+    if (rangeStart && rangeEnd) {
+      const start = new Date(rangeStart);
+      const end = new Date(rangeEnd);
+      const data = await prisma.event.findMany({
+        where: {
+          AND: [
+            { startsAt: { lte: end } },
+            {
+              OR: [
+                { endsAt: { gte: start } },
+                { endsAt: null, startsAt: { gte: start } },
+              ],
+            },
+          ],
+        },
+        include: { location: { select: { name: true } } },
+        orderBy: { startsAt: 'asc' },
+      });
+      return res.json({ data });
+    }
+
+    // Default paginated mode
     const { skip, take, page, limit, search } = paginateQuery(req);
     const where = search
       ? { name: { contains: search, mode: 'insensitive' } }
