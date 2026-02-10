@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.8] - 2026-02-10
+
+### Date Range Picker
+
+Replaced native `<input type="datetime-local">` for Event dates with a flatpickr-powered range picker.
+
+- **New component**: `DateRangePicker.jsx` — wraps flatpickr with `mode: "range"`, two-month display on desktop, one on mobile
+- **Custom theme**: `flatpickr-theme.css` using Tailwind v4 CSS variables (`--color-*`, `--spacing`, `--radius-*`, `--text-*`, `--font-weight-*`) for full design token reuse
+- **Cancel / Apply buttons**: Button group footer matching the app's existing button group style; selection only commits on Apply
+- **Config-driven**: New `widget: "dateRangePicker"` and `rangeEnd` / `pairedWith` options in `ui-configs.json` — no per-model component code needed
+- **Dark mode**: Full dark mode support via `prefers-color-scheme`
+- **oklch color mixing**: Uses `color-mix(in oklch, ...)` for perceptually uniform transparency blending
+
+### Calendar Semantic Colors
+
+Replaced monochromatic blue calendar pills/dots with semantically distinct hues for better scannability.
+
+| Classification | Color | Meaning |
+|---|---|---|
+| Start / Single | Teal | "begins here" |
+| Ongoing | Blue (light) | span continues |
+| End | Amber | "concludes here" |
+| More | Gray | overflow indicator |
+
+Applied consistently across month-view pills, year-view dots, and day popover.
+
 ## [0.7]
 
 ### CRUD Refactor (Phases 0–5)

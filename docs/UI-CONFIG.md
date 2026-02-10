@@ -70,11 +70,30 @@ Without this, field names are converted from camelCase to Title Case automatical
 |-------|---------|----------|
 | `"textarea"` | Multi-line `<textarea>` | Notes, descriptions |
 | `"photo"` | Photo upload with preview | Image fields |
+| `"dateRangePicker"` | Flatpickr range picker (two calendars, Cancel/Apply) | Date range pairs |
 
 ```json
 "notes": { "widget": "textarea" },
 "photoUrl": { "widget": "photo", "label": "Photo" }
 ```
+
+#### Date Range Picker
+
+The `dateRangePicker` widget manages two fields (start + end) from a single picker. Configure it with `rangeEnd` on the start field and `pairedWith` on the end field:
+
+```json
+"startsAt": {
+  "widget": "dateRangePicker",
+  "rangeEnd": "endsAt"
+},
+"endsAt": {
+  "pairedWith": "startsAt"
+}
+```
+
+- `rangeEnd` — names the end-date field that the picker also controls
+- `pairedWith` — hides this field from the form (the range picker handles it)
+- The picker theme uses Tailwind v4 CSS variables and supports dark mode
 
 Without `widget`, the input type is inferred from the Prisma field type:
 - `String` → text input
