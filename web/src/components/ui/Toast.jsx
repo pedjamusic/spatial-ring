@@ -100,12 +100,12 @@ export function Toast({ toast }) {
   return (
     <AriaToast
       toast={toast}
-      className="animate-in slide-in-from-bottom-5 max-w-xs rounded-md border border-gray-200 bg-white shadow-lg duration-300 dark:border-neutral-700 dark:bg-neutral-800"
+      className="animate-in slide-in-from-bottom-5 max-w-xs rounded-xl border border-gray-200 bg-white shadow-lg duration-300 dark:border-neutral-700 dark:bg-neutral-800"
     >
       <div className="flex p-4">
         <div className="shrink-0">
           <div
-            className={`inline-flex size-8 items-center justify-center rounded-lg ${
+            className={`inline-flex size-8 items-center justify-center rounded-xl ${
               colorClasses[variant]
             }`}
           >
@@ -123,7 +123,7 @@ export function Toast({ toast }) {
             slot="close"
             onPress={() => toast.close()}
             aria-label="Close"
-            className="inline-flex size-5 shrink-0 items-center justify-center rounded-lg text-gray-800 opacity-50 transition-opacity hover:opacity-100 focus:opacity-100 focus:outline-none dark:text-white"
+            className="inline-flex size-5 shrink-0 items-center justify-center rounded-xl text-gray-800 opacity-50 transition-opacity hover:opacity-100 focus:opacity-100 focus:outline-none dark:text-white"
           >
             <span className="sr-only">Close</span>
             <svg

@@ -12,7 +12,7 @@ export default function Badge({ children, variant = "blue", className = "" }) {
   return (
     <span
       className={[
-        "inline-flex rounded-md px-3 py-1 text-xs font-medium",
+        "inline-flex rounded-xl px-3 py-1 text-xs font-medium",
         variantStyles[variant] || variantStyles.blue,
         className,
       ].join(" ")}

@@ -275,7 +275,7 @@ export default function ModelForm({
             value={formData[foreignKeyFieldName] || ""}
             onChange={(e) => handleChange(foreignKeyFieldName, e.target.value)}
             onBlur={() => handleBlur(field)}
-            className={`not-dark:shadow-sm block min-w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:border-gray-400 hover:outline-gray-400 focus:border-blue-600 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 sm:leading-6 dark:border-neutral-700/50 dark:bg-neutral-800/50 dark:text-white dark:outline-neutral-700/50 dark:placeholder:text-gray-500 dark:hover:border-neutral-600 dark:hover:outline-neutral-600 ${
+            className={`not-dark:shadow-sm block min-w-full rounded-xl border border-gray-300 bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:border-gray-400 hover:outline-gray-400 focus:border-blue-600 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 sm:leading-6 dark:border-neutral-700/50 dark:bg-neutral-800/50 dark:text-white dark:outline-neutral-700/50 dark:placeholder:text-gray-500 dark:hover:border-neutral-600 dark:hover:outline-neutral-600 ${
               touched && error
                 ? "ring-red-500 focus:ring-red-500"
                 : "ring-gray-300 focus:ring-blue-600 dark:ring-gray-700"
@@ -312,7 +312,7 @@ export default function ModelForm({
             value={value}
             onChange={(e) => handleChange(field.name, e.target.value)}
             onBlur={() => handleBlur(field)}
-            className={`not-dark:shadow-sm block min-w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:border-gray-400 hover:outline-gray-400 focus:border-blue-600 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:border-white/10 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:border-blue-500 dark:focus:outline-blue-500 ${
+            className={`not-dark:shadow-sm block min-w-full rounded-xl border border-gray-300 bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:border-gray-400 hover:outline-gray-400 focus:border-blue-600 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:border-white/10 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:border-blue-500 dark:focus:outline-blue-500 ${
               touched && error
                 ? "ring-red-500 focus:ring-red-500"
                 : "ring-gray-300 focus:ring-blue-600 dark:ring-gray-700"
@@ -372,7 +372,7 @@ export default function ModelForm({
             onChange={(e) => handleChange(field.name, e.target.value)}
             onBlur={() => handleBlur(field)}
             rows={4}
-            className={`not-dark:shadow-sm block min-w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:border-gray-400 hover:outline-gray-400 focus:border-blue-600 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:border-white/10 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:border-blue-500 dark:focus:outline-blue-500 ${
+            className={`not-dark:shadow-sm block min-w-full rounded-xl border border-gray-300 bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:border-gray-400 hover:outline-gray-400 focus:border-blue-600 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:border-white/10 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:border-blue-500 dark:focus:outline-blue-500 ${
               touched && error
                 ? "ring-red-500 focus:ring-red-500"
                 : "ring-gray-300 focus:ring-blue-600 dark:ring-gray-700"
@@ -423,7 +423,7 @@ export default function ModelForm({
 
       <Form
         onSubmit={handleSubmit}
-        className="not-dark:shadow grid grid-cols-1 gap-4 rounded-lg border border-gray-300 bg-white px-6 py-4 sm:grid-cols-2 dark:border-neutral-700/50 dark:bg-neutral-800/50"
+        className="not-dark:shadow grid grid-cols-1 gap-4 rounded-xl border border-gray-300 bg-white px-6 py-4 sm:grid-cols-2 dark:border-neutral-700/50 dark:bg-neutral-800/50"
       >
         {formFields.map(renderField)}
         <div className="col-span-full mt-4 inline-flex">

@@ -127,7 +127,7 @@ export default function PhotoUpload({
           <img
             src={previewUrl || `/uploads/assets/${filename}`}
             alt="Asset"
-            className="h-24 w-24 rounded-md border border-gray-300 object-cover shadow-sm dark:border-neutral-700"
+            className="h-24 w-24 rounded-xl border border-gray-300 object-cover shadow-sm dark:border-neutral-700"
             loading="lazy"
           />
           <Button
@@ -154,7 +154,7 @@ export default function PhotoUpload({
         >
           <Button
             isDisabled={uploading}
-            className="not-dark:shadow-lg inline-flex items-center gap-2 rounded-md border border-dashed border-gray-300 bg-white px-3 py-1.5 text-base font-medium text-gray-500 outline-dashed outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:cursor-pointer hover:border-gray-400 hover:bg-gray-50 hover:text-gray-600 hover:outline-gray-400 focus:z-10 focus:border-transparent focus:bg-gray-50 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:pointer-events-none disabled:opacity-50 sm:text-sm/6 dark:border-neutral-700/50 dark:bg-neutral-800/50 dark:text-neutral-400 dark:outline-neutral-700/50 dark:placeholder:text-gray-500 dark:hover:bg-neutral-800 dark:hover:text-gray-400 dark:focus:bg-neutral-800 dark:focus:hover:outline-blue-500"
+            className="not-dark:shadow-lg inline-flex items-center gap-2 rounded-xl border border-dashed border-gray-300 bg-white px-3 py-1.5 text-base font-medium text-gray-500 outline-dashed outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:cursor-pointer hover:border-gray-400 hover:bg-gray-50 hover:text-gray-600 hover:outline-gray-400 focus:z-10 focus:border-transparent focus:bg-gray-50 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:pointer-events-none disabled:opacity-50 sm:text-sm/6 dark:border-neutral-700/50 dark:bg-neutral-800/50 dark:text-neutral-400 dark:outline-neutral-700/50 dark:placeholder:text-gray-500 dark:hover:bg-neutral-800 dark:hover:text-gray-400 dark:focus:bg-neutral-800 dark:focus:hover:outline-blue-500"
           >
             {uploading
               ? "Uploading…"

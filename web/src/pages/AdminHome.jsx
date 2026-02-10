@@ -76,7 +76,7 @@ export default function AdminHome() {
 
   if (error) {
     return (
-      <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
+      <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">
         <p className="font-semibold">Error loading dashboard</p>
         <p className="text-sm">{error}</p>
       </div>

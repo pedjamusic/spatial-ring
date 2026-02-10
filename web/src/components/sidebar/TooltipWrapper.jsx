@@ -34,7 +34,7 @@ export function TooltipWrapper({ children, content, delay = 700 }) {
       {shouldShowTooltip && (
         <div
           {...tooltipProps}
-          className="fixed z-50 rounded-lg bg-gray-900/75 px-3 py-2 text-sm font-medium whitespace-nowrap text-white backdrop-blur-sm not-dark:shadow-lg dark:bg-gray-700/50"
+          className="fixed z-50 rounded-xl bg-gray-900/75 px-3 py-2 text-sm font-medium whitespace-nowrap text-white backdrop-blur-sm not-dark:shadow-lg dark:bg-gray-700/50"
           style={{
             top: `${tooltipPosition.top}px`,
             left: `${tooltipPosition.left}px`,

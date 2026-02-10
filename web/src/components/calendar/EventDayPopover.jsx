@@ -67,7 +67,7 @@ export default function EventDayPopover({
     <div
       ref={ref}
       style={style}
-      className="rounded-lg border border-gray-200 bg-white shadow-lg dark:border-neutral-700 dark:bg-neutral-800"
+      className="rounded-xl border border-gray-200 bg-white shadow-lg dark:border-neutral-700 dark:bg-neutral-800"
       role="dialog"
       aria-label={`Events on ${formatted}`}
     >

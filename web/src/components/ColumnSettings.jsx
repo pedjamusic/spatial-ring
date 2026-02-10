@@ -40,7 +40,7 @@ export default function ColumnSettings({ meta, config, onToggle, onReset }) {
 
   return (
     <MenuTrigger>
-      <Button className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800/50 dark:hover:bg-neutral-800">
+      <Button className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800/50 dark:hover:bg-neutral-800">
         Columns
         <CircleEllipsis size={16} strokeWidth={1} absoluteStrokeWidth />
       </Button>

@@ -64,7 +64,7 @@ export function ValidationPopover({
       <div
         {...popoverProps}
         ref={popoverRef}
-        className={`pointer-events-auto z-50 max-w-xs rounded-lg border p-3 text-sm shadow-lg ${currentColors.bg}`}
+        className={`pointer-events-auto z-50 max-w-xs rounded-xl border p-3 text-sm shadow-lg ${currentColors.bg}`}
       >
         {/* Arrow using arrowProps from usePopover */}
         <svg

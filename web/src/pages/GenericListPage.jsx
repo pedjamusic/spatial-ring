@@ -250,7 +250,7 @@ export default function GenericListPage({
         </div>
         <Link
           to="new"
-          className="shadow-2xs focus:outline-hidden hidden items-center gap-x-2 rounded-md border border-blue-600 bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 focus:bg-blue-800 sm:inline-flex"
+          className="shadow-2xs focus:outline-hidden hidden items-center gap-x-2 rounded-xl border border-blue-600 bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 focus:bg-blue-800 sm:inline-flex"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
           Create {singular}
@@ -269,7 +269,7 @@ export default function GenericListPage({
       </div>
 
       {/* Card */}
-      <div className="not-dark:shadow rounded-lg border border-gray-300 bg-white dark:border-neutral-700/50 dark:bg-neutral-800/50">
+      <div className="not-dark:shadow rounded-xl border border-gray-300 bg-white dark:border-neutral-700/50 dark:bg-neutral-800/50">
         {isCalendarView ? (
           <>
             <CalendarNavigation

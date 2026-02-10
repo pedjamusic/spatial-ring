@@ -53,7 +53,7 @@ export default function EventCard({ event, to, size = "md" }) {
       tabIndex={1}
       to={to}
       className={[
-        "not-dark:shadow block rounded-md border border-gray-300 bg-white outline-1 -outline-offset-1 outline-gray-300 hover:border-gray-400 hover:outline-gray-400 focus:outline-2 focus:outline-blue-600 dark:border-neutral-700/25 dark:bg-neutral-800/50 dark:text-white dark:outline-neutral-700/25 dark:hover:border-gray-700 dark:hover:outline-gray-700",
+        "not-dark:shadow block rounded-xl border border-gray-300 bg-white outline-1 -outline-offset-1 outline-gray-300 hover:border-gray-400 hover:outline-gray-400 focus:outline-2 focus:outline-blue-600 dark:border-neutral-700/25 dark:bg-neutral-800/50 dark:text-white dark:outline-neutral-700/25 dark:hover:border-gray-700 dark:hover:outline-gray-700",
         sizeMap[size],
       ].join(" ")}
       aria-label={`Event: ${event.name}`}

@@ -16,7 +16,7 @@ export function BurgerMenu({ className = "" }) {
   return (
     <Button
       onPress={toggleSidebar}
-      className={`flex h-8 w-8 items-center justify-center rounded-md hover:cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${className}`}
+      className={`flex h-8 w-8 items-center justify-center rounded-xl hover:cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${className}`}
       aria-label={label}
     >
       <Menu size={20} />

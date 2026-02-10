@@ -6,7 +6,7 @@ export default function AssetAvatar({
   shape = "rounded", // "circle" or "rounded"
   size = 48,
 }) {
-  const radius = shape === "circle" ? "rounded-full" : "rounded-md";
+  const radius = shape === "circle" ? "rounded-full" : "rounded-xl";
   const dim = `h-${(size / 4) * 1} w-${(size / 4) * 1}`; // tailwind requires known tokens; default 12 = 48px
   if (!filename) {
     return (

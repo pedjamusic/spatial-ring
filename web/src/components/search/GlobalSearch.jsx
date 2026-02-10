@@ -92,7 +92,7 @@ export function GlobalSearch({
           onFocus={handleFocus}
           onBlur={() => setIsFocused(false)}
           onKeyDown={handleKeyDown}
-          className="w-full rounded-lg border border-gray-300 bg-white py-2 pe-8 ps-10 text-gray-900 placeholder:text-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          className="w-full rounded-xl border border-gray-300 bg-white py-2 pe-8 ps-10 text-gray-900 placeholder:text-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           placeholder="Search…"
           aria-label="Global search"
         />

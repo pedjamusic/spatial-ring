@@ -61,7 +61,7 @@ export function ValidationPopover({
   return (
     <div
       ref={popoverRef}
-      className={`fixed max-w-xs rounded-lg border p-3 text-sm shadow-lg ${variantClasses[variant]} `}
+      className={`fixed max-w-xs rounded-xl border p-3 text-sm shadow-lg ${variantClasses[variant]} `}
     >
       {/* Arrow */}
       <div className="absolute top-full left-4 h-0 w-0 border-t-4 border-r-4 border-l-4 border-transparent border-t-red-200 dark:border-t-red-700"></div>

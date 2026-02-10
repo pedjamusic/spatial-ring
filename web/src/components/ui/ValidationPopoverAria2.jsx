@@ -38,7 +38,7 @@ export function ValidationPopover({
       offset={8}
       isDismissable /* outside click / Esc closes */
       isNonModal /* no focus trapping */
-      className={`z-50 max-w-xs rounded-lg border p-3 text-sm shadow-lg ${bg}`}
+      className={`z-50 max-w-xs rounded-xl border p-3 text-sm shadow-lg ${bg}`}
     >
       {/* two hidden buttons give keyboard users an escape route */}
       <DismissButton onDismiss={() => onOpenChange(false)} />
@@ -81,7 +81,7 @@ export function ValidationPopover({
         <Button
           onPress={() => onOpenChange(false)}
           aria-label="Close"
-          className="size-5 shrink-0 rounded-lg opacity-60 transition hover:opacity-100 focus:outline-none"
+          className="size-5 shrink-0 rounded-xl opacity-60 transition hover:opacity-100 focus:outline-none"
         >
           <svg
             className="size-4"

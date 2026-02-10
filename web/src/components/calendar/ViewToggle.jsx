@@ -8,7 +8,7 @@ const VIEW_OPTIONS = [
 
 export default function ViewToggle({ value, onChange }) {
   return (
-    <div className="inline-flex rounded-md shadow-2xs" role="group">
+    <div className="inline-flex rounded-xl shadow-2xs" role="group">
       {VIEW_OPTIONS.map(({ value: v, label, Icon }, i) => {
         const active = value === v;
         const first = i === 0;

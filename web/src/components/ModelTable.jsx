@@ -29,7 +29,7 @@ function ActionMenu({ onEdit, onDelete }) {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex items-center justify-center rounded-md border border-gray-200 bg-white p-2 text-gray-500 hover:bg-gray-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800"
+        className="inline-flex items-center justify-center rounded-xl border border-gray-200 bg-white p-2 text-gray-500 hover:bg-gray-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800"
         aria-label="Actions"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
@@ -185,7 +185,7 @@ export default function ModelTable({
               ))}
               <Cell className="whitespace-nowrap py-2 text-end text-sm font-medium">
                 {/* Desktop: inline buttons */}
-                <div className="hidden shadow-2xs sm:inline-flex sm:rounded-md">
+                <div className="hidden shadow-2xs sm:inline-flex sm:rounded-xl">
                   <Button
                     onClick={() => onEdit(row)}
                     type="button"

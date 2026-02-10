@@ -22,7 +22,7 @@ export function SidebarMenuButton({
   const buttonContent = (
     <Link
       to={to}
-      className={`sidebar-menu-button inline-flex items-center gap-2 rounded-md p-1 text-gray-700 hover:bg-gray-200 dark:text-gray-100/75 dark:hover:bg-neutral-700/50 ${active ? "sidebar-menu-button-active" : ""} ${isFocusVisible ? "focus-visible" : ""} ${shouldCollapse ? "w-full justify-center" : ""} ${className} `}
+      className={`sidebar-menu-button inline-flex items-center gap-2 rounded-xl p-1 text-gray-700 hover:bg-gray-200 dark:text-gray-100/75 dark:hover:bg-neutral-700/50 ${active ? "sidebar-menu-button-active" : ""} ${isFocusVisible ? "focus-visible" : ""} ${shouldCollapse ? "w-full justify-center" : ""} ${className} `}
       aria-current={active ? "page" : undefined}
       {...focusProps}
     >
