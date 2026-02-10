@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.7]
+
+### CRUD Refactor (Phases 0–5)
+
+Replaced the monolithic `GenericCrud.jsx` with dedicated list and form pages, server-side pagination, and URL-driven state.
+
+- **API**: Added `paginateQuery()` helper and paginated `GET /` + `GET /:id` on all routes (EventLocation, AssetCategory, Warehouse, Event, Asset, Movement)
+- **Frontend**: New `GenericListPage` + `GenericFormPage` with server-side pagination, search, and column settings
+- **Dynamic routing**: All models served via `/admin/:model`, `/admin/:model/new`, `/admin/:model/:id/edit`
+- **URL state**: Search, page, and limit synced to URL query params (`useSearchParams`) — shareable links, browser back/forward
+- **Complex models**: Event (relations + DateTime), Asset (photo upload, many fields), Movement (multiple relations, enum) all working through generic pages
+- **Cleanup**: Deleted 7 dead page files (`GenericCrud.jsx`, `Assets.jsx`, `Events.jsx`, `Warehouses.jsx`, `Movements.jsx`, `EventLocations.jsx`, `AssetCategories.jsx`) — removed ~580 lines
+- **Tests**: API smoke tests for simple models; test safety (no `clearData()`, track + cleanup own rows only)
+
+### Other
+
+- Added PostgreSQL backup script with auto-pruning
+- Moved search + column settings inside table card
+
 ## [0.6]
 
 - Added live search
