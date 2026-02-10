@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 import { X } from "lucide-react";
 
 const CLASS_COLORS = {
-  start: "bg-blue-600",
-  single: "bg-blue-600",
-  ongoing: "bg-blue-300",
-  end: "bg-blue-200",
+  start: "bg-teal-600",
+  single: "bg-teal-600",
+  ongoing: "bg-blue-300 dark:bg-blue-500",
+  end: "bg-amber-500",
 };
 
 const CLASS_LABELS = {

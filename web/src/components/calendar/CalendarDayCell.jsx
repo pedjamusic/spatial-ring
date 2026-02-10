@@ -1,17 +1,17 @@
 import { isToday, isInMonth } from "./calendarUtils";
 
 const PILL_STYLES = {
-  start: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
-  single: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
+  start: "bg-teal-100 text-teal-700 dark:bg-teal-900/40 dark:text-teal-300",
+  single: "bg-teal-100 text-teal-700 dark:bg-teal-900/40 dark:text-teal-300",
   ongoing: "bg-blue-50 text-blue-500 dark:bg-blue-900/20 dark:text-blue-400",
-  end: "bg-gray-100 text-gray-600 dark:bg-neutral-700/40 dark:text-neutral-400",
+  end: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300",
 };
 
 const INDICATOR_COLORS = {
-  start: "bg-blue-600",
-  single: "bg-blue-600",
-  ongoing: "bg-blue-300",
-  end: "bg-blue-200",
+  start: "bg-teal-600",
+  single: "bg-teal-600",
+  ongoing: "bg-blue-300 dark:bg-blue-500",
+  end: "bg-amber-500",
 };
 
 /**
@@ -61,17 +61,17 @@ export default function CalendarDayCell({
           <div className="mt-0.5 flex gap-0.5">
             {starts.length > 0 && (
               <span
-                className={`inline-block rounded-full bg-blue-600 ${starts.length > 1 ? "h-1 w-2" : "size-1"}`}
+                className={`inline-block rounded-full bg-teal-600 ${starts.length > 1 ? "h-1 w-2" : "size-1"}`}
               />
             )}
             {ongoing.length > 0 && (
               <span
-                className={`inline-block h-1 rounded-full bg-blue-300 ${ongoing.length > 1 ? "w-2.5" : "w-1.5"}`}
+                className={`inline-block h-1 rounded-full bg-blue-300 dark:bg-blue-500 ${ongoing.length > 1 ? "w-2.5" : "w-1.5"}`}
               />
             )}
             {ends.length > 0 && (
               <span
-                className={`inline-block rounded-full bg-blue-200 ${ends.length > 1 ? "h-1 w-2" : "size-1"}`}
+                className={`inline-block rounded-full bg-amber-500 ${ends.length > 1 ? "h-1 w-2" : "size-1"}`}
               />
             )}
           </div>
