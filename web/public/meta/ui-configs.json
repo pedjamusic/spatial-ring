@@ -104,6 +104,13 @@
       "label": "Location",
       "path": "location.name"
     },
+    "startsAt": {
+      "dateOnly": true
+    },
+    "endsAt": {
+      "dateOnly": true,
+      "showDuration": { "fromField": "startsAt" }
+    },
     "notes": {
       "widget": "textarea",
       "hideInTable": true

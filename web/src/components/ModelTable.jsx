@@ -109,6 +109,30 @@ export default function ModelTable({
                             row,
                           )
                       : row[field.name];
+
+                    // Date-only + optional duration display
+                    if (field.type === "DateTime" && cfg.dateOnly && raw) {
+                      const dateStr = new Date(raw).toLocaleDateString();
+                      if (cfg.showDuration) {
+                        const fromVal = row[cfg.showDuration.fromField];
+                        if (fromVal) {
+                          const ms = new Date(raw) - new Date(fromVal);
+                          const days = Math.round(ms / (1000 * 60 * 60 * 24));
+                          if (days > 0) {
+                            return (
+                              <>
+                                {dateStr}{" "}
+                                <span className="text-xs text-gray-400 dark:text-neutral-500">
+                                  ({days} {days === 1 ? "day" : "days"})
+                                </span>
+                              </>
+                            );
+                          }
+                        }
+                      }
+                      return dateStr;
+                    }
+
                     return formatFieldValue(raw, field); // existing helper for dates etc.
                   })()}
                 </Cell>
