@@ -5,6 +5,7 @@ import ColumnSettings from "../components/ColumnSettings";
 import SearchInput from "../components/SearchInput";
 import Pagination from "../components/Pagination";
 import { PageHeader } from "../components/layout/PageHeader";
+import { H1 } from "../components/typography/H1";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ViewToggle from "../components/calendar/ViewToggle";
 import CalendarNavigation from "../components/calendar/CalendarNavigation";
@@ -231,7 +232,7 @@ export default function GenericListPage({
 
   return (
     <div className="grid gap-y-4">
-      <PageHeader title={plural} />
+      <PageHeader />
 
       {error && (
         <div className="border border-red-300 bg-red-200 p-4 text-red-600">
@@ -239,16 +240,28 @@ export default function GenericListPage({
         </div>
       )}
 
-      {/* Toolbar: ViewToggle + Create button */}
+      {/* Title + ViewToggle + Create button */}
       <div className="flex items-center justify-between">
-        <div>
+        <div className="flex items-center gap-4">
+          <H1>{plural}</H1>
           {calendarEnabled && (
             <ViewToggle value={view} onChange={handleViewChange} />
           )}
         </div>
         <Link
           to="new"
-          className="shadow-2xs focus:outline-hidden inline-flex items-center gap-x-2 rounded-md border border-blue-600 bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 focus:bg-blue-800"
+          className="shadow-2xs focus:outline-hidden hidden items-center gap-x-2 rounded-md border border-blue-600 bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 focus:bg-blue-800 sm:inline-flex"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+          Create {singular}
+        </Link>
+      </div>
+
+      {/* Mobile fixed bottom Create button */}
+      <div className="fixed bottom-4 left-0 right-0 z-40 flex justify-center sm:hidden">
+        <Link
+          to="new"
+          className="shadow-lg focus:outline-hidden inline-flex items-center gap-x-2 rounded-full border border-blue-600 bg-blue-600 px-5 py-3 text-sm font-medium text-white hover:bg-blue-500 focus:bg-blue-800"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
           Create {singular}

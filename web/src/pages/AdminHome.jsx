@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { resource } from "@/lib/api";
 
+import { H1 } from "@/components/typography/H1";
 import { H2 } from "@/components/typography/H2";
 import { PageHeader } from "@/components/layout/PageHeader";
 
@@ -84,7 +85,8 @@ export default function AdminHome() {
 
   return (
     <>
-      <PageHeader title="Dashboard" />
+      <PageHeader />
+      <H1>Dashboard</H1>
 
       <div className="space-y-6">
         <H2>Overview</H2>

@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import ModelForm from "../components/ModelForm";
 import { PageHeader } from "../components/layout/PageHeader";
+import { H1 } from "../components/typography/H1";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { resource } from "../lib/api";
 import { config } from "../config";
@@ -101,7 +102,8 @@ export default function GenericFormPage({
 
   return (
     <div className="grid gap-y-4">
-      <PageHeader title={isEdit ? `Edit ${singular}` : `Create ${singular}`} />
+      <PageHeader />
+      <H1>{isEdit ? `Edit ${singular}` : `Create ${singular}`}</H1>
 
       {error && (
         <div className="border border-red-300 bg-red-200 p-4 text-red-600">
