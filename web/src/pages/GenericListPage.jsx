@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import ModelTable from "../components/ModelTable";
 import ColumnSettings from "../components/ColumnSettings";
 import SearchInput from "../components/SearchInput";
@@ -33,6 +33,7 @@ export default function GenericListPage({
   titles = {},
 }) {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const singular = titles.singular || modelName;
   const plural = titles.plural || `${modelName}s`;
 
@@ -41,11 +42,11 @@ export default function GenericListPage({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Pagination state
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(25);
+  // Pagination state — synced with URL search params
+  const page = Number(searchParams.get("page")) || 1;
+  const limit = Number(searchParams.get("limit")) || 25;
+  const search = searchParams.get("search") || "";
   const [totalPages, setTotalPages] = useState(0);
-  const [search, setSearch] = useState("");
 
   // uiConfig state + localStorage
   const storageKey = `${STORAGE_KEY_PREFIX}${modelName}`;
@@ -112,14 +113,22 @@ export default function GenericListPage({
 
   // Reset to page 1 when search changes
   const handleSearchChange = useCallback((val) => {
-    setSearch(val);
-    setPage(1);
-  }, []);
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      if (val) next.set("search", val); else next.delete("search");
+      next.set("page", "1");
+      return next;
+    });
+  }, [setSearchParams]);
 
   const handleLimitChange = useCallback((val) => {
-    setLimit(val);
-    setPage(1);
-  }, []);
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set("limit", String(val));
+      next.set("page", "1");
+      return next;
+    });
+  }, [setSearchParams]);
 
   const handleDelete = async (id) => {
     if (!confirm("Are you sure you want to delete this item?")) return;
@@ -187,7 +196,11 @@ export default function GenericListPage({
         page={page}
         totalPages={totalPages}
         limit={limit}
-        onPageChange={setPage}
+        onPageChange={(val) => setSearchParams((prev) => {
+          const next = new URLSearchParams(prev);
+          next.set("page", String(val));
+          return next;
+        })}
         onLimitChange={handleLimitChange}
       />
     </div>

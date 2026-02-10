@@ -66,19 +66,19 @@ From generic CRUD to list + form pages with server-side pagination.
 
 ## Phase 4: Migrate Remaining Models
 
-- [ ] Event (relations + DateTime)
-- [ ] Asset (photo upload, many fields, relations)
-- [ ] Movement (multiple relations, enum — likely NOT standard CRUD long-term; may become relational/automated for item transfers, maintenance signals, vendor tracking. Keep generic for now, dedicated UX later.)
-- Branches: `feature/migrate-event`, `feature/migrate-asset`, `feature/migrate-movement`
+- [x] Event (relations + DateTime)
+- [x] Asset (photo upload, many fields, relations)
+- [x] Movement (multiple relations, enum — likely NOT standard CRUD long-term; may become relational/automated for item transfers, maintenance signals, vendor tracking. Keep generic for now, dedicated UX later.)
+- Branches: `feature/migrate-event`, `feature/migrate-asset`, `feature/migrate-movement` — merged to main
 
 ---
 
 ## Phase 5: Cleanup
 
-- [ ] Delete `GenericCrud.jsx`
-- [ ] Delete dead page components (Assets.jsx, Events.jsx, Warehouses.jsx, etc.)
-- [ ] Persist search/page/limit in URL via `useSearchParams()`
-- Branch: `feature/cleanup-generic-crud`
+- [x] Delete `GenericCrud.jsx`
+- [x] Delete dead page components (Assets.jsx, Events.jsx, Warehouses.jsx, etc.)
+- [x] Persist search/page/limit in URL via `useSearchParams()`
+- Branch: `feature/cleanup-generic-crud` — merged to main
 
 ---
 
@@ -99,4 +99,11 @@ From generic CRUD to list + form pages with server-side pagination.
 | `api/src/routes/assets.js` | 0b | Paginated GET /, added GET /:id |
 | `api/src/routes/movements.js` | 0b | Paginated GET /, added GET /:id, removed hardcoded take: 50 |
 | `web/src/lib/api.js` | 0c | list() accepts { page, limit, search } params |
-| `web/src/pages/GenericCrud.jsx` | 0d | Unwrap { data, meta } envelope |
+| `web/src/pages/GenericCrud.jsx` | 0d / 5 | Unwrap { data, meta } envelope → **deleted** |
+| `web/src/pages/Assets.jsx` | 5 | **Deleted** — dead code |
+| `web/src/pages/Events.jsx` | 5 | **Deleted** — dead code |
+| `web/src/pages/Warehouses.jsx` | 5 | **Deleted** — dead code |
+| `web/src/pages/Movements.jsx` | 5 | **Deleted** — dead code |
+| `web/src/pages/EventLocations.jsx` | 5 | **Deleted** — dead code |
+| `web/src/pages/AssetCategories.jsx` | 5 | **Deleted** — dead code |
+| `web/src/pages/GenericListPage.jsx` | 5 | search/page/limit synced to URL via `useSearchParams()` |
