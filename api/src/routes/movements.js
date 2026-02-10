@@ -55,4 +55,30 @@ router.post('/', async (req, res) => {
   }
 })
 
+// PUT /api/movements/:id
+router.put('/:id', async (req, res) => {
+  try {
+    const { assetId, type, quantity, locationId, eventId, performedById, notes } = req.body
+    const movement = await prisma.movement.update({
+      where: { id: req.params.id },
+      data: { assetId, type, quantity: parseInt(quantity), locationId, eventId, performedById, notes }
+    })
+    res.json(movement)
+  } catch (error) {
+    res.status(400).json({ error: 'Failed to update movement' })
+  }
+})
+
+// DELETE /api/movements/:id
+router.delete('/:id', async (req, res) => {
+  try {
+    await prisma.movement.delete({
+      where: { id: req.params.id }
+    })
+    res.status(204).send()
+  } catch (error) {
+    res.status(400).json({ error: 'Failed to delete movement' })
+  }
+})
+
 export default router;

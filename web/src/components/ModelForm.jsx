@@ -95,12 +95,12 @@ export default function ModelForm({
       );
 
       const endpointMap = {
+        Asset: "assets",
         Warehouse: "warehouses",
         AssetCategory: "assetCategories",
         User: "users",
         Event: "events",
         EventLocation: "eventLocations",
-        // Add more mappings as needed
       };
 
       const optionsPromises = relationFields.map(async (field) => {
@@ -395,7 +395,7 @@ export default function ModelForm({
         label={label}
         type={inputType}
         required={required}
-        value={value}
+        value={inputType === "datetime-local" && value ? String(value).slice(0, 16) : value}
         onChange={(e) =>
           handleChange(
             field.name,

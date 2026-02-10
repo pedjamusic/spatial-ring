@@ -8,6 +8,7 @@ import eventsRouter from "./events.js";
 import movementsRouter from "./movements.js";
 import assetCategories from "./assetCategories.js";
 import eventLocations from "./eventLocations.js";
+import usersRouter from "./users.js";
 
 const router = express.Router();
 
@@ -18,5 +19,6 @@ router.use("/events", eventsRouter);
 router.use("/movements", movementsRouter);
 router.use("/assetCategories", assetCategories);
 router.use("/eventLocations", eventLocations);
+router.use("/users", usersRouter);
 
 export default router;

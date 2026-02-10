@@ -30,36 +30,37 @@ From generic CRUD to list + form pages with server-side pagination.
 ## Phase 1: Frontend Shared Components
 
 ### 1a. Pagination component
-- [ ] `web/src/components/Pagination.jsx`
-- Branch: `feature/pagination-component`
+- [x] `web/src/components/Pagination.jsx`
 
 ### 1b. SearchInput component
-- [ ] `web/src/components/SearchInput.jsx`
-- Branch: `feature/search-input`
+- [x] `web/src/components/SearchInput.jsx`
 
 ### 1c. GenericListPage
-- [ ] `web/src/pages/GenericListPage.jsx`
-- Branch: `feature/generic-list-page`
+- [x] `web/src/pages/GenericListPage.jsx`
 
 ### 1d. GenericFormPage
-- [ ] `web/src/pages/GenericFormPage.jsx`
-- Branch: `feature/generic-form-page`
+- [x] `web/src/pages/GenericFormPage.jsx`
+- Cancel button with dirty check, breadcrumb link above form
+
+- Branch: `feature/list-form-pages` — merged to main
 
 ---
 
 ## Phase 2: Routing Changes
 
-- [ ] Update `web/src/App.jsx` — nested routes: list / new / :id/edit
-- Branch: `feature/routing-nested`
+- [x] Update `web/src/App.jsx` — nested routes: list / new / :id/edit
+- Branch: `feature/list-form-pages` — merged to main
 
 ---
 
 ## Phase 3: Verify Simple Models
 
-- [ ] EventLocation — list + create + edit + delete
-- [ ] AssetCategory — list + create + edit + delete
-- [ ] Warehouse — list + create + edit + delete
-- Branch: `feature/migrate-simple-models`
+- [x] EventLocation — list + create + edit + delete
+- [x] AssetCategory — list + create + edit + delete
+- [x] Warehouse — list + create + edit + delete
+- [x] Pagination contract (limit, page, meta fields)
+- [x] Auth guard on all three endpoints
+- Branch: `feature/smoke-tests-simple-models` — merged to main
 
 ---
 
@@ -67,7 +68,7 @@ From generic CRUD to list + form pages with server-side pagination.
 
 - [ ] Event (relations + DateTime)
 - [ ] Asset (photo upload, many fields, relations)
-- [ ] Movement (multiple relations, enum)
+- [ ] Movement (multiple relations, enum — likely NOT standard CRUD long-term; may become relational/automated for item transfers, maintenance signals, vendor tracking. Keep generic for now, dedicated UX later.)
 - Branches: `feature/migrate-event`, `feature/migrate-asset`, `feature/migrate-movement`
 
 ---

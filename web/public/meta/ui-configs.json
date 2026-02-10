@@ -66,9 +66,9 @@
       "label": "Category",
       "path": "category.name"
     },
-    "warehouse": {
+    "restingLocation": {
       "label": "Warehouse",
-      "path": "warehouse.name"
+      "path": "restingLocation.name"
     },
     "notes": {
       "widget": "textarea",
@@ -118,19 +118,36 @@
   },
   "Movement": {
     "id": {
-      "hidden": true
+      "hidden": true,
+      "hideFromColumnSettings": true
+    },
+    "assetId": {
+      "hidden": true,
+      "hideFromColumnSettings": true
+    },
+    "eventId": {
+      "hidden": true,
+      "hideFromColumnSettings": true
+    },
+    "performedById": {
+      "hidden": true,
+      "hideFromColumnSettings": true
+    },
+    "locationId": {
+      "hidden": true,
+      "hideFromColumnSettings": true
     },
     "asset": {
       "label": "Asset",
       "path": "asset.name"
     },
-    "fromWarehouse": {
-      "label": "From",
-      "path": "fromWarehouse.name"
+    "event": {
+      "label": "Event",
+      "path": "event.name"
     },
-    "toWarehouse": {
-      "label": "To",
-      "path": "toWarehouse.name"
+    "performedBy": {
+      "label": "Performed By",
+      "path": "performedBy.name"
     },
     "notes": {
       "widget": "textarea",

@@ -45,9 +45,9 @@ router.get('/:id', async (req, res) => {
 // POST /api/events
 router.post('/', async (req, res) => {
   try {
-    const { name, locationId, startsAt, endsAt } = req.body
+    const { name, locationId, startsAt, endsAt, notes } = req.body
     const event = await prisma.event.create({
-      data: { name, locationId, startsAt: startsAt ? new Date(startsAt) : null, endsAt: endsAt ? new Date(endsAt) : null }
+      data: { name, locationId, startsAt: startsAt ? new Date(startsAt) : null, endsAt: endsAt ? new Date(endsAt) : null, notes }
     })
     res.status(201).json(event)
   } catch (error) {
@@ -58,10 +58,10 @@ router.post('/', async (req, res) => {
 // PUT /api/events/:id
 router.put('/:id', async (req, res) => {
   try {
-    const { name, locationId, startsAt, endsAt } = req.body
+    const { name, locationId, startsAt, endsAt, notes } = req.body
     const event = await prisma.event.update({
       where: { id: req.params.id },
-      data: { name, locationId, startsAt: startsAt ? new Date(startsAt) : null, endsAt: endsAt ? new Date(endsAt) : null }
+      data: { name, locationId, startsAt: startsAt ? new Date(startsAt) : null, endsAt: endsAt ? new Date(endsAt) : null, notes }
     })
     res.json(event)
   } catch (error) {

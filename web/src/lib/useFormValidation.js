@@ -67,7 +67,11 @@ export function useFormValidation(meta, uiConfig = {}) {
       let hasErrors = false;
 
       fields.forEach((field) => {
-        const error = validateField(field, formData[field.name]);
+        // For relation fields, the value is stored under the FK name (e.g. performedById)
+        const key = (field.kind === "object" && !field.isList)
+          ? (field.name.endsWith("Id") ? field.name : `${field.name}Id`)
+          : field.name;
+        const error = validateField(field, formData[key]);
         if (error) {
           errors[field.name] = error;
           hasErrors = true;
