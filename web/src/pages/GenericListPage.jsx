@@ -146,13 +146,8 @@ export default function GenericListPage({
         </div>
       )}
 
-      {/* Toolbar: search + create button */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <SearchInput
-          value={search}
-          onChange={handleSearchChange}
-          placeholder={`Search ${plural.toLowerCase()}...`}
-        />
+      {/* Create button - outside the card */}
+      <div className="flex justify-end">
         <Link
           to="new"
           className="shadow-2xs focus:outline-hidden inline-flex items-center gap-x-2 rounded-md border border-blue-600 bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 focus:bg-blue-800"
@@ -162,17 +157,21 @@ export default function GenericListPage({
         </Link>
       </div>
 
-      {/* Column settings + table */}
-      <div className="flex items-center justify-end">
-        <ColumnSettings
-          meta={meta}
-          config={uiConfig}
-          onToggle={handleToggleColumnPref}
-          onReset={handleResetPrefs}
-        />
-      </div>
-
-      <div className="w-full min-w-0">
+      {/* Card: toolbar + table */}
+      <div className="not-dark:shadow rounded-lg border border-gray-300 bg-white dark:border-neutral-700/50 dark:bg-neutral-800/50">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-300 px-6 py-4 dark:border-neutral-700/50">
+          <SearchInput
+            value={search}
+            onChange={handleSearchChange}
+            placeholder={`Search ${plural.toLowerCase()}...`}
+          />
+          <ColumnSettings
+            meta={meta}
+            config={uiConfig}
+            onToggle={handleToggleColumnPref}
+            onReset={handleResetPrefs}
+          />
+        </div>
         <ModelTable
           meta={meta}
           data={data}

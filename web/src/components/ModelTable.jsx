@@ -51,7 +51,7 @@ export default function ModelTable({
   const hasPhoto = modelName === "Asset"; // this makes AssetAvatar appear only on Asset(s) page all assets table
 
   return (
-    <div className="not-dark:shadow flex flex-col overflow-x-auto rounded-lg border border-gray-300 bg-white px-6 py-4 dark:border-neutral-700/50 dark:bg-neutral-800/50">
+    <div className="flex flex-col overflow-x-auto px-6 py-4">
       {/* <div className="inline-block min-w-full align-middle dark:border-neutral-700"> */}
       {/* <div className="border border-gray-200 rounded-lg overflow-hidden dark:border-neutral-700"> */}
       {/* <div className="overflow-x-auto"> */}
@@ -137,7 +137,5 @@ export default function ModelTable({
         </TableBody>
       </Table>
     </div>
-    // </div>
-    // </div>
   );
 }
