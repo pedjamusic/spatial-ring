@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from "react";
 import {
   Button,
   Cell,
@@ -9,6 +10,51 @@ import {
 } from "react-aria-components";
 import { getFieldLabel, formatFieldValue } from "../lib/fieldMapping.js";
 import AssetAvatar from "./AssetAvatar";
+
+function ActionMenu({ onEdit, onDelete }) {
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handleClick = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [open]);
+
+  return (
+    <div ref={menuRef} className="relative inline-block sm:hidden">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="inline-flex items-center justify-center rounded-md border border-gray-200 bg-white p-2 text-gray-500 hover:bg-gray-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800"
+        aria-label="Actions"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+      </button>
+      {open && (
+        <div className="absolute right-0 z-50 mt-1 w-32 overflow-hidden rounded-xl border border-gray-200 bg-gray-50/50 shadow-xl backdrop-blur-sm dark:border-neutral-700 dark:bg-neutral-800/50">
+          <button
+            type="button"
+            onClick={() => { setOpen(false); onEdit(); }}
+            className="block w-full px-4 py-2 text-left text-sm text-blue-600 hover:bg-gray-300/50 dark:text-blue-400 dark:hover:bg-neutral-600/25"
+          >
+            Edit
+          </button>
+          <button
+            type="button"
+            onClick={() => { setOpen(false); onDelete(); }}
+            className="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-300/50 dark:text-red-400 dark:hover:bg-neutral-600/25"
+          >
+            Delete
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function ModelTable({
   meta,
@@ -138,8 +184,8 @@ export default function ModelTable({
                 </Cell>
               ))}
               <Cell className="whitespace-nowrap py-2 text-end text-sm font-medium">
-                <div className="shadow-2xs inline-flex rounded-md">
-                  {/* Action buttons */}
+                {/* Desktop: inline buttons */}
+                <div className="hidden shadow-2xs sm:inline-flex sm:rounded-md">
                   <Button
                     onClick={() => onEdit(row)}
                     type="button"
@@ -155,6 +201,11 @@ export default function ModelTable({
                     Delete
                   </Button>
                 </div>
+                {/* Mobile: kebab menu */}
+                <ActionMenu
+                  onEdit={() => onEdit(row)}
+                  onDelete={() => onDelete(row.id)}
+                />
               </Cell>
             </Row>
           ))}
