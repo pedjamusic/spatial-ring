@@ -105,11 +105,14 @@
       "path": "location.name"
     },
     "startsAt": {
-      "dateOnly": true
+      "dateOnly": true,
+      "widget": "dateRangePicker",
+      "rangeEnd": "endsAt"
     },
     "endsAt": {
       "dateOnly": true,
-      "showDuration": { "fromField": "startsAt" }
+      "showDuration": { "fromField": "startsAt" },
+      "pairedWith": "startsAt"
     },
     "notes": {
       "widget": "textarea",

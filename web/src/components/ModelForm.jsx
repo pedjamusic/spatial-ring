@@ -9,6 +9,7 @@ import { authFetch } from "../lib/api";
 import { useFormValidation } from "../lib/useFormValidation";
 import ValidatedFormField from "./ValidatedFormField";
 import PhotoUpload from "./PhotoUpload";
+import DateRangePicker from "./DateRangePicker";
 
 import {
   Button,
@@ -146,7 +147,8 @@ export default function ModelForm({
   // --- RENDER LOGIC ---
 
   const formFields = meta.fields.filter(
-    (field) => !isFieldHidden(field, uiConfig),
+    (field) =>
+      !isFieldHidden(field, uiConfig) && !uiConfig[field.name]?.pairedWith,
   );
 
   // EDIT: submit handler (Create/Update is decided by presence of initialData.id)
@@ -252,7 +254,23 @@ export default function ModelForm({
       );
     }
 
-    // DIVINE REALIZATION - appearance: none resets <select> to look same-ish across browsers + use tailwindcss-forms (D'oh!)
+    // Date range picker widget (e.g. Event startsAt + endsAt)
+    if (uiConfig[field.name]?.widget === "dateRangePicker") {
+      const rangeEndField = uiConfig[field.name].rangeEnd;
+      const fieldLabel = `${getFieldLabel(field, uiConfig)} / ${getFieldLabel({ name: rangeEndField }, uiConfig)}`;
+      return (
+        <DateRangePicker
+          key={field.name}
+          label={fieldLabel}
+          startValue={formData[field.name] || ""}
+          endValue={formData[rangeEndField] || ""}
+          onChangeStart={(v) => setFormData((prev) => ({ ...prev, [field.name]: v }))}
+          onChangeEnd={(v) => setFormData((prev) => ({ ...prev, [rangeEndField]: v }))}
+          required={required}
+        />
+      );
+    }
+
     // Handle relation fields (dropdowns)
     if (field.kind === "object" && !field.isList) {
       const options = relationOptions[field.name] || [];
