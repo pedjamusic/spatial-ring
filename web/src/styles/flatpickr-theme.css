@@ -248,6 +248,8 @@ span.flatpickr-weekday {
   background: var(--color-blue-600);
   color: var(--color-white);
   border-color: var(--color-blue-600);
+  box-shadow: 0 10px 15px -3px color-mix(in oklch, var(--color-blue-600) 50%, transparent),
+              0 4px 6px -4px color-mix(in oklch, var(--color-blue-600) 50%, transparent);
 }
 
 .flatpickr-footer .fp-apply:hover {

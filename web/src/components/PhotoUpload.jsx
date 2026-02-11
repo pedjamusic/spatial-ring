@@ -140,7 +140,7 @@ export default function PhotoUpload({
           <Button
             onPress={remove}
             isDisabled={uploading}
-            className="focus:outline-hidden absolute -right-2 -top-2 rounded-full bg-red-600 p-1 text-white hover:cursor-pointer hover:bg-red-700"
+            className="focus:outline-hidden absolute -right-2 -top-2 rounded-full bg-red-600 p-1 text-white shadow-lg shadow-red-600/50 hover:cursor-pointer hover:bg-red-700"
             aria-label="Delete photo"
           >
             <X strokeWidth={1} size={16} />

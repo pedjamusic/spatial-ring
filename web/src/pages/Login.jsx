@@ -176,7 +176,7 @@ export default function Login() {
               type="submit"
               isDisabled={loading}
               disabled={loading}
-              className="not-dark:shadow focus:outline-hidden -ms-px w-full items-center gap-x-2 rounded-xl border border-blue-600 bg-blue-600 px-4 py-3 text-sm font-medium text-white hover:cursor-pointer hover:bg-blue-500 focus:z-10 focus:bg-blue-800 disabled:pointer-events-none disabled:border-gray-500 disabled:bg-gray-600 disabled:text-gray-300 disabled:opacity-50"
+              className="shadow-lg shadow-blue-600/50 focus:outline-hidden -ms-px w-full items-center gap-x-2 rounded-xl border border-blue-600 bg-blue-600 px-4 py-3 text-sm font-medium text-white hover:cursor-pointer hover:bg-blue-500 focus:z-10 focus:bg-blue-800 disabled:pointer-events-none disabled:border-gray-500 disabled:bg-gray-600 disabled:text-gray-300 disabled:opacity-50"
             >
               Sign in
             </Button>
