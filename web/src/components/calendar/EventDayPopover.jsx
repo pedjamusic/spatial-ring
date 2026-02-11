@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { X } from "lucide-react";
 
@@ -24,6 +24,7 @@ export default function EventDayPopover({
   onClose,
 }) {
   const ref = useRef(null);
+  const [position, setPosition] = useState(null);
 
   useEffect(() => {
     const handleKey = (e) => {
@@ -40,21 +41,36 @@ export default function EventDayPopover({
     };
   }, [onClose]);
 
-  const style = {};
-  if (triggerRect) {
+  // Measure actual popover height after render to position accurately
+  useLayoutEffect(() => {
+    if (!triggerRect || !ref.current) return;
     const popoverWidth = 280;
+    const popoverHeight = ref.current.offsetHeight;
+    const gap = 6;
+
     let left = triggerRect.left + triggerRect.width / 2 - popoverWidth / 2;
     left = Math.max(8, Math.min(left, window.innerWidth - popoverWidth - 8));
-    let top = triggerRect.bottom + 6;
-    if (top + 300 > window.innerHeight) {
-      top = triggerRect.top - 6 - 200;
+
+    let top = triggerRect.bottom + gap;
+    if (top + popoverHeight > window.innerHeight) {
+      top = triggerRect.top - gap - popoverHeight;
     }
-    style.position = "fixed";
-    style.left = left;
-    style.top = top;
-    style.width = popoverWidth;
-    style.zIndex = 50;
-  }
+    // Clamp to viewport top
+    top = Math.max(8, top);
+
+    setPosition({ left, top, width: popoverWidth });
+  }, [triggerRect, entries]);
+
+  const style = triggerRect
+    ? {
+        position: "fixed",
+        left: position?.left ?? -9999,
+        top: position?.top ?? -9999,
+        width: position?.width ?? 280,
+        zIndex: 50,
+        visibility: position ? "visible" : "hidden",
+      }
+    : {};
 
   const formatted = date.toLocaleDateString(undefined, {
     weekday: "long",
