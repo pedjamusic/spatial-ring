@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FileTrigger, Button } from "react-aria-components";
 import { X } from "lucide-react";
 import { config } from "../config";
+import { toast } from "../lib/toast";
 
 const API_BASE = config.apiUrl ? `${config.apiUrl}/api` : "/api";
 
@@ -70,6 +71,7 @@ export default function PhotoUpload({
       if (previewUrl) URL.revokeObjectURL(previewUrl);
       setPreviewUrl(URL.createObjectURL(file));
       setFilename(file.name); // triggers "Change photo" button text
+      toast.success("Photo selected");
       return;
     }
 
@@ -79,8 +81,10 @@ export default function PhotoUpload({
       const data = await uploadNow(file);
       setFilename(data.filename);
       onUploaded?.(data);
+      toast.success("Photo uploaded");
     } catch (e) {
       setError(e.message || "Upload failed");
+      toast.error(e.message || "Upload failed");
     } finally {
       setUploading(false);
       setProgress(0);
@@ -98,6 +102,7 @@ export default function PhotoUpload({
       setFilename(null);
       onPendingFile?.(null);
       onDeleted?.();
+      toast.info("Photo removed");
       return;
     }
 
@@ -112,8 +117,10 @@ export default function PhotoUpload({
 
       setFilename(null);
       onDeleted?.();
+      toast.info("Photo deleted");
     } catch (e) {
       setError(e.message || "Delete failed");
+      toast.error(e.message || "Delete failed");
     } finally {
       setUploading(false);
     }

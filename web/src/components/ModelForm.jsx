@@ -10,6 +10,7 @@ import { useFormValidation } from "../lib/useFormValidation";
 import ValidatedFormField from "./ValidatedFormField";
 import PhotoUpload from "./PhotoUpload";
 import DateRangePicker from "./DateRangePicker";
+import { toast } from "../lib/toast";
 
 import {
   Button,
@@ -31,7 +32,6 @@ export default function ModelForm({
   const [formData, setFormData] = useState(initialData);
   const [relationOptions, setRelationOptions] = useState({});
   const [loading, setLoading] = useState(false);
-  const [formError, setFormError] = useState("");
   const [pendingPhotoFile, setPendingPhotoFile] = useState(null);
 
   // Initialize validation hook
@@ -129,9 +129,7 @@ export default function ModelForm({
         } catch (error) {
           if (error.name === "AbortError") return { field: field.name, options: [] };
           console.error(`⚠️ Failed to load options for ${field.name}:`, error);
-          setFormError(
-            `⚠️ Failed to load ${field.relation.to}: ${error.message}`,
-          );
+          toast.error(`Failed to load ${field.relation.to}: ${error.message}`);
           return { field: field.name, options: [] };
         }
       });
@@ -162,7 +160,6 @@ export default function ModelForm({
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setFormError("");
 
     // Mark all fields as touched
     touchAllFields(formFields);
@@ -172,7 +169,7 @@ export default function ModelForm({
 
     if (!isValid) {
       setLoading(false);
-      setFormError("Please correct the errors below");
+      toast.warning("Please correct the errors below");
       console.log("❌ Form validation failed:", errors);
 
       // Focus first invalid field
@@ -191,7 +188,7 @@ export default function ModelForm({
       setPendingPhotoFile(null);
       resetValidation();
     } catch (error) {
-      setFormError(error?.message || "⚠️ Failed to submit form");
+      toast.error(error?.message || "Failed to submit form");
     } finally {
       setLoading(false);
     }
@@ -225,7 +222,6 @@ export default function ModelForm({
       if (!confirm("You have unsaved changes. Discard them?")) return;
     }
 
-    setFormError("");
     setFormData(initialData ?? {}); // critical: reset to passed defaults, not {}
     onCancel?.(); // let container route back / close dialog
   };
@@ -439,13 +435,6 @@ export default function ModelForm({
 
   return (
     <>
-      {/* Form error notification, TODO: move to toast */}
-      {formError && (
-        <div className="mb-4 border border-red-300 bg-red-200 p-3 text-red-600">
-          {formError}
-        </div>
-      )}
-
       <Form
         onSubmit={handleSubmit}
         className="not-dark:shadow grid grid-cols-1 gap-4 rounded-xl border border-gray-300 bg-white px-6 py-4 sm:grid-cols-2 dark:border-neutral-700/50 dark:bg-neutral-800/50"

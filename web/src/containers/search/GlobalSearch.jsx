@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { GlobalSearch } from "@/components/search/GlobalSearch";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { resource } from "@/lib/api";
+import { toast } from "@/lib/toast";
 
 const MIN_SEARCH_LENGTH = 3;
 const RESULTS_PER_CATEGORY = 5;
@@ -48,6 +49,7 @@ export function GlobalSearchContainer() {
         }
       } catch (error) {
         console.error("Failed to fetch search ", error);
+        toast.error("Failed to load search data");
       } finally {
         if (active) {
           setLoading(false);

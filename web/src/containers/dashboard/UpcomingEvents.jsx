@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { resource } from "@/lib/api";
+import { toast } from "@/lib/toast";
 import EventCardGrid from "@/components/cards/EventCardGrid";
 
 export function UpcomingEventsContainer() {
@@ -42,6 +43,7 @@ export function UpcomingEventsContainer() {
         if (active) {
           console.error("Failed to fetch upcoming events:", err);
           setError(err.message);
+          toast.error("Failed to load upcoming events");
         }
       } finally {
         if (active) {

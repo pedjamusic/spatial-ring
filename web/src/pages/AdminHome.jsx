@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { resource } from "@/lib/api";
+import { toast } from "@/lib/toast";
 
 import { H1 } from "@/components/typography/H1";
 import { H2 } from "@/components/typography/H2";
@@ -57,6 +58,7 @@ export default function AdminHome() {
         if (active) {
           console.error("Failed to fetch dashboard stats:", err);
           setError(err.message);
+          toast.error("Failed to load dashboard");
         }
       } finally {
         if (active) {
