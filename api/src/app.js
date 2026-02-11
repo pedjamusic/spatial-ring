@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -47,8 +48,17 @@ app.use(
   }),
 );
 
+// Rate limiting for auth routes
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 10,
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
+  message: { error: "Too many attempts, please try again later" },
+});
+
 // Public routes
-app.use("/auth", authRouter);
+app.use("/auth", authLimiter, authRouter);
 app.use("/api/meta", metaRouter);
 
 // Protected routes

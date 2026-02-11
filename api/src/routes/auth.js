@@ -10,12 +10,31 @@ if (!process.env.JWT_SECRET) {
 const JWT_SECRET = process.env.JWT_SECRET
 const router = express.Router()
 
+// Pre-computed dummy hash for timing attack prevention
+const DUMMY_HASH = bcrypt.hashSync('dummy', 12)
+
+function validateAuthInput(email, password) {
+  if (!email || typeof email !== 'string' || email.length > 255) {
+    return 'Invalid input'
+  }
+  if (!password || typeof password !== 'string' || password.length < 4 || password.length > 128) {
+    return 'Invalid input'
+  }
+  return null
+}
+
 router.post('/register', async (req, res) => {
   try {
     const { name, email, password } = req.body
+
+    const validationError = validateAuthInput(email, password)
+    if (validationError) {
+      return res.status(400).json({ error: validationError })
+    }
+
     const existingUser = await prisma.user.findUnique({ where: { email } })
     if (existingUser) {
-      return res.status(400).json({ error: 'User already exists' })
+      return res.status(400).json({ error: 'Registration failed' })
     }
 
     const saltRounds = parseInt(process.env.BCRYPT_COST || '12')
@@ -39,9 +58,16 @@ router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body
 
+    const validationError = validateAuthInput(email, password)
+    if (validationError) {
+      return res.status(400).json({ error: validationError })
+    }
+
     const user = await prisma.user.findUnique({ where: { email } })
 
     if (!user) {
+      // Run dummy bcrypt compare to prevent timing attacks
+      await bcrypt.compare(password, DUMMY_HASH)
       return res.status(401).json({ error: 'Invalid credentials' })
     }
 

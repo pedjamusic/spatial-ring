@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.8.1] - 2026-02-11
+
+### Request Race Condition Fixes
+
+Added `AbortController` to all data-fetching effects that re-fire on parameter changes, preventing out-of-order responses from rendering stale data.
+
+- **API layer**: `makeRequest`, `resource().list()`, `resource().get()`, and `authFetch` now accept an optional `signal` for request cancellation
+- **GenericListPage**: Aborts in-flight requests on search, pagination, or view changes — the highest-impact fix
+- **useCalendarEvents**: Aborts when rapidly navigating months/years
+- **GenericFormPage**: Upgraded from `active` flag to `AbortController` for real HTTP cancellation
+- **ModelForm**: Relation dropdown fetches abort on meta change or unmount
+- Mount-once components (`AdminHome`, `GlobalSearch`, `App`) retain their existing `active` flag pattern — no race risk with static deps
+
 ## [0.8] - 2026-02-10
 
 ### Date Range Picker

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { setToken } from "../lib/auth";
+import { login } from "../lib/auth";
 import { toast } from "../lib/toast";
 import { useFieldValidation } from "../lib/useFieldValidation";
 import { Form, TextField, Button } from "react-aria-components";
@@ -25,29 +25,26 @@ export default function Login() {
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(value)) {
-      setLoading(true);
       return {
         state: "invalid",
         message: "Please enter a valid email address",
       };
     }
-    return { state: "valid", message: "Looks good!" };
+    return { state: "valid", message: "" };
   };
 
   // Password validation function
   const validatePassword = (value) => {
     if (!value) {
-      setLoading(true);
       return { state: "invalid", message: "Password is required" };
     }
     if (value.length < 4) {
-      setLoading(true);
       return {
         state: "invalid",
         message: "Password must be at least 4 characters",
       };
     }
-    return { state: "valid", message: "Looks good!" };
+    return { state: "valid", message: "" };
   };
 
   // Validation hooks
@@ -101,30 +98,19 @@ export default function Login() {
 
     // Don't submit if validation fails
     if (emailVal.state === "invalid" || passwordVal.state === "invalid") {
+      setLoading(false);
       return;
     }
 
     try {
-      const res = await fetch("/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        const msg = data?.error || "Login failed";
-        setLoading(true);
-        toast.error(msg);
-        throw new Error(msg);
-      }
-
-      const data = await res.json();
-      setToken(data.token);
+      await login({ email, password });
       toast.success("Successfully logged in!");
       navigate(from, { replace: true });
     } catch (err) {
-      setError(err.message || "Unexpected error");
+      const msg = err.message || "Unexpected error";
+      setError(msg);
+      toast.error(msg);
+      setLoading(false);
     }
   };
 
@@ -177,7 +163,12 @@ export default function Login() {
           </TextField>
 
           {error && (
-            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+            <p
+              role="alert"
+              className="text-sm text-red-600 dark:text-red-400"
+            >
+              {error}
+            </p>
           )}
 
           <div>
