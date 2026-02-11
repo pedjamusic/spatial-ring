@@ -84,7 +84,7 @@ export function GlobalSearchContainer() {
         id: `asset-${a.id}`,
         label: a.name || a.sku || `Asset #${a.id}`,
         model: "Asset",
-        href: `/admin/assets`, // Single word: correct
+        href: `/admin/assets/${a.id}/edit`,
       }));
 
     const matchedCategories = allData.categories
@@ -94,7 +94,7 @@ export function GlobalSearchContainer() {
         id: `category-${c.id}`,
         label: c.name || `Category #${c.id}`,
         model: "Category",
-        href: `/admin/assetCategories`, // FIXED: camelCase to match resources.json
+        href: `/admin/assetCategories/${c.id}/edit`,
       }));
 
     const matchedWarehouses = allData.warehouses
@@ -104,7 +104,7 @@ export function GlobalSearchContainer() {
         id: `warehouse-${w.id}`,
         label: w.name || `Warehouse #${w.id}`,
         model: "Warehouse",
-        href: `/admin/warehouses`,
+        href: `/admin/warehouses/${w.id}/edit`,
       }));
 
     const matchedEvents = allData.events
@@ -114,7 +114,7 @@ export function GlobalSearchContainer() {
         id: `event-${e.id}`,
         label: e.name || `Event #${e.id}`,
         model: "Event",
-        href: `/admin/events`,
+        href: `/admin/events/${e.id}/edit`,
       }));
 
     const matchedLocations = allData.locations
@@ -124,7 +124,7 @@ export function GlobalSearchContainer() {
         id: `location-${l.id}`,
         label: l.name || `Location #${l.id}`,
         model: "Location",
-        href: `/admin/eventLocations`, // FIXED: camelCase to match resources.json
+        href: `/admin/eventLocations/${l.id}/edit`,
       }));
 
     return [
