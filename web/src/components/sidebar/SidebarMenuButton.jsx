@@ -26,7 +26,7 @@ export function SidebarMenuButton({
   const buttonContent = (
     <Link
       to={to}
-      className={`sidebar-menu-button inline-flex items-center gap-2 rounded-xl p-1 text-gray-700 hover:bg-gray-200 dark:text-gray-100/75 dark:hover:bg-neutral-700/50 ${active ? "sidebar-menu-button-active" : ""} ${isFocusVisible ? "focus-visible" : ""} ${shouldCollapse ? "w-full justify-center" : ""} ${className} `}
+      className={`sidebar-menu-button inline-flex items-center gap-2 rounded-xl p-2 text-gray-700 hover:bg-gray-200 dark:text-gray-100/75 dark:hover:bg-neutral-700/50 ${active ? "sidebar-menu-button-active" : ""} ${isFocusVisible ? "focus-visible" : ""} ${shouldCollapse ? "w-full justify-center" : ""} ${className} `}
       aria-current={active ? "page" : undefined}
       onClick={handleClick}
       {...focusProps}
@@ -35,13 +35,13 @@ export function SidebarMenuButton({
         <Icon
           className="sidebar-icon"
           aria-hidden="true"
-          size={!shouldCollapse ? 16 : 24}
-          strokeWidth={!shouldCollapse ? 1 : 1.5}
+          // size={!shouldCollapse ? 16 : 24}
+          size={24}
+          // strokeWidth={!shouldCollapse ? 1 : 1.5}
+          strokeWidth={1.5}
         />
       )}
-      {!shouldCollapse && (
-        <span className="sidebar-label">{children}</span>
-      )}
+      {!shouldCollapse && <span className="sidebar-label">{children}</span>}
     </Link>
   );
 
