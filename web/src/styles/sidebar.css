@@ -2,8 +2,6 @@
 .sidebar {
   height: 100vh;
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  background-color: var(--color-background);
-  border-right: 1px solid var(--color-border);
   flex-shrink: 0;
 }
 
@@ -12,44 +10,42 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  padding: 0 0.5rem;
 }
 
 /* Sidebar header row — match PageHeader height */
 .sidebar-header-row {
   height: 58px;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid light-dark(#e5e7eb, #1f2937);
 }
 
-/* Desktop sidebar (≥ 1024px) — sticky inline */
-.sidebar-desktop {
+/* ── Non-mobile (≥768px): inline sticky sidebar ── */
+.sidebar-inline {
   position: sticky;
   top: 0;
 }
 
-.sidebar-desktop.sidebar-expanded {
-  width: 16rem;
+.sidebar-inline.sidebar-expanded {
+  width: 13rem;
 }
 
-.sidebar-desktop.sidebar-collapsed {
+.sidebar-inline.sidebar-collapsed {
   width: 4rem;
 }
 
-/* Mobile sidebar (< 1024px) — always visible as icon-only */
-.sidebar-mobile-inline {
-  position: sticky;
-  top: 0;
-  width: 4rem;
-  z-index: 10;
-}
-
-/* Mobile overlay open — expand over content */
-.sidebar-mobile-inline.sidebar-overlay-open {
+/* ── Mobile (<768px): fixed overlay sidebar ── */
+.sidebar-mobile {
   position: fixed;
-  top: 0;
   left: 0;
-  bottom: 0;
-  width: 16rem;
+  top: 0;
   z-index: 50;
+  width: 0;
+  overflow: hidden;
+  background-color: light-dark(white, #171717);
+}
+
+.sidebar-mobile.sidebar-overlay-open {
+  width: 16rem;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
@@ -62,37 +58,26 @@
   backdrop-filter: blur(2px);
 }
 
-/* Hide labels and text when collapsed */
-.sidebar-collapsed:not(.sidebar-overlay-open) .sidebar-label {
+/* Hide labels and text when collapsed (non-mobile only) */
+.sidebar-inline.sidebar-collapsed .sidebar-label {
   opacity: 0;
   width: 0;
   overflow: hidden;
   white-space: nowrap;
 }
 
-/* Center icons when collapsed */
-.sidebar-collapsed:not(.sidebar-overlay-open) .sidebar-menu-button {
+/* Center icons when collapsed (non-mobile only) */
+.sidebar-inline.sidebar-collapsed .sidebar-menu-button {
   justify-content: center;
   padding-left: 0.5rem;
   padding-right: 0.5rem;
 }
 
-/* Hide group labels when collapsed */
-.sidebar-collapsed:not(.sidebar-overlay-open) .sidebar-group-label {
+/* Hide group labels when collapsed (non-mobile only) */
+.sidebar-inline.sidebar-collapsed .sidebar-group-label {
   opacity: 0;
   height: 0;
   overflow: hidden;
-}
-
-/* Show labels when overlay is open on mobile */
-.sidebar-overlay-open .sidebar-label {
-  opacity: 1;
-  width: auto;
-}
-
-.sidebar-overlay-open .sidebar-group-label {
-  opacity: 1;
-  height: auto;
 }
 
 /* Smooth transitions for content */

@@ -11,7 +11,7 @@
     @slot;
   }
 }
-/* @import "./sidebar.css"; */
+@import "./sidebar.css";
 
 :root {
   color-scheme: light dark;

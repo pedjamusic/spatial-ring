@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import { GlobalSearchContainer } from "@/containers/search/GlobalSearch";
+import { BurgerMenu } from "@/components/sidebar/BurgerMenu";
+import { useSidebar } from "@/components/sidebar/useSidebar";
 
 import logoTransparent from "../../assets/Logo transparent.png";
 
@@ -7,10 +9,15 @@ export function PageHeader({
   showSearch = true,
   className = "",
 }) {
+  const { isMobile } = useSidebar();
+
   return (
     <div
       className={`page-header mb-6 flex items-center gap-4 border-b border-gray-200 pb-4 dark:border-gray-800 ${className}`}
     >
+      {/* Burger menu on mobile only (sidebar is fully hidden) */}
+      {isMobile && <BurgerMenu />}
+
       {/* Left: Logo */}
       <Link to="/admin" className="flex-shrink-0">
         <img

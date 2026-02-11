@@ -261,7 +261,7 @@ export default function GenericListPage({
       </div>
 
       {/* Mobile fixed bottom Create button */}
-      <div className="fixed bottom-4 left-0 right-0 z-40 flex justify-center sm:hidden">
+      <div className="fixed bottom-4 left-0 right-0 z-30 flex justify-center sm:hidden">
         <Link
           to="new"
           className="shadow-glow shadow-blue-600/50 focus:outline-hidden inline-flex items-center gap-x-2 rounded-full border border-blue-600 bg-blue-600 px-5 py-3 text-sm font-medium text-white hover:bg-blue-500 focus:bg-blue-800"

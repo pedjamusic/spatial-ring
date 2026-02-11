@@ -4,7 +4,7 @@ import { useSidebar } from "./useSidebar";
 export function Sidebar({ children, side = "left", className = "" }) {
   const { isMobile, isCollapsed, isOverlayOpen, closeOverlay } = useSidebar();
 
-  // Close overlay on ESC key
+  // Close overlay on ESC key (mobile only)
   useEffect(() => {
     if (!isOverlayOpen) return;
     const handleKeyDown = (e) => {
@@ -16,8 +16,8 @@ export function Sidebar({ children, side = "left", className = "" }) {
 
   const sidebarClasses = [
     "sidebar",
-    isMobile ? "sidebar-mobile-inline" : "sidebar-desktop",
-    isCollapsed ? "sidebar-collapsed" : "sidebar-expanded",
+    isMobile ? "sidebar-mobile" : "sidebar-inline",
+    !isMobile && (isCollapsed ? "sidebar-collapsed" : "sidebar-expanded"),
     isOverlayOpen ? "sidebar-overlay-open" : "",
     className,
   ]
@@ -26,7 +26,6 @@ export function Sidebar({ children, side = "left", className = "" }) {
 
   return (
     <>
-      {/* Backdrop for mobile overlay */}
       {isMobile && isOverlayOpen && (
         <div className="sidebar-backdrop" onClick={closeOverlay} />
       )}

@@ -32,7 +32,7 @@ import {
 } from "lucide-react";
 
 export function AppSidebar() {
-  const { shouldHideLabels } = useSidebar();
+  const { shouldHideLabels, isMobile } = useSidebar();
   const { resources, loading } = useCrudResources();
   const location = useLocation();
 
@@ -41,7 +41,7 @@ export function AppSidebar() {
       {/* Sidebar Header with burger toggle */}
       <SidebarHeader>
         <div className="sidebar-header-row flex items-center justify-start pl-2">
-          <BurgerMenu />
+          {!isMobile && <BurgerMenu />}
         </div>
       </SidebarHeader>
 

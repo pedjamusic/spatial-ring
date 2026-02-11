@@ -2,21 +2,33 @@
 import { useState, useEffect, useCallback } from "react";
 import { SidebarContext } from "./SidebarContext";
 
+const BREAKPOINT_MOBILE = 768;
+const BREAKPOINT_LARGE = 1280;
+
 export function SidebarProvider({ children }) {
-  const [isMobile, setIsMobile] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isOverlayOpen, setIsOverlayOpen] = useState(false);
+  const [viewport, setViewport] = useState("large"); // "mobile" | "medium" | "large"
+  const [isExpanded, setIsExpanded] = useState(true); // non-mobile: expanded vs collapsed (4rem)
+  const [isOverlayOpen, setIsOverlayOpen] = useState(false); // mobile: overlay open
 
   useEffect(() => {
     const checkScreenSize = () => {
-      const mobile = window.innerWidth < 1024;
-      setIsMobile((prev) => {
-        if (prev !== mobile) {
-          // Reset states on viewport change
-          setIsCollapsed(mobile ? true : false);
+      const width = window.innerWidth;
+      let newViewport;
+      if (width < BREAKPOINT_MOBILE) {
+        newViewport = "mobile";
+      } else if (width < BREAKPOINT_LARGE) {
+        newViewport = "medium";
+      } else {
+        newViewport = "large";
+      }
+
+      setViewport((prev) => {
+        if (prev !== newViewport) {
           setIsOverlayOpen(false);
+          // Large: expanded by default, medium: collapsed by default
+          setIsExpanded(newViewport === "large");
         }
-        return mobile;
+        return newViewport;
       });
     };
 
@@ -26,26 +38,31 @@ export function SidebarProvider({ children }) {
   }, []);
 
   const toggleSidebar = useCallback(() => {
-    if (isMobile) {
+    if (viewport === "mobile") {
       setIsOverlayOpen((prev) => !prev);
     } else {
-      setIsCollapsed((prev) => !prev);
+      // Medium and large: toggle expanded/collapsed (4rem strip stays)
+      setIsExpanded((prev) => !prev);
     }
-  }, [isMobile]);
+  }, [viewport]);
 
   const closeOverlay = useCallback(() => {
     setIsOverlayOpen(false);
   }, []);
 
-  // On mobile, sidebar is always collapsed inline; overlay controls the expanded state
-  // On desktop, isCollapsed controls expanded/collapsed
-  const shouldHideLabels = isMobile ? !isOverlayOpen : isCollapsed;
+  const isMobile = viewport === "mobile";
+  // Non-mobile: collapsed means 4rem icon strip. Mobile: always collapsed (hidden).
+  const isCollapsed = isMobile ? true : !isExpanded;
+  // Mobile: never hide labels — overlay uses width:0 + overflow:hidden to clip
+  const shouldHideLabels = isMobile ? false : isCollapsed;
 
   return (
     <SidebarContext.Provider
       value={{
         isMobile,
-        isCollapsed: isMobile ? true : isCollapsed,
+        viewport,
+        isCollapsed,
+        isExpanded,
         isOverlayOpen,
         shouldHideLabels,
         toggleSidebar,

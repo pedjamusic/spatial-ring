@@ -15,15 +15,20 @@ export function SidebarMenuButton({
   const location = useLocation();
   const active = isActive ?? location.pathname.startsWith(to);
   const { isFocusVisible, focusProps } = useFocusRing();
-  const { shouldHideLabels } = useSidebar();
+  const { shouldHideLabels, isMobile, isOverlayOpen, closeOverlay } =
+    useSidebar();
 
   const shouldCollapse = shouldHideLabels;
+
+  // Close overlay on nav click (mobile only)
+  const handleClick = isMobile && isOverlayOpen ? closeOverlay : undefined;
 
   const buttonContent = (
     <Link
       to={to}
       className={`sidebar-menu-button inline-flex items-center gap-2 rounded-xl p-1 text-gray-700 hover:bg-gray-200 dark:text-gray-100/75 dark:hover:bg-neutral-700/50 ${active ? "sidebar-menu-button-active" : ""} ${isFocusVisible ? "focus-visible" : ""} ${shouldCollapse ? "w-full justify-center" : ""} ${className} `}
       aria-current={active ? "page" : undefined}
+      onClick={handleClick}
       {...focusProps}
     >
       {Icon && (
@@ -35,7 +40,6 @@ export function SidebarMenuButton({
         />
       )}
       {!shouldCollapse && (
-        // <span className="sidebar-label truncate">{children}</span>
         <span className="sidebar-label">{children}</span>
       )}
     </Link>
