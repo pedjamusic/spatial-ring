@@ -24,7 +24,7 @@ export default function ViewToggle({ value, onChange }) {
               last && "rounded-r-md",
               !first && "-ml-px",
               active
-                ? "border border-blue-600 bg-blue-600 text-white shadow-lg shadow-blue-600/50"
+                ? "border border-blue-600 bg-blue-600 text-white shadow-glow shadow-blue-600/50"
                 : "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700",
             ]
               .filter(Boolean)

@@ -1,6 +1,11 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/forms";
 
+@theme {
+  --shadow-glow: 0 4px 12px -2px var(--tw-shadow-color, rgb(0 0 0 / 0.1)),
+                 0 2px 6px -2px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
+}
+
 @custom-variant pointer-fine {
   @media (pointer: fine) {
     @slot;

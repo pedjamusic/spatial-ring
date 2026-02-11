@@ -448,7 +448,7 @@ export default function ModelForm({
             className={`shadow-2xs focus:outline-hidden -ms-px inline-flex items-center gap-x-2 border border-blue-600 px-4 py-3 text-sm font-medium text-gray-800 first:ms-0 first:rounded-s-lg last:rounded-e-lg hover:cursor-pointer focus:z-10 focus:bg-blue-800 disabled:pointer-events-none disabled:cursor-not-allowed disabled:border-gray-500 disabled:bg-gray-600 disabled:text-gray-300 disabled:opacity-50 ${
               loading
                 ? "cursor-not-allowed bg-gray-300 text-gray-500"
-                : "bg-blue-600 text-white shadow-lg shadow-blue-600/50 hover:bg-blue-500"
+                : "bg-blue-600 text-white shadow-glow shadow-blue-600/50 hover:bg-blue-500"
             }`}
           >
             {loading ? "Saving..." : initialData.id ? "Update" : "Create"}
