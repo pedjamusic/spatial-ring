@@ -9,6 +9,8 @@ const CLASS_COLORS = {
   end: "bg-amber-500",
 };
 
+const PAST_COLOR = "bg-gray-300 dark:bg-neutral-600";
+
 const CLASS_LABELS = {
   start: "Starts",
   single: "Event",
@@ -104,15 +106,15 @@ export default function EventDayPopover({
             <li key={`${entry.event.id}-${entry.classification}`} className="px-4 py-2.5">
               <Link
                 to={`${entry.event.id}/edit`}
-                className="flex items-center gap-x-2.5 text-sm text-gray-700 hover:text-blue-600 dark:text-neutral-300 dark:hover:text-blue-400"
+                className={`flex items-center gap-x-2.5 text-sm ${entry.isPast ? "text-gray-400 hover:text-gray-600 dark:text-neutral-500 dark:hover:text-neutral-300" : "text-gray-700 hover:text-blue-600 dark:text-neutral-300 dark:hover:text-blue-400"}`}
                 onClick={onClose}
               >
                 <span
-                  className={`inline-block size-2 shrink-0 rounded-full ${CLASS_COLORS[entry.classification]}`}
+                  className={`inline-block size-2 shrink-0 rounded-full ${entry.isPast ? PAST_COLOR : CLASS_COLORS[entry.classification]}`}
                 />
                 <span className="truncate">{entry.event[labelField]}</span>
                 <span className="ml-auto shrink-0 text-xs text-gray-400">
-                  {CLASS_LABELS[entry.classification]}
+                  {entry.isPast ? "Past" : CLASS_LABELS[entry.classification]}
                 </span>
               </Link>
             </li>

@@ -42,6 +42,9 @@ export default function useCalendarEvents({
 
       // Build dayMap: iterate each event, walk its date span, classify each day
       const map = new Map();
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
       for (const event of events) {
         const start = event[dateStartField]
           ? new Date(event[dateStartField])
@@ -52,18 +55,20 @@ export default function useCalendarEvents({
         if (!start) continue;
 
         const rangeEndDate = end || start;
+        const effectiveEnd = new Date(
+          rangeEndDate.getFullYear(),
+          rangeEndDate.getMonth(),
+          rangeEndDate.getDate(),
+        );
+        const isPast = effectiveEnd < today;
+
         const cursor = new Date(
           start.getFullYear(),
           start.getMonth(),
           start.getDate(),
         );
-        const limit = new Date(
-          rangeEndDate.getFullYear(),
-          rangeEndDate.getMonth(),
-          rangeEndDate.getDate(),
-        );
 
-        while (cursor <= limit) {
+        while (cursor <= effectiveEnd) {
           const key = dayKey(cursor);
           const classification = classifyEventDay(
             event,
@@ -73,7 +78,7 @@ export default function useCalendarEvents({
           );
           if (classification) {
             if (!map.has(key)) map.set(key, []);
-            map.get(key).push({ event, classification });
+            map.get(key).push({ event, classification, isPast });
           }
           cursor.setDate(cursor.getDate() + 1);
         }

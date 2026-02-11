@@ -7,12 +7,16 @@ const PILL_STYLES = {
   end: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300",
 };
 
+const PAST_PILL = "bg-gray-100 text-gray-400 dark:bg-neutral-700/30 dark:text-neutral-500";
+
 const INDICATOR_COLORS = {
   start: "bg-teal-600",
   single: "bg-teal-600",
   ongoing: "bg-blue-300 dark:bg-blue-500",
   end: "bg-amber-500",
 };
+
+const PAST_INDICATOR = "bg-gray-300 dark:bg-neutral-600";
 
 /**
  * A single day cell used by both month and year views.
@@ -36,11 +40,14 @@ export default function CalendarDayCell({
 
   // --- Year view (compact, dots only) ---
   if (size === "sm") {
-    const starts = entries.filter(
+    const active = entries.filter((e) => !e.isPast);
+    const past = entries.filter((e) => e.isPast);
+
+    const starts = active.filter(
       (e) => e.classification === "start" || e.classification === "single",
     );
-    const ongoing = entries.filter((e) => e.classification === "ongoing");
-    const ends = entries.filter((e) => e.classification === "end");
+    const ongoing = active.filter((e) => e.classification === "ongoing");
+    const ends = active.filter((e) => e.classification === "end");
 
     return (
       <button
@@ -72,6 +79,11 @@ export default function CalendarDayCell({
             {ends.length > 0 && (
               <span
                 className={`inline-block rounded-full bg-amber-500 ${ends.length > 1 ? "h-1 w-2" : "size-1"}`}
+              />
+            )}
+            {past.length > 0 && starts.length === 0 && ongoing.length === 0 && ends.length === 0 && (
+              <span
+                className={`inline-block rounded-full bg-gray-300 dark:bg-neutral-600 ${past.length > 1 ? "h-1 w-2" : "size-1"}`}
               />
             )}
           </div>
@@ -114,10 +126,10 @@ export default function CalendarDayCell({
           {entries.slice(0, 2).map((entry) => (
               <div
                 key={`${entry.event.id}-${entry.classification}`}
-                className={`flex items-center gap-1 rounded px-1.5 py-0.5 text-xs leading-tight ${PILL_STYLES[entry.classification]}`}
+                className={`flex items-center gap-1 rounded px-1.5 py-0.5 text-xs leading-tight ${entry.isPast ? PAST_PILL : PILL_STYLES[entry.classification]}`}
               >
                 <span
-                  className={`inline-block size-1.5 shrink-0 rounded-full ${INDICATOR_COLORS[entry.classification]}`}
+                  className={`inline-block size-1.5 shrink-0 rounded-full ${entry.isPast ? PAST_INDICATOR : INDICATOR_COLORS[entry.classification]}`}
                 />
                 <span className="truncate font-medium">
                   {entry.event[labelField]}
