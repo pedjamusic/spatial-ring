@@ -33,9 +33,11 @@ function getAuthHeaders() {
 
 async function makeRequest(endpoint, options = {}) {
   const url = `${BASE_URL}${endpoint}`;
+  const { signal, ...rest } = options;
   const fetchConfig = {
-    ...options,
+    ...rest,
     headers: getAuthHeaders(),
+    ...(signal ? { signal } : {}),
   };
 
   const response = await fetch(url, fetchConfig);
@@ -49,11 +51,11 @@ function buildQuery(params) {
 }
 
 export const resource = (name) => ({
-  list: (params) => {
+  list: (params, { signal } = {}) => {
     const query = params ? buildQuery(params) : '';
-    return makeRequest(`/${name}${query}`);
+    return makeRequest(`/${name}${query}`, { signal });
   },
-  get: (id) => makeRequest(`/${name}/${id}`),
+  get: (id, { signal } = {}) => makeRequest(`/${name}/${id}`, { signal }),
   create: (data) =>
     makeRequest(`/${name}`, {
       method: "POST",
@@ -70,4 +72,5 @@ export const resource = (name) => ({
     }),
 });
 
-export const authFetch = (endpoint) => makeRequest(`/${endpoint}`);
+export const authFetch = (endpoint, { signal } = {}) =>
+  makeRequest(`/${endpoint}`, { signal });

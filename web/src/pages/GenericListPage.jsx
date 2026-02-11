@@ -123,31 +123,34 @@ export default function GenericListPage({
     month: calMonth,
   });
 
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(async (signal) => {
     setLoading(true);
     setError("");
     try {
       // Load metadata
-      const metaResponse = await fetch(`/api/meta/models/${modelName}`);
+      const metaResponse = await fetch(`/api/meta/models/${modelName}`, { signal });
       if (!metaResponse.ok) throw new Error(`Meta fetch failed: ${metaResponse.status}`);
       const metaData = await metaResponse.json();
       setMeta(metaData);
 
       // Load paginated data (only for table view)
       if (!isCalendarView) {
-        const res = await api.list({ page, limit, search: search || undefined });
+        const res = await api.list({ page, limit, search: search || undefined }, { signal });
         setData(res.data || []);
         setTotalPages(res.meta?.totalPages || 0);
       }
     } catch (err) {
+      if (err.name === "AbortError") return;
       setError(err.message);
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) setLoading(false);
     }
   }, [modelName, api, page, limit, search, isCalendarView]);
 
   useEffect(() => {
-    loadData();
+    const controller = new AbortController();
+    loadData(controller.signal);
+    return () => controller.abort();
   }, [loadData]);
 
   // View switching — persist to localStorage

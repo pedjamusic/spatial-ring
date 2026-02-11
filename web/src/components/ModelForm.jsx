@@ -88,9 +88,12 @@ export default function ModelForm({
 
   // Effect 3: Load data for relation dropdowns when meta changes
   useEffect(() => {
-    const fetchRelationOptions = async () => {
-      if (!meta?.fields) return;
+    if (!meta?.fields) return;
 
+    const controller = new AbortController();
+    const { signal } = controller;
+
+    const fetchRelationOptions = async () => {
       const relationFields = meta.fields.filter(
         (field) => field.kind === "object" && !field.isList && field.relation,
       );
@@ -114,7 +117,7 @@ export default function ModelForm({
         }
 
         try {
-          const res = await authFetch(endpoint);
+          const res = await authFetch(endpoint, { signal });
           const data = Array.isArray(res) ? res : res.data || [];
 
           // Ensure data is an array before mapping
@@ -124,6 +127,7 @@ export default function ModelForm({
               }));
           return { field: field.name, options };
         } catch (error) {
+          if (error.name === "AbortError") return { field: field.name, options: [] };
           console.error(`⚠️ Failed to load options for ${field.name}:`, error);
           setFormError(
             `⚠️ Failed to load ${field.relation.to}: ${error.message}`,
@@ -133,6 +137,7 @@ export default function ModelForm({
       });
 
       const allOptions = await Promise.all(optionsPromises);
+      if (signal.aborted) return;
       const optionsMap = allOptions.reduce((acc, { field, options }) => {
         acc[field] = options;
         return acc;
@@ -142,6 +147,8 @@ export default function ModelForm({
     };
 
     fetchRelationOptions();
+
+    return () => controller.abort();
   }, [meta]);
 
   // --- RENDER LOGIC ---

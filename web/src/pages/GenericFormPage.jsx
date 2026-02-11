@@ -29,33 +29,33 @@ export default function GenericFormPage({
   const api = useMemo(() => resource(resourceName), [resourceName]);
 
   useEffect(() => {
-    let active = true;
+    const controller = new AbortController();
+    const { signal } = controller;
 
     (async () => {
       setLoading(true);
       setError("");
       try {
         // Load metadata
-        const metaResponse = await fetch(`/api/meta/models/${modelName}`);
+        const metaResponse = await fetch(`/api/meta/models/${modelName}`, { signal });
         if (!metaResponse.ok) throw new Error(`Meta fetch failed: ${metaResponse.status}`);
         const metaData = await metaResponse.json();
-        if (!active) return;
         setMeta(metaData);
 
         // Load existing record for edit mode
         if (isEdit) {
-          const record = await api.get(id);
-          if (!active) return;
+          const record = await api.get(id, { signal });
           setInitialData(record);
         }
       } catch (err) {
-        if (active) setError(err.message);
+        if (err.name === "AbortError") return;
+        setError(err.message);
       } finally {
-        if (active) setLoading(false);
+        if (!signal.aborted) setLoading(false);
       }
     })();
 
-    return () => { active = false; };
+    return () => controller.abort();
   }, [modelName, id, isEdit, api]);
 
   const handleSave = async (formData, extras = {}) => {

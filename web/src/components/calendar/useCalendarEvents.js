@@ -24,7 +24,7 @@ export default function useCalendarEvents({
 
   const api = useMemo(() => resource(resourceName), [resourceName]);
 
-  const fetchEvents = useCallback(async () => {
+  const fetchEvents = useCallback(async (signal) => {
     if (!view) {
       setDayMap(new Map());
       setLoading(false);
@@ -34,7 +34,10 @@ export default function useCalendarEvents({
     try {
       const range =
         view === "year" ? getYearRange(year) : getMonthRange(year, month);
-      const res = await api.list({ rangeStart: range.start, rangeEnd: range.end });
+      const res = await api.list(
+        { rangeStart: range.start, rangeEnd: range.end },
+        { signal },
+      );
       const events = res.data || [];
 
       // Build dayMap: iterate each event, walk its date span, classify each day
@@ -77,15 +80,18 @@ export default function useCalendarEvents({
       }
 
       setDayMap(map);
-    } catch {
+    } catch (err) {
+      if (err.name === "AbortError") return;
       setDayMap(new Map());
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) setLoading(false);
     }
   }, [api, dateStartField, dateEndField, view, year, month]);
 
   useEffect(() => {
-    fetchEvents();
+    const controller = new AbortController();
+    fetchEvents(controller.signal);
+    return () => controller.abort();
   }, [fetchEvents]);
 
   return { dayMap, loading };
