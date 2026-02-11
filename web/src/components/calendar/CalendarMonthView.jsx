@@ -27,7 +27,7 @@ export default function CalendarMonthView({
         {WEEKDAYS.map((d) => (
           <div
             key={d}
-            className="py-2.5 text-center text-xs font-medium text-gray-500 uppercase dark:text-neutral-400"
+            className="px-4 py-2.5 text-xs font-medium uppercase text-gray-500 dark:text-neutral-400"
           >
             {d}
           </div>
