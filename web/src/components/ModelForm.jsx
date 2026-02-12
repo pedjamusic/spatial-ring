@@ -14,6 +14,7 @@ import { toast } from "../lib/toast";
 
 import {
   Button,
+  Checkbox,
   Form,
   TextField,
   Label,
@@ -21,6 +22,7 @@ import {
   Select,
   TextArea,
 } from "react-aria-components";
+import { inputClasses } from "../lib/formStyles";
 
 export default function ModelForm({
   meta,
@@ -296,11 +298,7 @@ export default function ModelForm({
             value={formData[foreignKeyFieldName] || ""}
             onChange={(e) => handleChange(foreignKeyFieldName, e.target.value)}
             onBlur={() => handleBlur(field)}
-            className={`not-dark:shadow-sm block min-w-full rounded-xl border border-gray-300 bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:border-gray-400 hover:outline-gray-400 focus:border-blue-600 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 sm:leading-6 dark:border-neutral-700/50 dark:bg-neutral-800/50 dark:text-white dark:outline-neutral-700/50 dark:placeholder:text-gray-500 dark:hover:border-neutral-600 dark:hover:outline-neutral-600 ${
-              touched && error
-                ? "ring-red-500 focus:ring-red-500"
-                : "ring-gray-300 focus:ring-blue-600 dark:ring-gray-700"
-            }`}
+            className={inputClasses(touched && error)}
           >
             <option value="">Select...</option>
             {options.map((opt) => (
@@ -333,11 +331,7 @@ export default function ModelForm({
             value={value}
             onChange={(e) => handleChange(field.name, e.target.value)}
             onBlur={() => handleBlur(field)}
-            className={`not-dark:shadow-sm block min-w-full rounded-xl border border-gray-300 bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:border-gray-400 hover:outline-gray-400 focus:border-blue-600 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:border-white/10 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:border-blue-500 dark:focus:outline-blue-500 ${
-              touched && error
-                ? "ring-red-500 focus:ring-red-500"
-                : "ring-gray-300 focus:ring-blue-600 dark:ring-gray-700"
-            }`}
+            className={inputClasses(touched && error)}
           >
             <option value="">Choose...</option>
             {field.enumValues.map((val) => (
@@ -358,22 +352,30 @@ export default function ModelForm({
     // Checkbox for booleans
     if (inputType === "checkbox") {
       return (
-        <label
+        <Checkbox
           key={field.name}
-          className="mb-4 flex items-center gap-2"
-          htmlFor={field.name}
+          isSelected={Boolean(value)}
+          onChange={(checked) => handleChange(field.name, checked)}
+          className="group mb-4 flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white"
         >
-          <input
-            id={field.name}
-            type="checkbox"
-            name={field.name}
-            checked={Boolean(value)}
-            onChange={(e) => handleChange(field.name, e.target.checked)}
-          />
-          <span className="text-sm font-medium text-gray-900 dark:text-white">
-            {label}
-          </span>
-        </label>
+          <div className="flex size-4 items-center justify-center rounded border border-gray-300 bg-white group-data-[selected]:border-blue-600 group-data-[selected]:bg-blue-600 group-data-[focus-visible]:outline-2 group-data-[focus-visible]:-outline-offset-2 group-data-[focus-visible]:outline-blue-600 dark:border-neutral-700/50 dark:bg-neutral-800/50 dark:group-data-[selected]:border-blue-600 dark:group-data-[selected]:bg-blue-600">
+            <svg
+              className="hidden size-3 text-white group-data-[selected]:block"
+              viewBox="0 0 14 14"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M3 8l3 3 5-7"
+                stroke="currentColor"
+                strokeWidth={2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+          {label}
+        </Checkbox>
       );
     }
 
@@ -393,11 +395,7 @@ export default function ModelForm({
             onChange={(e) => handleChange(field.name, e.target.value)}
             onBlur={() => handleBlur(field)}
             rows={4}
-            className={`not-dark:shadow-sm block min-w-full rounded-xl border border-gray-300 bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:border-gray-400 hover:outline-gray-400 focus:border-blue-600 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:border-white/10 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:border-blue-500 dark:focus:outline-blue-500 ${
-              touched && error
-                ? "ring-red-500 focus:ring-red-500"
-                : "ring-gray-300 focus:ring-blue-600 dark:ring-gray-700"
-            }`}
+            className={inputClasses(touched && error)}
           />
           {touched && error && (
             <p className="mt-2 text-xs text-red-600 dark:text-red-400">

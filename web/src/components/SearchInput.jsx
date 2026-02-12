@@ -53,7 +53,7 @@ export default function SearchInput({ value = "", onChange, placeholder = "Searc
         onChange={handleChange}
         placeholder={placeholder}
         aria-label={placeholder}
-        className="not-dark:shadow-sm w-full rounded-xl border border-gray-300 bg-white py-2 pe-8 ps-10 text-sm text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:border-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:border-neutral-700/50 dark:bg-neutral-800/50 dark:text-white dark:outline-neutral-700/50 dark:hover:border-neutral-600 dark:focus:outline-blue-500"
+        className="not-dark:shadow-sm w-full rounded-xl border border-gray-300 bg-white py-2 pe-8 ps-10 text-base text-gray-900 ring-0 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:border-gray-400 hover:outline-gray-400 focus:border-blue-600 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm dark:border-neutral-700/50 dark:bg-neutral-800/50 dark:text-white dark:outline-neutral-700/50 dark:hover:border-neutral-600 dark:hover:outline-neutral-600 dark:focus:border-blue-600 dark:focus:outline-blue-600"
       />
 
       {/* Clear button */}
