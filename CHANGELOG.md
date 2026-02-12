@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.8.2] - 2026-02-11
+
+### Sidebar Refactoring
+
+Improved desktop and mobile sidebar UX with unified navigation.
+
+- **Sticky inline layout** on desktop — sidebar remains visible and fixed in place
+- **Mobile overlay** — sidebar appears as an overlay with backdrop on small screens
+- **Unified toggle** — single burger icon controls both desktop and mobile states
+- **Font and icon weights** — updated navigation typography for better hierarchy and readability
+
+### Button Enhancements
+
+Added visual depth to primary action buttons.
+
+- **Colored outer glow** — buttons now have a subtle colored glow effect matching their theme
+- **Custom shadow-glow utility** — centered glow effect using custom CSS utility (`shadow-glow`)
+
+### Calendar Improvements
+
+Enhanced calendar visual presentation and usability.
+
+- **Weekday positioning** — refined layout for better alignment
+- **Past event muting** — past events now display in neutral gray for visual hierarchy
+- **Popover positioning** — calendar day popover now uses measured height for accurate positioning
+
+### Search & Navigation
+
+- **Search result linking** — global search results now link to individual item detail pages
+- **Toast standardization** — unified toast notification styling and behavior across the UI
+
+### Bug Fixes
+
+- **Login security** — improved security, accessibility, and loading state handling
+- **Node.js version pinning** — fixed nixpacks builds by pinning Node.js version
+
 ## [0.8.1] - 2026-02-11
 
 ### Request Race Condition Fixes
@@ -32,12 +68,12 @@ Replaced native `<input type="datetime-local">` for Event dates with a flatpickr
 
 Replaced monochromatic blue calendar pills/dots with semantically distinct hues for better scannability.
 
-| Classification | Color | Meaning |
-|---|---|---|
-| Start / Single | Teal | "begins here" |
-| Ongoing | Blue (light) | span continues |
-| End | Amber | "concludes here" |
-| More | Gray | overflow indicator |
+| Classification | Color        | Meaning            |
+| -------------- | ------------ | ------------------ |
+| Start / Single | Teal         | "begins here"      |
+| Ongoing        | Blue (light) | span continues     |
+| End            | Amber        | "concludes here"   |
+| More           | Gray         | overflow indicator |
 
 Applied consistently across month-view pills, year-view dots, and day popover.
 
