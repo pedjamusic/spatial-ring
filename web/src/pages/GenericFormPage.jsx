@@ -24,7 +24,6 @@ export default function GenericFormPage({
   const [meta, setMeta] = useState(null);
   const [initialData, setInitialData] = useState({});
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
   const api = useMemo(() => resource(resourceName), [resourceName]);
 
@@ -34,7 +33,6 @@ export default function GenericFormPage({
 
     (async () => {
       setLoading(true);
-      setError("");
       try {
         // Load metadata
         const metaResponse = await fetch(`/api/meta/models/${modelName}`, { signal });
@@ -49,7 +47,7 @@ export default function GenericFormPage({
         }
       } catch (err) {
         if (err.name === "AbortError") return;
-        setError(err.message);
+        toast.error(err.message);
       } finally {
         if (!signal.aborted) setLoading(false);
       }
@@ -87,7 +85,6 @@ export default function GenericFormPage({
       navigate(`/admin/${resourceName}`);
     } catch (err) {
       const errorMessage = err.message || "Operation failed";
-      setError(errorMessage);
       toast.error(`Failed to save ${singular}: ${errorMessage}`);
       throw err; // Re-throw so ModelForm can handle loading state
     }
@@ -104,12 +101,6 @@ export default function GenericFormPage({
     <div className="grid gap-y-4">
       <PageHeader />
       <H1>{isEdit ? `Edit ${singular}` : `Create ${singular}`}</H1>
-
-      {error && (
-        <div className="border border-red-300 bg-red-200 p-4 text-red-600">
-          {error}
-        </div>
-      )}
 
       <div className="flex items-center gap-3">
         <Link
