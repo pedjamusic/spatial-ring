@@ -64,7 +64,6 @@ export function useFormValidation(meta, uiConfig = {}) {
   const validateForm = useCallback(
     (formData, fields) => {
       const errors = {};
-      let hasErrors = false;
 
       fields.forEach((field) => {
         // For relation fields, the value is stored under the FK name (e.g. performedById)
@@ -74,12 +73,11 @@ export function useFormValidation(meta, uiConfig = {}) {
         const error = validateField(field, formData[key]);
         if (error) {
           errors[field.name] = error;
-          hasErrors = true;
         }
       });
 
       setFieldErrors(errors);
-      return { isValid: !hasErrors, errors };
+      return { isValid: Object.keys(errors).length === 0, errors };
     },
     [validateField]
   );

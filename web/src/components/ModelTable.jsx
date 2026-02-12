@@ -73,7 +73,7 @@ export default function ModelTable({
     .filter((f) => !uiConfig[f.name]?.hideInTable) // hide **only** in table
     .filter((f) => !["Json"].includes(f.type))
     .filter((f) => f.kind !== "object" || Boolean(uiConfig[f.name]?.path)) // allow relations with path, otherwise hide
-    .sort((a, b) => {
+    .toSorted((a, b) => {
       const ia = order.indexOf(a.name);
       const ib = order.indexOf(b.name);
       if (ia === -1 && ib === -1) return 0; // neither specified

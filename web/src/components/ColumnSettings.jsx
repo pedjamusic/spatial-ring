@@ -68,7 +68,7 @@ export default function ColumnSettings({ meta, config, onToggle, onReset }) {
           className="min-h-0 flex-1 overflow-auto p-2"
         >
           {allTableFields.map((f) => {
-            const label = (config[f.name] && config[f.name].label) || f.name;
+            const label = config[f.name]?.label ?? f.name;
             return (
               <MenuItem
                 key={f.name}

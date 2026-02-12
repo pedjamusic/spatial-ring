@@ -136,15 +136,10 @@ export function GlobalSearchContainer() {
     ];
   }, [debouncedQuery, allData]);
 
-  const grouped = useMemo(() => {
-    return results.reduce(
-      (acc, curr) => {
-        (acc[curr.model] ||= []).push(curr);
-        return acc;
-      },
-      { Asset: [], Category: [], Warehouse: [], Event: [], Location: [] },
-    );
-  }, [results]);
+  const grouped = useMemo(
+    () => Object.groupBy(results, (item) => item.model),
+    [results],
+  );
 
   return (
     <GlobalSearch

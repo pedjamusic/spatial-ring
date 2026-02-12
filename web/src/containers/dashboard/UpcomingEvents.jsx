@@ -34,7 +34,7 @@ export function UpcomingEventsContainer() {
 
               return false;
             })
-            .sort((a, b) => new Date(a.startsAt) - new Date(b.startsAt))
+            .toSorted((a, b) => new Date(a.startsAt) - new Date(b.startsAt))
             .slice(0, 4);
 
           setEvents(upcoming);

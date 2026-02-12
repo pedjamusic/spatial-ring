@@ -15,13 +15,11 @@ export default function DashboardStatsContainer({
   // Find a resource path by matching common identifiers (path/title/resourceName/modelName)
   const findPath = (candidates) => {
     const lower = (v) => String(v || "").toLowerCase();
-    for (const r of resources) {
+    const found = resources.find((r) => {
       const hay = [r.path, r.title, r.resourceName, r.modelName].map(lower);
-      if (candidates.some((c) => hay.some((h) => h.includes(lower(c))))) {
-        return `/admin/${r.path}`;
-      }
-    }
-    return "/admin"; // fallback
+      return candidates.some((c) => hay.some((h) => h.includes(lower(c))));
+    });
+    return found ? `/admin/${found.path}` : "/admin";
   };
 
   // Guess paths for common resources; adjust candidates to your meta/resources.json entries.
