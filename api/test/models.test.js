@@ -1,12 +1,11 @@
 import { beforeAll, afterAll, describe, it, expect } from 'vitest';
 import request   from 'supertest';
-import prisma    from '../src/lib/prisma.js';
 import { app }   from '../src/app.js';
 import { login, clearData } from './_helpers.js';
 
 let auth;
 beforeAll(async () => { auth = await login(); });
-afterAll(async () => { await clearData(); await prisma.$disconnect(); });
+afterAll(async () => { await clearData(); });
 
 const MODELS = [
   { name: 'warehouses',       create: () => ({ name: 'WH-A'             }) },
@@ -48,13 +47,11 @@ describe('CRUD / auth for every model', () => {
         .set(auth)
         .send({ [patch]: `${body[patch]}-updated` });
 
-      // some models don’t implement PUT yet → accept 200 or 404
-      expect([200,404]).toContain(r3.status);
+      expect(r3.status).toBe(200);
 
       // DELETE
       const r4 = await request(app).delete(`${base}/${id}`).set(auth);
-      // same: some models lack DELETE → accept 204 or 404
-      expect([204,404]).toContain(r4.status);
+      expect(r4.status).toBe(204);
     });
   });
 });

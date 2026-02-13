@@ -12,11 +12,14 @@ const __dirname = path.dirname(__filename);
 const API_FOLDER_ROOT = path.join(__dirname, '..'); 
 const SCHEMA_PATH = path.join(API_FOLDER_ROOT, 'prisma', 'schema.prisma');
 const ENV_PATH = path.join(API_FOLDER_ROOT, '.env'); // Path to your API's .env file
+const TEST_ENV_PATH = path.join(API_FOLDER_ROOT, '.env.test'); // Path to API test env file
 const DATA_DIR = path.join(API_FOLDER_ROOT, 'data');
 
 // SQLite file path, defined relative to the API root
 const SQLITE_FILE_PATH = path.join(DATA_DIR, 'spatial-ring-inventory.db');
 const SQLITE_URL = `file:${SQLITE_FILE_PATH}`;
+const SQLITE_TEST_FILE_PATH = path.join(DATA_DIR, 'spatial-ring-inventory.test.db');
+const SQLITE_TEST_URL = `file:${SQLITE_TEST_FILE_PATH}`;
 
 // --- Initialization for Readline Interface ---
 const rl = readline.createInterface({
@@ -30,14 +33,14 @@ const rl = readline.createInterface({
  * Reads the existing .env file, updates the DATABASE_URL, and writes the content back.
  * @param {string} dbUrl - The new database URL.
  */
-function updateEnvFile(dbUrl) {
+function updateEnvFileAt(filePath, dbUrl) {
   let envContent = '';
   const dbLine = `DATABASE_URL="${dbUrl}"`;
   
   try {
     // 1. Read existing content
-    if (fs.existsSync(ENV_PATH)) {
-      envContent = fs.readFileSync(ENV_PATH, 'utf8');
+    if (fs.existsSync(filePath)) {
+      envContent = fs.readFileSync(filePath, 'utf8');
       
       // 2. Remove any existing DATABASE_URL/DB_PROVIDER line
       const updatedLines = envContent
@@ -54,13 +57,46 @@ function updateEnvFile(dbUrl) {
     }
 
     // 4. Write content back
-    fs.writeFileSync(ENV_PATH, envContent);
-    console.log(`\n✅ ${path.basename(ENV_PATH)} updated successfully.`);
+    fs.writeFileSync(filePath, envContent);
+    console.log(`\n✅ ${path.basename(filePath)} updated successfully.`);
 
   } catch (e) {
-    console.error(`\n❌ Error handling .env file at ${ENV_PATH}:`, e.message);
+    console.error(`\n❌ Error handling env file at ${filePath}:`, e.message);
     process.exit(1);
   }
+}
+
+function updateEnvFile(dbUrl) {
+  updateEnvFileAt(ENV_PATH, dbUrl);
+}
+
+function updateTestEnvFile(dbUrl) {
+  updateEnvFileAt(TEST_ENV_PATH, dbUrl);
+}
+
+function isLocalPostgresUrl(dbUrl) {
+  try {
+    const parsed = new URL(dbUrl);
+    const host = (parsed.hostname || '').toLowerCase();
+    return host === 'localhost' || host === '127.0.0.1' || host === '::1';
+  } catch {
+    return false;
+  }
+}
+
+function derivePostgresTestUrl(dbUrl) {
+  const parsed = new URL(dbUrl);
+  const dbName = parsed.pathname.replace(/^\//, '');
+  if (!dbName) {
+    return dbUrl;
+  }
+
+  if (dbName.toLowerCase().includes('test')) {
+    return dbUrl;
+  }
+
+  parsed.pathname = `/${dbName}_test`;
+  return parsed.toString();
 }
 
 /**
@@ -88,9 +124,12 @@ function updateSchemaFile(provider) {
 /**
  * Runs the Prisma commands (generate and migrate).
  */
-function runPrismaCommands(dbUrl, provider) {
+function runPrismaCommands(dbUrl, provider, testDbUrl = null) {
   // 1. Update .env file (now handled by the new function)
   updateEnvFile(dbUrl);
+  if (testDbUrl) {
+    updateTestEnvFile(testDbUrl);
+  }
 
   // 2. Run Prisma Commands
   try {
@@ -163,7 +202,14 @@ function handlePromptPostgres() {
 
     console.log(`\nConfiguring for PostgreSQL with URL: ${dbUrl}`);
     updateSchemaFile('postgresql');
-    runPrismaCommands(dbUrl, 'postgresql');
+    const testDbUrl = isLocalPostgresUrl(dbUrl) ? derivePostgresTestUrl(dbUrl) : null;
+    runPrismaCommands(dbUrl, 'postgresql', testDbUrl);
+
+    if (testDbUrl) {
+      console.log(`\n🧪 .env.test DATABASE_URL set to: ${testDbUrl}`);
+    } else {
+      console.log('\nℹ️ Skipped .env.test update (non-local PostgreSQL URL). Configure api/.env.test manually for isolated tests.');
+    }
 
     console.log('\nGood luck with your vibecoding! Remember to have your PostgreSQL server running.');
   });
@@ -178,7 +224,8 @@ function handleSQLite() {
 
   console.log('\nConfiguring for zero-setup SQLite (local file database).');
   updateSchemaFile(provider);
-  runPrismaCommands(dbUrl, provider);
+  runPrismaCommands(dbUrl, provider, SQLITE_TEST_URL);
+  console.log(`\n🧪 .env.test DATABASE_URL set to SQLite test file: ${SQLITE_TEST_URL}`);
   console.log('\nGood luck with your vibecoding! The SQLite file is self-contained and ready to go.');
 }
 
