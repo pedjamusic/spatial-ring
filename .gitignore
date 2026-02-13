@@ -30,6 +30,5 @@ Dockerfile
 
 AGENTS.md
 CLAUDE.md
-TODO.md
 
 web/*.sh
