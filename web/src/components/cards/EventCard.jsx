@@ -2,6 +2,14 @@ import { Link } from "react-router-dom";
 import { Calendar, MapPin } from "lucide-react";
 import Badge from "../ui/Badge";
 
+const gradientByVariant = {
+  blue: "color-mix(in oklch, var(--color-blue-500) 12%, transparent)",
+  yellow: "color-mix(in oklch, var(--color-yellow-500) 12%, transparent)",
+  red: "color-mix(in oklch, var(--color-red-500) 12%, transparent)",
+  green: "color-mix(in oklch, var(--color-green-500) 12%, transparent)",
+  gray: "color-mix(in oklch, var(--color-gray-500) 12%, transparent)",
+};
+
 export default function EventCard({ event, to, size = "md" }) {
   const sizeMap = {
     sm: "p-4",
@@ -47,20 +55,29 @@ export default function EventCard({ event, to, size = "md" }) {
   };
 
   const eventStatus = getEventStatus();
+  const gradientColor =
+    gradientByVariant[eventStatus?.variant] || gradientByVariant.blue;
 
   return (
     <Link
       tabIndex={1}
       to={to}
       className={[
-        "not-dark:shadow block rounded-xl border border-gray-300 bg-white outline-1 -outline-offset-1 outline-gray-300 hover:border-gray-400 hover:outline-gray-400 focus:outline-2 focus:outline-blue-600 dark:border-neutral-700/25 dark:bg-neutral-800/50 dark:text-white dark:outline-neutral-700/25 dark:hover:border-gray-700 dark:hover:outline-gray-700",
+        "not-dark:shadow relative block overflow-hidden rounded-xl border border-gray-300 bg-white outline-1 -outline-offset-1 outline-gray-300 hover:border-gray-400 hover:outline-gray-400 focus:outline-2 focus:outline-blue-600 dark:border-neutral-700/25 dark:bg-neutral-800/50 dark:text-white dark:outline-neutral-700/25 dark:hover:border-gray-700 dark:hover:outline-gray-700",
         sizeMap[size],
       ].join(" ")}
       aria-label={`Event: ${event.name}`}
     >
-      <div className="space-y-3">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: `radial-gradient(circle at bottom left, ${gradientColor} 0%, oklch(0 0 0 / 0) 45%)`,
+        }}
+      />
+      <div className="relative z-10 space-y-3">
         {/* Event name */}
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <h3 className="truncate text-lg font-semibold text-gray-900 dark:text-gray-100">
           {event.name}
         </h3>
 

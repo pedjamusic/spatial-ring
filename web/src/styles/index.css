@@ -18,6 +18,44 @@
 
 :root {
   color-scheme: light dark;
+
+  --badge-blue-bg: color-mix(in oklch, var(--color-blue-500) 18%, white);
+  --badge-blue-text: var(--color-blue-800);
+  --badge-yellow-bg: color-mix(in oklch, var(--color-yellow-500) 22%, white);
+  --badge-yellow-text: var(--color-yellow-900);
+  --badge-red-bg: color-mix(in oklch, var(--color-red-500) 18%, white);
+  --badge-red-text: var(--color-red-800);
+  --badge-green-bg: color-mix(in oklch, var(--color-green-500) 18%, white);
+  --badge-green-text: var(--color-green-800);
+  --badge-gray-bg: color-mix(in oklch, var(--color-gray-500) 16%, white);
+  --badge-gray-text: var(--color-gray-800);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --badge-blue-bg: color-mix(
+      in oklch,
+      var(--color-blue-500) 28%,
+      transparent
+    );
+    --badge-blue-text: var(--color-blue-300);
+    --badge-yellow-bg: color-mix(
+      in oklch,
+      var(--color-yellow-500) 28%,
+      transparent
+    );
+    --badge-yellow-text: var(--color-yellow-300);
+    --badge-red-bg: color-mix(in oklch, var(--color-red-500) 28%, transparent);
+    --badge-red-text: var(--color-red-300);
+    --badge-green-bg: color-mix(
+      in oklch,
+      var(--color-green-500) 28%,
+      transparent
+    );
+    --badge-green-text: var(--color-green-300);
+    --badge-gray-bg: var(--color-gray-800);
+    --badge-gray-text: var(--color-gray-300);
+  }
 }
 body {
   color: light-dark(var(--light), var(--dark));
