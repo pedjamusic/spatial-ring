@@ -3,7 +3,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
-    // setupFiles: ['./test/setup.js'],
+    globalSetup: ['./test/global-setup.js'],
     include: ['test/**/*.test.js'],
     exclude: ['node_modules', 'dist', 'src/**/node_modules', 'src/**/dist'],
     hookTimeout: 30000,
