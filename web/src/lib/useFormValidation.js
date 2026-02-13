@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { isFieldRequired as checkFieldRequired } from "./fieldMapping";
+import { getFieldValueKey } from "./formFieldKeys";
 
 /**
  * Reusable form validation hook for CRUD operations
@@ -67,9 +68,7 @@ export function useFormValidation(meta, uiConfig = {}) {
 
       fields.forEach((field) => {
         // For relation fields, the value is stored under the FK name (e.g. performedById)
-        const key = (field.kind === "object" && !field.isList)
-          ? (field.name.endsWith("Id") ? field.name : `${field.name}Id`)
-          : field.name;
+        const key = getFieldValueKey(field);
         const error = validateField(field, formData[key]);
         if (error) {
           errors[field.name] = error;
