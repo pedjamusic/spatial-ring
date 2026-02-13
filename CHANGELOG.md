@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [0.8.3] - 2026-02-13
 
+### Dashboard Event UX & Visual Polish
+
+- **Event card status glow** — added subtle bottom-left radial gradient glow on dashboard event cards, with color driven by event urgency/ongoing status via `color-mix(in oklch, ...)`
+- **Badge color consistency** — moved badge variant backgrounds/text to centralized CSS tokens with light/dark theme-specific mixing for stronger visual parity across themes
+- **Context-aware event navigation** — when opening an event from Dashboard, Cancel/back now return to Dashboard instead of default Events list
+- **Breadcrumb context labeling** — event form breadcrumb now shows `Dashboard` for Dashboard-origin flows (fallback remains resource label like `Events`)
+
+### Frontend Form Validation Consistency
+
+- **Relation field validation key alignment** — relation dropdown blur/change/submit validation now consistently uses FK value mapping with stable error/touched state keys
+- **Numeric input zero handling** — number normalization preserves `0` values instead of collapsing to empty string, preventing false required-field errors
+- **Date range widget validation parity** — `DateRangePicker` now uses shared form input classes, touched/error display, and blur wiring through the same `ModelForm` validation flow as other form controls
+- **Frontend regression tests** — added targeted Vitest coverage for field key mapping and numeric input normalization
+
 ### Testing & Environment
 
 - **Isolated test env guardrails** — added `api/.env.test.example` and mandatory test env checks before API test commands
@@ -17,6 +31,7 @@ All notable changes to this project will be documented in this file. See [standa
 ### Versioning
 
 - Bumped monorepo versions to `0.8.3` in root, API, and web package manifests
+
 ## [0.8.2] - 2026-02-11
 
 ### Sidebar Refactoring
