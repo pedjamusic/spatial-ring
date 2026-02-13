@@ -30,5 +30,6 @@ Dockerfile
 
 AGENTS.md
 CLAUDE.md
+MEMORY.md
 
 web/*.sh
