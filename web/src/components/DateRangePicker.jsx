@@ -3,6 +3,7 @@ import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import "../styles/flatpickr-theme.css";
 import { Calendar } from "lucide-react";
+import { inputClasses } from "../lib/formStyles";
 
 /**
  * Combined date-range + optional time picker powered by flatpickr.
@@ -10,13 +11,17 @@ import { Calendar } from "lucide-react";
  * Has Cancel / Apply buttons — selection is only committed on Apply.
  */
 export default function DateRangePicker({
+  id = "date-range",
   startValue,
   endValue,
   onChangeStart,
   onChangeEnd,
+  onBlur,
   enableTime = false,
   required = false,
   label = "Date Range",
+  error = null,
+  touched = false,
 }) {
   const inputRef = useRef(null);
   const fpRef = useRef(null);
@@ -143,10 +148,12 @@ export default function DateRangePicker({
       ? `${formatDisplay(startValue)}  —  ${formatDisplay(endValue)}`
       : formatDisplay(startValue)
     : "Select dates…";
+  const showError = touched && error;
+  const errorId = `${id}-error`;
 
   return (
     <div className="col-span-full sm:col-span-2">
-      <label className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
+      <label htmlFor={id} className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
         {label}
         {required && <span className="ml-1 text-red-600">*</span>}
       </label>
@@ -155,9 +162,13 @@ export default function DateRangePicker({
         <input ref={inputRef} type="text" className="sr-only" tabIndex={-1} />
 
         <button
+          id={id}
           type="button"
           onClick={() => fpRef.current?.open()}
-          className="not-dark:shadow-sm flex w-full items-center gap-2 rounded-xl border border-gray-300 bg-white px-3 py-1.5 text-left text-sm text-gray-900 outline-1 -outline-offset-1 outline-gray-300 hover:border-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:border-neutral-700/50 dark:bg-neutral-800/50 dark:text-white dark:outline-neutral-700/50 dark:hover:border-neutral-600 dark:hover:outline-neutral-600 dark:focus:outline-blue-600"
+          onBlur={onBlur}
+          aria-invalid={showError || undefined}
+          aria-describedby={showError ? errorId : undefined}
+          className={`${inputClasses(showError)} flex items-center gap-2 text-left`}
         >
           <Calendar className="h-4 w-4 shrink-0 text-gray-400 dark:text-gray-500" />
           <span className={startValue ? "" : "text-gray-400 dark:text-gray-500"}>
@@ -165,6 +176,11 @@ export default function DateRangePicker({
           </span>
         </button>
       </div>
+      {showError && (
+        <p id={errorId} className="mt-2 text-xs text-red-600 dark:text-red-400">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
