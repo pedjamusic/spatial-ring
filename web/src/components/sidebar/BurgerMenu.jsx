@@ -16,10 +16,10 @@ export function BurgerMenu({ className = "" }) {
   return (
     <Button
       onPress={toggleSidebar}
-      className={`flex h-8 w-8 items-center justify-center rounded-xl hover:cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${className}`}
+      className={`ml-0.5 flex h-10 w-10 items-center justify-center rounded-xl hover:cursor-pointer hover:bg-gray-200 dark:hover:bg-neutral-700/50 ${className}`}
       aria-label={label}
     >
-      <Menu size={20} />
+      <Menu size={24} strokeWidth={4} />
     </Button>
   );
 }

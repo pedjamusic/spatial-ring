@@ -2,9 +2,12 @@
 @plugin "@tailwindcss/forms";
 
 @theme {
-  --shadow-glow: 0 4px 12px -2px var(--tw-shadow-color, rgb(0 0 0 / 0.1)),
-                 0 2px 6px -2px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
+  --shadow-glow:
+    0 4px 12px -2px var(--tw-shadow-color, rgb(0 0 0 / 0.1)),
+    0 2px 6px -2px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
 }
+
+/* Apply smooth color transitions only to interactive states */
 
 @custom-variant pointer-fine {
   @media (pointer: fine) {

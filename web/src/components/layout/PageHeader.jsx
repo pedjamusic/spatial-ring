@@ -5,15 +5,12 @@ import { useSidebar } from "@/components/sidebar/useSidebar";
 
 import logoTransparent from "../../assets/Logo transparent.png";
 
-export function PageHeader({
-  showSearch = true,
-  className = "",
-}) {
+export function PageHeader({ showSearch = true, className = "" }) {
   const { isMobile } = useSidebar();
 
   return (
     <div
-      className={`page-header mb-6 flex items-center gap-4 border-b border-gray-200 pb-4 dark:border-gray-800 ${className}`}
+      className={`page-header mb-1 flex items-center gap-4 border-b border-gray-200 pb-4 dark:border-gray-800 ${className}`}
     >
       {/* Burger menu on mobile only (sidebar is fully hidden) */}
       {isMobile && <BurgerMenu />}

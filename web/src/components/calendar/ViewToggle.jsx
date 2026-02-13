@@ -8,7 +8,7 @@ const VIEW_OPTIONS = [
 
 export default function ViewToggle({ value, onChange }) {
   return (
-    <div className="inline-flex rounded-xl shadow-2xs" role="group">
+    <div className="shadow-2xs inline-flex rounded-xl" role="group">
       {VIEW_OPTIONS.map(({ value: v, label, Icon }, i) => {
         const active = value === v;
         const first = i === 0;
@@ -19,12 +19,12 @@ export default function ViewToggle({ value, onChange }) {
             type="button"
             onClick={() => onChange(v)}
             className={[
-              "inline-flex items-center gap-x-1.5 px-3 py-2 text-sm font-medium transition-colors",
+              "inline-flex items-center gap-x-1.5 px-3 py-2 text-sm font-medium",
               first && "rounded-l-md",
               last && "rounded-r-md",
               !first && "-ml-px",
               active
-                ? "border border-blue-600 bg-blue-600 text-white shadow-glow shadow-blue-600/50"
+                ? "shadow-glow border border-blue-600 bg-blue-600 text-white shadow-blue-600/50"
                 : "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700",
             ]
               .filter(Boolean)

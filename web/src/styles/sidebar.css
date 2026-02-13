@@ -16,7 +16,8 @@
 /* Sidebar header row — match PageHeader height */
 .sidebar-header-row {
   height: 58px;
-  border-bottom: 1px solid light-dark(#e5e7eb, #1f2937);
+
+  /* border-bottom: 1px solid light-dark(#e5e7eb, #1f2937); */
 }
 
 /* ── Non-mobile (≥768px): inline sticky sidebar ── */
@@ -83,5 +84,8 @@
 /* Smooth transitions for content */
 .sidebar-label,
 .sidebar-group-label {
-  transition: opacity 0.2s ease, width 0.2s ease, height 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    width 0.2s ease,
+    height 0.2s ease;
 }

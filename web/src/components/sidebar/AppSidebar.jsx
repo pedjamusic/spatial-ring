@@ -40,7 +40,7 @@ export function AppSidebar() {
     <Sidebar>
       {/* Sidebar Header with burger toggle */}
       <SidebarHeader>
-        <div className="sidebar-header-row flex items-center justify-start pl-2">
+        <div className="sidebar-header-row flex items-center justify-start">
           {!isMobile && <BurgerMenu />}
         </div>
       </SidebarHeader>
