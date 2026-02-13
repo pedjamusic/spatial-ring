@@ -269,16 +269,25 @@ export default function ModelForm({
     // Date range picker widget (e.g. Event startsAt + endsAt)
     if (uiConfig[field.name]?.widget === "dateRangePicker") {
       const rangeEndField = uiConfig[field.name].rangeEnd;
+      const rangeEndMetaField = meta.fields.find((f) => f.name === rangeEndField);
       const fieldLabel = `${getFieldLabel(field, uiConfig)} / ${getFieldLabel({ name: rangeEndField }, uiConfig)}`;
       return (
         <DateRangePicker
           key={field.name}
+          id={field.name}
           label={fieldLabel}
           startValue={formData[field.name] || ""}
           endValue={formData[rangeEndField] || ""}
-          onChangeStart={(v) => setFormData((prev) => ({ ...prev, [field.name]: v }))}
-          onChangeEnd={(v) => setFormData((prev) => ({ ...prev, [rangeEndField]: v }))}
+          onChangeStart={(v) => handleChange(field, v)}
+          onChangeEnd={(v) =>
+            rangeEndMetaField
+              ? handleChange(rangeEndMetaField, v)
+              : setFormData((prev) => ({ ...prev, [rangeEndField]: v }))
+          }
+          onBlur={() => handleBlur(field)}
           required={required}
+          error={error}
+          touched={touched}
         />
       );
     }
