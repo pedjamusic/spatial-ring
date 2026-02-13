@@ -86,7 +86,7 @@ export default function AdminHome() {
   }
 
   return (
-    <>
+    <div className="grid gap-y-4">
       <PageHeader />
       <H1>Dashboard</H1>
 
@@ -100,6 +100,6 @@ export default function AdminHome() {
           <UpcomingEventsContainer />
         </div>
       </div>
-    </>
+    </div>
   );
 }
