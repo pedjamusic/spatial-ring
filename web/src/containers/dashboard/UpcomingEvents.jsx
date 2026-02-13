@@ -74,5 +74,5 @@ export function UpcomingEventsContainer() {
     );
   }
 
-  return <EventCardGrid events={events} />;
+  return <EventCardGrid events={events} linkState={{ returnTo: "/admin" }} />;
 }
