@@ -16,13 +16,11 @@ import {
   Button,
   Checkbox,
   Form,
-  TextField,
   Label,
-  Input,
-  Select,
   TextArea,
 } from "react-aria-components";
 import { inputClasses } from "../lib/formStyles";
+import { getFieldValueKey } from "../lib/formFieldKeys";
 
 export default function ModelForm({
   meta,
@@ -196,19 +194,26 @@ export default function ModelForm({
     }
   };
 
-  const handleChange = (fieldName, value, field) => {
-    setFormData((prev) => ({ ...prev, [fieldName]: value }));
+  const handleChange = (field, value) => {
+    const valueKey = getFieldValueKey(field);
+    const stateKey = field.name;
+
+    setFormData((prev) => ({ ...prev, [valueKey]: value }));
 
     // Validate on change if field was touched
-    if (touchedFields[fieldName]) {
+    if (touchedFields[stateKey]) {
       const error = validateField(field, value);
-      updateFieldError(fieldName, error);
+      updateFieldError(stateKey, error);
     }
   };
+
   const handleBlur = (field) => {
-    touchField(field.name);
-    const error = validateField(field, formData[field.name]);
-    updateFieldError(field.name, error);
+    const valueKey = getFieldValueKey(field);
+    const stateKey = field.name;
+
+    touchField(stateKey);
+    const error = validateField(field, formData[valueKey]);
+    updateFieldError(stateKey, error);
   };
 
   // CANCEL: check for unsaved changes, then restore original initialData and notify parent
@@ -232,7 +237,8 @@ export default function ModelForm({
     const inputType = uiConfig[field.name]?.widget || getInputType(field);
     const label = getFieldLabel(field, uiConfig);
     const required = isFieldRequired(field);
-    const value = formData[field.name] ?? "";
+    const valueKey = getFieldValueKey(field);
+    const value = formData[valueKey] ?? "";
     const error = fieldErrors[field.name];
     const touched = touchedFields[field.name];
 
@@ -280,11 +286,6 @@ export default function ModelForm({
     if (field.kind === "object" && !field.isList) {
       const options = relationOptions[field.name] || [];
 
-      // Generic foreign key field name mapping
-      const foreignKeyFieldName = field.name.endsWith("Id")
-        ? field.name
-        : `${field.name}Id`;
-
       return (
         <Label
           key={field.name}
@@ -295,8 +296,8 @@ export default function ModelForm({
           <select
             id={field.name}
             required={required}
-            value={formData[foreignKeyFieldName] || ""}
-            onChange={(e) => handleChange(foreignKeyFieldName, e.target.value)}
+            value={value}
+            onChange={(e) => handleChange(field, e.target.value)}
             onBlur={() => handleBlur(field)}
             className={inputClasses(touched && error)}
           >
@@ -329,7 +330,7 @@ export default function ModelForm({
             id={field.name}
             required={required}
             value={value}
-            onChange={(e) => handleChange(field.name, e.target.value)}
+            onChange={(e) => handleChange(field, e.target.value)}
             onBlur={() => handleBlur(field)}
             className={inputClasses(touched && error)}
           >
@@ -355,7 +356,7 @@ export default function ModelForm({
         <Checkbox
           key={field.name}
           isSelected={Boolean(value)}
-          onChange={(checked) => handleChange(field.name, checked)}
+          onChange={(checked) => handleChange(field, checked)}
           className="group mb-4 flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white"
         >
           <div className="flex size-4 items-center justify-center rounded border border-gray-300 bg-white group-data-[selected]:border-blue-600 group-data-[selected]:bg-blue-600 group-data-[focus-visible]:outline-2 group-data-[focus-visible]:-outline-offset-2 group-data-[focus-visible]:outline-blue-600 dark:border-neutral-700/50 dark:bg-neutral-800/50 dark:group-data-[selected]:border-blue-600 dark:group-data-[selected]:bg-blue-600">
@@ -392,7 +393,7 @@ export default function ModelForm({
             id={field.name}
             required={required}
             value={value}
-            onChange={(e) => handleChange(field.name, e.target.value)}
+            onChange={(e) => handleChange(field, e.target.value)}
             onBlur={() => handleBlur(field)}
             rows={4}
             className={inputClasses(touched && error)}
@@ -417,11 +418,10 @@ export default function ModelForm({
         value={inputType === "datetime-local" && value ? String(value).slice(0, 16) : value}
         onChange={(e) =>
           handleChange(
-            field.name,
+            field,
             inputType === "number"
               ? Number(e.target.value) || ""
               : e.target.value,
-            field,
           )
         }
         onBlur={() => handleBlur(field)}
