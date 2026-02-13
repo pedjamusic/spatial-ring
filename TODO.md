@@ -164,15 +164,4 @@ Current search is `ILIKE '%term%'` — no stemming, no ranking, no fuzzy matchin
 
 - [x] `🟢 easy` **`.env.test` for test database** — isolated test env guardrails added (`.env.test.example`, env safety check in test scripts)
 - [x] `🟢 easy` **API test suite hardening** — centralized test bootstrap enabled and permissive CRUD assertions tightened
-
-### Completed in this pass
-
-- Shared one-time DB bootstrap for tests enabled (`vitest` global setup)
-- Permissive status assertions (`404` fallback) removed from CRUD tests
-- Test data lifecycle centralization improved by removing per-file DB disconnect side effects
-
-### Test review findings (addressed)
-
-- Shared setup file existed but was not active in `vitest` config
-- `models.test.js` allowed `200/404` and `204/404`, masking route regressions
-- Some suites had duplicated auth/data setup with inconsistent cleanup ownership
+- [x] `⚡ quick` **`setup-db` writes `.env.test` safely** — auto-updates `.env.test` for local Postgres/SQLite flows; skips manual/remote Postgres
