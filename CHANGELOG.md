@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.8.3] - 2026-02-13
+
+### Testing & Environment
+
+- **Isolated test env guardrails** — added `api/.env.test.example` and mandatory test env checks before API test commands
+- **Safer setup script behavior** — `setup-db` now writes `.env.test` automatically only for local PostgreSQL and SQLite flows, and skips automatic test env changes for manual/remote PostgreSQL
+- **Test harness hardening** — enabled shared one-time Vitest global setup and tightened permissive CRUD test assertions
+
+### Documentation
+
+- **TODO format cleanup** — `TODO.md` now keeps infrastructure updates in established checkbox task format, with narrative summaries tracked in changelog entries
+
+### Versioning
+
+- Bumped monorepo versions to `0.8.3` in root, API, and web package manifests
 ## [0.8.2] - 2026-02-11
 
 ### Sidebar Refactoring
