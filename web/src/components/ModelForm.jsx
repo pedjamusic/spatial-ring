@@ -21,6 +21,7 @@ import {
 } from "react-aria-components";
 import { inputClasses } from "../lib/formStyles";
 import { getFieldValueKey } from "../lib/formFieldKeys";
+import { normalizeInputValue } from "../lib/formFieldValues";
 
 export default function ModelForm({
   meta,
@@ -419,9 +420,7 @@ export default function ModelForm({
         onChange={(e) =>
           handleChange(
             field,
-            inputType === "number"
-              ? Number(e.target.value) || ""
-              : e.target.value,
+            normalizeInputValue(inputType, e.target.value),
           )
         }
         onBlur={() => handleBlur(field)}
