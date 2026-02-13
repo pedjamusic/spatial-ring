@@ -12,7 +12,7 @@ Effort tags: `⚡ quick` (<30 min) · `🟢 easy` (<half day) · `🟡 medium` (
 ## Frontend
 
 - [x] `🟢 easy` **Form error notification → toast** — removed inline error `<div>` from `GenericFormPage.jsx`; all errors now use `toast.error()` only
-- [ ] `🟡 medium` **Form element consistency** — make all form elements (inputs, selects, textareas) style and behave identically (noted in CHANGELOG v0.5.3)
+- [x] `🟡 medium` **Form element consistency** — all CRUD form elements now share unified styling and validation behavior, including relation selects, number zero handling, and date-range widget validation flow
 - [ ] `🟢 easy` **Bundle size** — currently ~620kB; consider code splitting / lazy loading routes (`React.lazy` + `Suspense`)
 - [ ] `🔴 large` **Settings page** — sidebar has a placeholder "Settings Group" comment (`AppSidebar.jsx`) but no implementation
 - [ ] `🔴 large` **Mobile app** — `mobile/` workspace exists as an empty placeholder
