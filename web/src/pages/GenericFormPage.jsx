@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, useLocation, Link } from "react-router-dom";
 import ModelForm from "../components/ModelForm";
 import { PageHeader } from "../components/layout/PageHeader";
 import { H1 } from "../components/typography/H1";
@@ -16,6 +16,7 @@ export default function GenericFormPage({
 }) {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const isEdit = Boolean(id);
 
   const singular = titles.singular || modelName;
@@ -26,6 +27,19 @@ export default function GenericFormPage({
   const [loading, setLoading] = useState(true);
 
   const api = useMemo(() => resource(resourceName), [resourceName]);
+  const defaultBackPath = `/admin/${resourceName}`;
+  const requestedBackPath = location.state?.returnTo;
+  const requestedBackLabel = location.state?.returnLabel;
+  const backPath =
+    typeof requestedBackPath === "string" && requestedBackPath.startsWith("/admin")
+      ? requestedBackPath
+      : defaultBackPath;
+  const backLabel =
+    typeof requestedBackLabel === "string" && requestedBackLabel.trim()
+      ? requestedBackLabel
+      : backPath === "/admin"
+        ? "Dashboard"
+        : plural;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -91,7 +105,7 @@ export default function GenericFormPage({
   };
 
   const handleCancel = () => {
-    navigate(`/admin/${resourceName}`);
+    navigate(backPath);
   };
 
   if (loading) return <LoadingSpinner />;
@@ -104,11 +118,11 @@ export default function GenericFormPage({
 
       <div className="flex items-center gap-3">
         <Link
-          to={`/admin/${resourceName}`}
+          to={backPath}
           className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-neutral-400 dark:hover:text-neutral-200"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
-          {plural}
+          {backLabel}
         </Link>
       </div>
 
