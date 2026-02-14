@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import {
   Button,
@@ -9,6 +9,7 @@ import {
   TableBody,
   TableHeader,
 } from "react-aria-components";
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import { getFieldLabel, formatFieldValue } from "../lib/fieldMapping.js";
 import AssetAvatar from "./AssetAvatar";
 import Badge from "./ui/Badge";
@@ -80,6 +81,44 @@ function getAssetAvailabilityMeta(row) {
   };
 }
 
+function getAssetAvailabilitySortRank(row) {
+  const total = Number(row?.quantity || 0);
+  const available = Number(row?.availableQuantity ?? total);
+  if (available >= total) return 0;
+  if (available > 0) return 1;
+  return 2;
+}
+
+function getRowValue(row, fieldName, uiConfig) {
+  const path = uiConfig?.[fieldName]?.path;
+  if (!path) return row?.[fieldName];
+  return path.split(".").reduce((acc, key) => (acc ? acc[key] : undefined), row);
+}
+
+function compareValues(a, b, fieldType) {
+  const aNull = a == null || a === "";
+  const bNull = b == null || b === "";
+  if (aNull && bNull) return 0;
+  if (aNull) return 1;
+  if (bNull) return -1;
+
+  if (fieldType === "DateTime") {
+    const aTime = new Date(a).getTime();
+    const bTime = new Date(b).getTime();
+    const aValid = Number.isFinite(aTime);
+    const bValid = Number.isFinite(bTime);
+    if (aValid && bValid) return aTime - bTime;
+  }
+
+  if (typeof a === "number" && typeof b === "number") return a - b;
+  if (typeof a === "boolean" && typeof b === "boolean") return Number(a) - Number(b);
+
+  return String(a).localeCompare(String(b), undefined, {
+    numeric: true,
+    sensitivity: "base",
+  });
+}
+
 export default function ModelTable({
   meta,
   data,
@@ -89,6 +128,22 @@ export default function ModelTable({
   modelName = "",
   getCellLink = () => null,
 }) {
+  const defaultSortField = uiConfig?._tableConfig?.defaultSort?.field;
+  const defaultSortDirection = uiConfig?._tableConfig?.defaultSort?.direction === "descending"
+    ? "descending"
+    : "ascending";
+  const [sortDescriptor, setSortDescriptor] = useState(
+    defaultSortField ? { column: defaultSortField, direction: defaultSortDirection } : null,
+  );
+
+  useEffect(() => {
+    if (!defaultSortField) {
+      setSortDescriptor(null);
+      return;
+    }
+    setSortDescriptor({ column: defaultSortField, direction: defaultSortDirection });
+  }, [defaultSortField, defaultSortDirection, modelName]);
+
   // If the page provides uiConfig.columnOrder = ['field1','field2',…]
   // sort meta.fields accordingly and fall back to schema order.
   const order = uiConfig.columnOrder || [];
@@ -109,6 +164,27 @@ export default function ModelTable({
     .slice(0, uiConfig.maxColumns || meta.fields.length); // Limit columns
   // .sort((a, b) => order.indexOf(a.name) - order.indexOf(b.name) || 0);
 
+  const sortedData = useMemo(() => {
+    if (!sortDescriptor?.column) return data;
+
+    const sortField = meta.fields.find((field) => field.name === sortDescriptor.column);
+    if (!sortField) return data;
+
+    const direction = sortDescriptor.direction === "descending" ? -1 : 1;
+
+    return [...data].sort((leftRow, rightRow) => {
+      if (modelName === "Asset" && sortField.name === "status") {
+        const leftRank = getAssetAvailabilitySortRank(leftRow);
+        const rightRank = getAssetAvailabilitySortRank(rightRow);
+        return (leftRank - rightRank) * direction;
+      }
+
+      const left = getRowValue(leftRow, sortField.name, uiConfig);
+      const right = getRowValue(rightRow, sortField.name, uiConfig);
+      return compareValues(left, right, sortField.type) * direction;
+    });
+  }, [data, meta.fields, modelName, sortDescriptor, uiConfig]);
+
   if (!data?.length) {
     return <div>👀 No records found.</div>;
   }
@@ -125,8 +201,10 @@ export default function ModelTable({
     <div className="w-full max-w-full overflow-x-auto px-6 py-4">
       <div className="min-w-max">
       <Table
-        aria-label=""
+        aria-label={`${modelName} table`}
         selectionMode="multiple"
+        sortDescriptor={sortDescriptor ?? undefined}
+        onSortChange={setSortDescriptor}
         className="min-w-full divide-y divide-gray-200 dark:divide-neutral-700"
       >
         <TableHeader>
@@ -136,13 +214,32 @@ export default function ModelTable({
             <Column
               scope="col"
               key={field.name}
-              className="py-4 text-start text-xs font-medium uppercase text-gray-500 dark:text-neutral-400"
+              id={field.name}
+              allowsSorting
+              className={({ allowsSorting }) =>
+                `group py-4 text-start text-xs font-medium uppercase ${
+                  allowsSorting ? "cursor-pointer select-none" : ""
+                }`
+              }
             >
-              {modelName === "Asset" && field.name === "quantity"
-                ? "Available / Total"
-                : modelName === "Asset" && field.name === "status"
-                  ? "Availability"
-                  : getFieldLabel(field, uiConfig)}
+              {({ sortDirection }) => (
+                <span className="inline-flex items-center gap-1 text-gray-500 transition-colors group-hover:text-gray-700 dark:text-neutral-400 dark:group-hover:text-neutral-200">
+                  <span className="whitespace-nowrap">
+                    {modelName === "Asset" && field.name === "quantity"
+                      ? "Available / Total"
+                      : modelName === "Asset" && field.name === "status"
+                        ? "Availability"
+                        : getFieldLabel(field, uiConfig)}
+                  </span>
+                  {sortDirection === "descending" ? (
+                    <ArrowDown size={14} strokeWidth={1.8} aria-hidden="true" />
+                  ) : sortDirection === "ascending" ? (
+                    <ArrowUp size={14} strokeWidth={1.8} aria-hidden="true" />
+                  ) : (
+                    <ArrowUpDown size={14} strokeWidth={1.8} aria-hidden="true" />
+                  )}
+                </span>
+              )}
             </Column>
           ))}
 
@@ -152,7 +249,7 @@ export default function ModelTable({
         </TableHeader>
 
         <TableBody className="divide-y divide-gray-200 dark:divide-neutral-700">
-          {data.map((row) => (
+          {sortedData.map((row) => (
             <Row key={row.id}>
               {/* Photo cell */}
               {hasPhoto && (
@@ -173,15 +270,7 @@ export default function ModelTable({
                   {/* {formatFieldValue(row[field.name], field)} */}
                   {(() => {
                     const cfg = uiConfig[field.name] || {};
-                    const path = cfg.path; // e.g. "location.name"
-                    const raw = path
-                      ? path
-                          .split(".")
-                          .reduce(
-                            (acc, key) => (acc ? acc[key] : undefined),
-                            row,
-                          )
-                      : row[field.name];
+                    const raw = getRowValue(row, field.name, uiConfig);
 
                     // Date-only + optional duration display
                     if (field.type === "DateTime" && cfg.dateOnly && raw) {
