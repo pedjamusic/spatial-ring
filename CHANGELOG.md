@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [Unreleased]
+
+### Event Assignment & View Flow
+
+- Added a dedicated Event `VIEW` page (`/admin/events/:id`) as the default single-event page, with a built-in `Edit` action
+- Added `Assets Used` management on the Event view, including inline asset assignment to the event
+- Added Event assignment API endpoints:
+  - `GET /api/events/:id/assignments`
+  - `GET /api/events/:id/assignable-assets`
+  - `POST /api/events/:id/assignments`
+- Updated Event links to point to the Event view page from:
+  - Calendar day popover entries
+  - Events table `Name` column (actions remain `Edit` + `Delete`)
+  - Dashboard event cards
+  - Global search results
+- Updated Event edit navigation so both `Save` and `Cancel` return to Event `SHOW` (`/admin/events/:id`) and breadcrumb text reflects `Event Details`
+- Added backend tests for assignment flow in `api/test/events-assignments.test.js`
+
 ## [0.8.3] - 2026-02-13
 
 ### Dashboard Event UX & Visual Polish
