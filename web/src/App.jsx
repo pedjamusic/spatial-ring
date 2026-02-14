@@ -67,7 +67,33 @@ export default function App() {
               configsLoaded &&
               resources.map((r) => (
                 <Route key={r.path} path={r.path}>
-                  <Route index element={<GenericListPage {...propsFor(r)} />} />
+                  <Route
+                    index
+                    element={
+                      <GenericListPage
+                        {...propsFor(r)}
+                        fixedListParams={r.resourceName === "events" ? { scope: "active" } : {}}
+                        toolbarScopeAction={r.resourceName === "events"
+                          ? { to: "/admin/events/archive", label: "Archived", countParams: { scope: "archived" } }
+                          : null}
+                      />
+                    }
+                  />
+                  {r.resourceName === "events" && (
+                    <Route
+                      path="archive"
+                      element={
+                        <GenericListPage
+                          {...propsFor(r)}
+                          titles={{ singular: "Archived Event", plural: "Archived Events" }}
+                          fixedListParams={{ scope: "archived" }}
+                          hideCreateButton
+                          hideMobileCreateButton
+                          toolbarScopeAction={{ to: "/admin/events", label: "Active", countParams: { scope: "active" } }}
+                        />
+                      }
+                    />
+                  )}
                   <Route path="new" element={<GenericFormPage {...propsFor(r)} />} />
                   {r.resourceName === "events" && (
                     <Route path=":id" element={<EventViewPage />} />

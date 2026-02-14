@@ -37,6 +37,10 @@ export default function GenericListPage({
   resourceName,
   uiConfig: defaultUiConfig = {},
   titles = {},
+  fixedListParams = {},
+  hideCreateButton = false,
+  hideMobileCreateButton = false,
+  toolbarScopeAction = null,
 }) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -47,6 +51,7 @@ export default function GenericListPage({
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [scopeCount, setScopeCount] = useState(null);
 
   // Calendar config from _viewConfig
   const calendarConfig = defaultUiConfig?._viewConfig?.calendar;
@@ -135,7 +140,12 @@ export default function GenericListPage({
 
       // Load paginated data (only for table view)
       if (!isCalendarView) {
-        const res = await api.list({ page, limit, search: search || undefined }, { signal });
+        const res = await api.list({
+          ...fixedListParams,
+          page,
+          limit,
+          search: search || undefined,
+        }, { signal });
         setData(res.data || []);
         setTotalPages(res.meta?.totalPages || 0);
       }
@@ -145,13 +155,43 @@ export default function GenericListPage({
     } finally {
       if (!signal?.aborted) setLoading(false);
     }
-  }, [modelName, api, page, limit, search, isCalendarView]);
+  }, [modelName, api, page, limit, search, isCalendarView, fixedListParams]);
 
   useEffect(() => {
     const controller = new AbortController();
     loadData(controller.signal);
     return () => controller.abort();
   }, [loadData]);
+
+  useEffect(() => {
+    if (!toolbarScopeAction?.countParams) {
+      setScopeCount(null);
+      return;
+    }
+
+    const controller = new AbortController();
+    const { signal } = controller;
+
+    (async () => {
+      try {
+        const res = await api.list(
+          {
+            ...toolbarScopeAction.countParams,
+            page: 1,
+            limit: 1,
+          },
+          { signal },
+        );
+        if (!signal.aborted) {
+          setScopeCount(res.meta?.total ?? null);
+        }
+      } catch {
+        if (!signal.aborted) setScopeCount(null);
+      }
+    })();
+
+    return () => controller.abort();
+  }, [api, toolbarScopeAction]);
 
   // View switching — persist to localStorage
   const handleViewChange = useCallback((newView) => {
@@ -253,7 +293,7 @@ export default function GenericListPage({
         </div>
         <Link
           to="new"
-          className="shadow-glow shadow-blue-600/50 focus:outline-hidden hidden items-center gap-x-2 rounded-xl border border-blue-600 bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 focus:bg-blue-800 sm:inline-flex"
+          className={`shadow-glow shadow-blue-600/50 focus:outline-hidden hidden items-center gap-x-2 rounded-xl border border-blue-600 bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 focus:bg-blue-800 sm:inline-flex ${hideCreateButton ? "sm:hidden" : ""}`}
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
           Create {singular}
@@ -264,7 +304,7 @@ export default function GenericListPage({
       <div className="fixed bottom-4 left-0 right-0 z-30 flex justify-center sm:hidden">
         <Link
           to="new"
-          className="shadow-glow shadow-blue-600/50 focus:outline-hidden inline-flex items-center gap-x-2 rounded-full border border-blue-600 bg-blue-600 px-5 py-3 text-sm font-medium text-white hover:bg-blue-500 focus:bg-blue-800"
+          className={`shadow-glow shadow-blue-600/50 focus:outline-hidden inline-flex items-center gap-x-2 rounded-full border border-blue-600 bg-blue-600 px-5 py-3 text-sm font-medium text-white hover:bg-blue-500 focus:bg-blue-800 ${hideCreateButton || hideMobileCreateButton ? "hidden" : ""}`}
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
           Create {singular}
@@ -306,17 +346,49 @@ export default function GenericListPage({
         ) : (
           <>
             <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-300 px-6 py-4 dark:border-neutral-700/50">
-              <SearchInput
-                value={search}
-                onChange={handleSearchChange}
-                placeholder={`Search ${plural.toLowerCase()}...`}
-              />
-              <ColumnSettings
-                meta={meta}
-                config={uiConfig}
-                onToggle={handleToggleColumnPref}
-                onReset={handleResetPrefs}
-              />
+              <div className="flex min-w-0 flex-1 items-center gap-2">
+                <div className="min-w-0 flex-1">
+                  <SearchInput
+                    value={search}
+                    onChange={handleSearchChange}
+                    placeholder={`Search ${plural.toLowerCase()}...`}
+                  />
+                </div>
+                {toolbarScopeAction && (
+                  <Link
+                    to={toolbarScopeAction.to}
+                    className="hidden cursor-pointer items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none sm:inline-flex dark:border-neutral-700 dark:bg-neutral-800/50 dark:hover:bg-neutral-800"
+                  >
+                    <span>{toolbarScopeAction.label}</span>
+                    {typeof scopeCount === "number" && (
+                      <span className="inline-flex min-w-6 items-center justify-center rounded-full bg-gray-200 px-1.5 py-0.5 text-xs font-semibold text-gray-700 dark:bg-neutral-700 dark:text-neutral-200">
+                        {scopeCount}
+                      </span>
+                    )}
+                  </Link>
+                )}
+              </div>
+              <div className="flex w-full items-center justify-center gap-2 sm:w-auto sm:justify-start">
+                {toolbarScopeAction && (
+                  <Link
+                    to={toolbarScopeAction.to}
+                    className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none sm:hidden dark:border-neutral-700 dark:bg-neutral-800/50 dark:hover:bg-neutral-800"
+                  >
+                    <span>{toolbarScopeAction.label}</span>
+                    {typeof scopeCount === "number" && (
+                      <span className="inline-flex min-w-6 items-center justify-center rounded-full bg-gray-200 px-1.5 py-0.5 text-xs font-semibold text-gray-700 dark:bg-neutral-700 dark:text-neutral-200">
+                        {scopeCount}
+                      </span>
+                    )}
+                  </Link>
+                )}
+                <ColumnSettings
+                  meta={meta}
+                  config={uiConfig}
+                  onToggle={handleToggleColumnPref}
+                  onReset={handleResetPrefs}
+                />
+              </div>
             </div>
             <ModelTable
               meta={meta}

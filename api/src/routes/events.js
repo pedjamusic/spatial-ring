@@ -4,6 +4,28 @@ import { paginateQuery, paginateResponse } from '../lib/pagination.js';
 
 const router = express.Router();
 
+function getScopeWhere(scope) {
+  const now = new Date();
+  if (scope === 'archived') {
+    return {
+      OR: [
+        { endsAt: { lt: now } },
+        { AND: [{ endsAt: null }, { startsAt: { lt: now } }] },
+      ],
+    };
+  }
+  if (scope === 'active') {
+    return {
+      OR: [
+        { endsAt: { gte: now } }, // future + ongoing
+        { AND: [{ endsAt: null }, { startsAt: { gte: now } }] }, // no end, upcoming
+        { AND: [{ startsAt: null }, { endsAt: null }] }, // unscheduled events
+      ],
+    };
+  }
+  return {};
+}
+
 function toQuantityMap(rows) {
   return new Map(
     rows.map((row) => [row.assetId, row._sum.quantity || 0]),
@@ -114,7 +136,7 @@ async function getActiveEventAssignments(eventId) {
 // GET /api/events
 router.get('/', async (req, res) => {
   try {
-    const { rangeStart, rangeEnd } = req.query;
+    const { rangeStart, rangeEnd, scope } = req.query;
 
     // Calendar date-range mode: return all events in range (no pagination)
     if (rangeStart && rangeEnd) {
@@ -140,9 +162,13 @@ router.get('/', async (req, res) => {
 
     // Default paginated mode
     const { skip, take, page, limit, search } = paginateQuery(req);
-    const where = search
+    const searchWhere = search
       ? { name: { contains: search, mode: 'insensitive' } }
       : {};
+    const scopeWhere = getScopeWhere(scope);
+    const where = {
+      AND: [searchWhere, scopeWhere],
+    };
 
     const [data, total] = await Promise.all([
       prisma.event.findMany({
