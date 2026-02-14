@@ -218,7 +218,7 @@ export default function EventViewPage() {
     <div className="grid gap-y-4">
       <PageHeader />
 
-      <div className="flex min-w-0 items-center gap-2 overflow-hidden">
+      <div className="flex min-w-0 items-center gap-2">
         <div className="min-w-0 flex-1 overflow-hidden">
           <H1 className="overflow-hidden text-ellipsis whitespace-nowrap">{event.name}</H1>
         </div>

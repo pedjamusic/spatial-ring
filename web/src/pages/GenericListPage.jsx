@@ -272,7 +272,7 @@ export default function GenericListPage({
       </div>
 
       {/* Card */}
-      <div className="not-dark:shadow rounded-xl border border-gray-300 bg-white dark:border-neutral-700/50 dark:bg-neutral-800/50">
+      <div className="not-dark:shadow overflow-hidden rounded-xl border border-gray-300 bg-white dark:border-neutral-700/50 dark:bg-neutral-800/50">
         {isCalendarView ? (
           <>
             <CalendarNavigation
