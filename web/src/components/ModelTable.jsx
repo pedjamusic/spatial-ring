@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
 import {
   Button,
   Cell,
@@ -63,6 +64,7 @@ export default function ModelTable({
   onDelete,
   uiConfig = {},
   modelName = "",
+  getCellLink = () => null,
 }) {
   // If the page provides uiConfig.columnOrder = ['field1','field2',…]
   // sort meta.fields accordingly and fall back to schema order.
@@ -179,7 +181,21 @@ export default function ModelTable({
                       return dateStr;
                     }
 
-                    return formatFieldValue(raw, field); // existing helper for dates etc.
+                    const formattedValue = formatFieldValue(raw, field);
+                    const linkTarget = getCellLink(row, field);
+
+                    if (linkTarget) {
+                      return (
+                        <Link
+                          to={linkTarget}
+                          className="font-semibold text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-300"
+                        >
+                          {formattedValue}
+                        </Link>
+                      );
+                    }
+
+                    return formattedValue; // existing helper for dates etc.
                   })()}
                 </Cell>
               ))}

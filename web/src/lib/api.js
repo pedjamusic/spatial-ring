@@ -72,5 +72,5 @@ export const resource = (name) => ({
     }),
 });
 
-export const authFetch = (endpoint, { signal } = {}) =>
-  makeRequest(`/${endpoint}`, { signal });
+export const authFetch = (endpoint, options = {}) =>
+  makeRequest(`/${endpoint}`, options);

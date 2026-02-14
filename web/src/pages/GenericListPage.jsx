@@ -325,6 +325,11 @@ export default function GenericListPage({
               onDelete={handleDelete}
               uiConfig={uiConfig}
               modelName={modelName}
+              getCellLink={(row, field) => (
+                modelName === "Event" && field.name === "name"
+                  ? `/admin/${resourceName}/${row.id}`
+                  : null
+              )}
             />
           </>
         )}

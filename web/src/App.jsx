@@ -10,6 +10,7 @@ import Logout from "./pages/Logout";
 import AdminHome from "./pages/AdminHome";
 import GenericListPage from "./pages/GenericListPage";
 import GenericFormPage from "./pages/GenericFormPage";
+import EventViewPage from "./pages/EventViewPage";
 
 import { useCrudResources } from "./components/sidebar/useCrudResources";
 
@@ -68,6 +69,9 @@ export default function App() {
                 <Route key={r.path} path={r.path}>
                   <Route index element={<GenericListPage {...propsFor(r)} />} />
                   <Route path="new" element={<GenericFormPage {...propsFor(r)} />} />
+                  {r.resourceName === "events" && (
+                    <Route path=":id" element={<EventViewPage />} />
+                  )}
                   <Route path=":id/edit" element={<GenericFormPage {...propsFor(r)} />} />
                 </Route>
               ))}

@@ -114,7 +114,7 @@ export function GlobalSearchContainer() {
         id: `event-${e.id}`,
         label: e.name || `Event #${e.id}`,
         model: "Event",
-        href: `/admin/events/${e.id}/edit`,
+        href: `/admin/events/${e.id}`,
       }));
 
     const matchedLocations = allData.locations

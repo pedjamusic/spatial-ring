@@ -15,7 +15,7 @@ export default function EventCardGrid({ events, linkState }) {
         <EventCard
           key={event.id}
           event={event}
-          to={`/admin/events/${event.id}/edit`}
+          to={`/admin/events/${event.id}`}
           linkState={linkState}
         />
       ))}

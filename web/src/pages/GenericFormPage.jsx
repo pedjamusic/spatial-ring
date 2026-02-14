@@ -18,6 +18,7 @@ export default function GenericFormPage({
   const navigate = useNavigate();
   const location = useLocation();
   const isEdit = Boolean(id);
+  const isEventEdit = resourceName === "events" && isEdit;
 
   const singular = titles.singular || modelName;
   const plural = titles.plural || `${modelName}s`;
@@ -27,19 +28,24 @@ export default function GenericFormPage({
   const [loading, setLoading] = useState(true);
 
   const api = useMemo(() => resource(resourceName), [resourceName]);
-  const defaultBackPath = `/admin/${resourceName}`;
+  const defaultBackPath = isEventEdit
+    ? `/admin/${resourceName}/${id}`
+    : `/admin/${resourceName}`;
   const requestedBackPath = location.state?.returnTo;
   const requestedBackLabel = location.state?.returnLabel;
-  const backPath =
-    typeof requestedBackPath === "string" && requestedBackPath.startsWith("/admin")
+  const backPath = isEventEdit
+    ? defaultBackPath
+    : typeof requestedBackPath === "string" && requestedBackPath.startsWith("/admin")
       ? requestedBackPath
       : defaultBackPath;
   const backLabel =
-    typeof requestedBackLabel === "string" && requestedBackLabel.trim()
-      ? requestedBackLabel
-      : backPath === "/admin"
-        ? "Dashboard"
-        : plural;
+    isEventEdit
+      ? `${singular} Details`
+      : typeof requestedBackLabel === "string" && requestedBackLabel.trim()
+        ? requestedBackLabel
+        : backPath === "/admin"
+          ? "Dashboard"
+          : plural;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -96,7 +102,7 @@ export default function GenericFormPage({
 
         toast.success(`${singular} created successfully!`);
       }
-      navigate(`/admin/${resourceName}`);
+      navigate(isEdit ? backPath : `/admin/${resourceName}`);
     } catch (err) {
       const errorMessage = err.message || "Operation failed";
       toast.error(`Failed to save ${singular}: ${errorMessage}`);

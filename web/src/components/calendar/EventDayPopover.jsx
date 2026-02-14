@@ -105,7 +105,7 @@ export default function EventDayPopover({
         {entries.map((entry) => (
             <li key={`${entry.event.id}-${entry.classification}`} className="px-4 py-2.5">
               <Link
-                to={`${entry.event.id}/edit`}
+                to={`/admin/events/${entry.event.id}`}
                 className={`flex items-center gap-x-2.5 text-sm ${entry.isPast ? "text-gray-400 hover:text-gray-600 dark:text-neutral-500 dark:hover:text-neutral-300" : "text-gray-700 hover:text-blue-600 dark:text-neutral-300 dark:hover:text-blue-400"}`}
                 onClick={onClose}
               >
