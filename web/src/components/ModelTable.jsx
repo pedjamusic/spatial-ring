@@ -11,6 +11,7 @@ import {
 } from "react-aria-components";
 import { getFieldLabel, formatFieldValue } from "../lib/fieldMapping.js";
 import AssetAvatar from "./AssetAvatar";
+import Badge from "./ui/Badge";
 
 function ActionMenu({ onEdit, onDelete }) {
   const [open, setOpen] = useState(false);
@@ -55,6 +56,28 @@ function ActionMenu({ onEdit, onDelete }) {
       )}
     </div>
   );
+}
+
+function getAssetAvailabilityMeta(row) {
+  const total = Number(row?.quantity || 0);
+  const available = Number(row?.availableQuantity ?? total);
+
+  if (available <= 0) {
+    return {
+      label: "Unavailable",
+      variant: "red",
+    };
+  }
+  if (available >= total) {
+    return {
+      label: "All available",
+      variant: "green",
+    };
+  }
+  return {
+    label: "Partially in use",
+    variant: "yellow",
+  };
 }
 
 export default function ModelTable({
@@ -117,7 +140,11 @@ export default function ModelTable({
               key={field.name}
               className="py-4 text-start text-xs font-medium uppercase text-gray-500 dark:text-neutral-400"
             >
-              {getFieldLabel(field, uiConfig)}
+              {modelName === "Asset" && field.name === "quantity"
+                ? "Available / Total"
+                : modelName === "Asset" && field.name === "status"
+                  ? "Availability"
+                  : getFieldLabel(field, uiConfig)}
             </Column>
           ))}
 
@@ -179,6 +206,25 @@ export default function ModelTable({
                         }
                       }
                       return dateStr;
+                    }
+
+                    if (modelName === "Asset" && field.name === "quantity") {
+                      const total = Number(raw || 0);
+                      const available = Number(row.availableQuantity ?? total);
+                      return (
+                        <span className="font-semibold text-gray-800 dark:text-neutral-200">
+                          {available}/{total}
+                        </span>
+                      );
+                    }
+
+                    if (modelName === "Asset" && field.name === "status") {
+                      const availability = getAssetAvailabilityMeta(row);
+                      return (
+                        <Badge variant={availability.variant}>
+                          {availability.label}
+                        </Badge>
+                      );
                     }
 
                     const formattedValue = formatFieldValue(raw, field);

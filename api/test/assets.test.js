@@ -34,4 +34,24 @@ describe('Assets CRUD', () => {
       .send({ name: 'Test Asset' });
     expect(res.status).toBe(201);
   });
+
+  it('GET /api/assets includes availability fields', async () => {
+    const auth = await getAuth();
+    const created = await request(app)
+      .post('/api/assets')
+      .set(auth)
+      .send({ name: 'Availability Asset', quantity: 3 });
+
+    expect(created.status).toBe(201);
+
+    const res = await request(app)
+      .get('/api/assets?search=Availability Asset')
+      .set(auth);
+
+    expect(res.status).toBe(200);
+    const asset = (res.body.data || []).find((row) => row.id === created.body.id);
+    expect(asset).toBeDefined();
+    expect(asset).toHaveProperty('totalQuantity', 3);
+    expect(asset).toHaveProperty('availableQuantity', 3);
+  });
 });

@@ -4,47 +4,111 @@ import { paginateQuery, paginateResponse } from '../lib/pagination.js';
 
 const router = express.Router();
 
-async function getLatestMovementsByAssetIds(assetIds) {
-  if (!assetIds.length) return [];
+function toQuantityMap(rows) {
+  return new Map(
+    rows.map((row) => [row.assetId, row._sum.quantity || 0]),
+  );
+}
 
-  return prisma.movement.findMany({
-    where: { assetId: { in: assetIds } },
-    orderBy: [{ assetId: 'asc' }, { performedAt: 'desc' }, { id: 'desc' }],
-    distinct: ['assetId'],
-    select: {
-      assetId: true,
-      type: true,
-      eventId: true,
+async function getQuantityMapByType(type, assetIds) {
+  if (!assetIds?.length) return new Map();
+
+  const rows = await prisma.movement.groupBy({
+    by: ['assetId'],
+    where: {
+      type,
+      assetId: { in: assetIds },
     },
+    _sum: { quantity: true },
   });
+  return toQuantityMap(rows);
+}
+
+function getAvailabilityForAsset(asset, inUseMap, storedMap) {
+  const totalQuantity = asset.quantity || 0;
+  if (asset.status === 'Maintenance') {
+    return {
+      totalQuantity,
+      inUseQuantity: totalQuantity,
+      availableQuantity: 0,
+    };
+  }
+
+  const totalInUse = inUseMap.get(asset.id) || 0;
+  const totalStored = storedMap.get(asset.id) || 0;
+  const netInUse = Math.max(0, totalInUse - totalStored);
+  const inUseQuantity = Math.min(netInUse, totalQuantity);
+  const availableQuantity = Math.max(0, totalQuantity - inUseQuantity);
+
+  return { totalQuantity, inUseQuantity, availableQuantity };
+}
+
+async function getAssetAvailabilityMaps(assetIds) {
+  const [inUseMap, storedMap] = await Promise.all([
+    getQuantityMapByType('InUse', assetIds),
+    getQuantityMapByType('Stored', assetIds),
+  ]);
+
+  return { inUseMap, storedMap };
 }
 
 async function getActiveEventAssignments(eventId) {
-  const inUseMovements = await prisma.movement.findMany({
+  const grouped = await prisma.movement.groupBy({
+    by: ['assetId'],
     where: {
       eventId,
       type: 'InUse',
     },
-    include: {
-      asset: {
-        include: {
-          category: { select: { name: true } },
-          restingLocation: { select: { name: true } },
-        },
+    _sum: { quantity: true },
+  });
+  if (!grouped.length) return [];
+
+  const assetIds = grouped.map((row) => row.assetId);
+  const [assets, latestByAsset, { inUseMap, storedMap }] = await Promise.all([
+    prisma.asset.findMany({
+      where: { id: { in: assetIds } },
+      include: {
+        category: { select: { name: true } },
+        restingLocation: { select: { name: true } },
       },
-      performedBy: { select: { id: true, name: true } },
-    },
-    orderBy: [{ performedAt: 'desc' }, { id: 'desc' }],
-  });
+    }),
+    prisma.movement.findMany({
+      where: {
+        eventId,
+        type: 'InUse',
+        assetId: { in: assetIds },
+      },
+      include: { performedBy: { select: { id: true, name: true } } },
+      orderBy: [{ assetId: 'asc' }, { performedAt: 'desc' }, { id: 'desc' }],
+      distinct: ['assetId'],
+    }),
+    getAssetAvailabilityMaps(assetIds),
+  ]);
 
-  const assetIds = [...new Set(inUseMovements.map((movement) => movement.assetId))];
-  const latestByAsset = await getLatestMovementsByAssetIds(assetIds);
-  const latestMap = new Map(latestByAsset.map((movement) => [movement.assetId, movement]));
+  const groupedByAsset = new Map(grouped.map((row) => [row.assetId, row._sum.quantity || 0]));
+  const latestByAssetMap = new Map(latestByAsset.map((row) => [row.assetId, row]));
+  const assetsById = new Map(assets.map((asset) => [asset.id, asset]));
 
-  return inUseMovements.filter((movement) => {
-    const latest = latestMap.get(movement.assetId);
-    return latest?.type === 'InUse' && latest?.eventId === eventId;
-  });
+  return assetIds
+    .map((assetId) => {
+      const asset = assetsById.get(assetId);
+      if (!asset) return null;
+      const latest = latestByAssetMap.get(assetId);
+      const { availableQuantity, totalQuantity } = getAvailabilityForAsset(asset, inUseMap, storedMap);
+
+      return {
+        id: assetId,
+        assetId,
+        asset,
+        assignedQuantity: groupedByAsset.get(assetId) || 0,
+        availableQuantity,
+        totalQuantity,
+        lastAssignedAt: latest?.performedAt || null,
+        lastAssignedBy: latest?.performedBy || null,
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.asset.name.localeCompare(b.asset.name));
 }
 
 // GET /api/events
@@ -135,23 +199,7 @@ router.get('/:id/assignable-assets', async (req, res) => {
     });
     if (!event) return res.status(404).json({ error: 'Event not found' });
 
-    const latestMovements = await prisma.movement.findMany({
-      orderBy: [{ assetId: 'asc' }, { performedAt: 'desc' }, { id: 'desc' }],
-      distinct: ['assetId'],
-      select: {
-        assetId: true,
-        type: true,
-      },
-    });
-
-    const inUseAssetIds = latestMovements
-      .filter((movement) => movement.type === 'InUse')
-      .map((movement) => movement.assetId);
-
     const assets = await prisma.asset.findMany({
-      where: {
-        id: inUseAssetIds.length ? { notIn: inUseAssetIds } : undefined,
-      },
       include: {
         category: { select: { name: true } },
         restingLocation: { select: { name: true } },
@@ -159,7 +207,17 @@ router.get('/:id/assignable-assets', async (req, res) => {
       orderBy: { name: 'asc' },
     });
 
-    res.json({ data: assets });
+    const assetIds = assets.map((asset) => asset.id);
+    const { inUseMap, storedMap } = await getAssetAvailabilityMaps(assetIds);
+
+    const data = assets
+      .map((asset) => ({
+        ...asset,
+        ...getAvailabilityForAsset(asset, inUseMap, storedMap),
+      }))
+      .filter((asset) => asset.availableQuantity > 0);
+
+    res.json({ data });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch assignable assets' });
   }
@@ -186,7 +244,7 @@ router.post('/:id/assignments', async (req, res) => {
       }),
       prisma.asset.findUnique({
         where: { id: assetId },
-        select: { id: true, quantity: true },
+        select: { id: true, quantity: true, status: true },
       }),
     ]);
 
@@ -197,18 +255,13 @@ router.post('/:id/assignments', async (req, res) => {
       return res.status(404).json({ error: 'Asset not found' });
     }
 
-    if (parsedQuantity > asset.quantity) {
-      return res.status(400).json({ error: `Cannot assign more than ${asset.quantity}` });
-    }
+    const { inUseMap, storedMap } = await getAssetAvailabilityMaps([assetId]);
+    const availability = getAvailabilityForAsset(asset, inUseMap, storedMap);
 
-    const latestMovement = await prisma.movement.findFirst({
-      where: { assetId },
-      orderBy: [{ performedAt: 'desc' }, { id: 'desc' }],
-      select: { type: true, eventId: true },
-    });
-
-    if (latestMovement?.type === 'InUse') {
-      return res.status(400).json({ error: 'Asset is already assigned to an event' });
+    if (parsedQuantity > availability.availableQuantity) {
+      return res.status(400).json({
+        error: `Cannot assign ${parsedQuantity}. Only ${availability.availableQuantity} available.`,
+      });
     }
 
     const assignment = await prisma.$transaction(async (tx) => {

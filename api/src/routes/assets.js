@@ -5,6 +5,64 @@ import { paginateQuery, paginateResponse } from '../lib/pagination.js';
 
 const router = express.Router();
 
+function toQuantityMap(rows) {
+  return new Map(
+    rows.map((row) => [row.assetId, row._sum.quantity || 0]),
+  );
+}
+
+async function getQuantityMapByType(type, assetIds) {
+  if (!assetIds.length) return new Map();
+
+  const rows = await prisma.movement.groupBy({
+    by: ['assetId'],
+    where: {
+      type,
+      assetId: { in: assetIds },
+    },
+    _sum: { quantity: true },
+  });
+  return toQuantityMap(rows);
+}
+
+function getAvailabilityForAsset(asset, inUseMap, storedMap) {
+  const totalQuantity = asset.quantity || 0;
+  if (asset.status === 'Maintenance') {
+    return {
+      totalQuantity,
+      inUseQuantity: totalQuantity,
+      availableQuantity: 0,
+    };
+  }
+
+  const totalInUse = inUseMap.get(asset.id) || 0;
+  const totalStored = storedMap.get(asset.id) || 0;
+  const netInUse = Math.max(0, totalInUse - totalStored);
+  const inUseQuantity = Math.min(netInUse, totalQuantity);
+  const availableQuantity = Math.max(0, totalQuantity - inUseQuantity);
+
+  return {
+    totalQuantity,
+    inUseQuantity,
+    availableQuantity,
+  };
+}
+
+async function addAvailability(assets) {
+  const assetIds = assets.map((asset) => asset.id);
+  if (!assetIds.length) return assets;
+
+  const [inUseMap, storedMap] = await Promise.all([
+    getQuantityMapByType('InUse', assetIds),
+    getQuantityMapByType('Stored', assetIds),
+  ]);
+
+  return assets.map((asset) => ({
+    ...asset,
+    ...getAvailabilityForAsset(asset, inUseMap, storedMap),
+  }));
+}
+
 // GET /api/assets
 router.get('/', async (req, res) => {
   try {
@@ -19,7 +77,7 @@ router.get('/', async (req, res) => {
         ] }
       : {};
 
-    const [data, total] = await Promise.all([
+    const [rawData, total] = await Promise.all([
       prisma.asset.findMany({
         where,
         skip,
@@ -29,6 +87,7 @@ router.get('/', async (req, res) => {
       }),
       prisma.asset.count({ where }),
     ]);
+    const data = await addAvailability(rawData);
     res.json(paginateResponse(data, total, { page, limit }))
   } catch (error) {
     console.error('Failed to fetch assets:', error.message);
@@ -44,7 +103,8 @@ router.get('/:id', async (req, res) => {
       include: { restingLocation: true, category: true }
     });
     if (!asset) return res.status(404).json({ error: 'Asset not found' });
-    res.json(asset)
+    const [assetWithAvailability] = await addAvailability([asset]);
+    res.json(assetWithAvailability)
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch asset' })
   }

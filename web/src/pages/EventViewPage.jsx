@@ -54,6 +54,7 @@ export default function EventViewPage() {
       : "/admin/events";
 
   const selectedAsset = availableAssets.find((asset) => asset.id === assetId);
+  const parsedQuantity = Number(quantity);
 
   const loadData = useCallback(async (signal) => {
     setLoading(true);
@@ -81,6 +82,10 @@ export default function EventViewPage() {
     loadData(controller.signal);
     return () => controller.abort();
   }, [loadData]);
+
+  useEffect(() => {
+    setQuantity(1);
+  }, [assetId]);
 
   const handleAssignAsset = async (e) => {
     e.preventDefault();
@@ -214,7 +219,7 @@ export default function EventViewPage() {
             <input
               type="number"
               min={1}
-              max={selectedAsset?.quantity || undefined}
+              max={selectedAsset?.availableQuantity || undefined}
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
               className="mt-1 block w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-0 focus:border-blue-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"
@@ -223,7 +228,14 @@ export default function EventViewPage() {
 
           <button
             type="submit"
-            disabled={submitting || !availableAssets.length}
+            disabled={
+              submitting
+              || !availableAssets.length
+              || !selectedAsset
+              || !Number.isInteger(parsedQuantity)
+              || parsedQuantity <= 0
+              || parsedQuantity > selectedAsset.availableQuantity
+            }
             className="inline-flex items-center justify-center self-end rounded-xl border border-blue-600 bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {submitting ? "Assigning..." : "Assign Asset"}
@@ -252,19 +264,19 @@ export default function EventViewPage() {
                 <tr className="text-xs font-medium tracking-wide text-gray-500 uppercase dark:text-neutral-400">
                   <th className="py-2 pr-3">Asset</th>
                   <th className="py-2 pr-3">Category</th>
-                  <th className="py-2 pr-3">Qty</th>
-                  <th className="py-2 pr-3">Assigned</th>
+                  <th className="py-2 pr-3">Assigned Qty</th>
+                  <th className="py-2 pr-3">Last Assigned</th>
                   <th className="py-2 pr-3">By</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
                 {assignments.map((assignment) => (
-                  <tr key={assignment.id}>
+                  <tr key={assignment.assetId}>
                     <td className="py-2 pr-3 text-gray-900 dark:text-gray-100">{assignment.asset?.name || "Unknown"}</td>
                     <td className="py-2 pr-3 text-gray-700 dark:text-neutral-300">{assignment.asset?.category?.name || "Uncategorized"}</td>
-                    <td className="py-2 pr-3 text-gray-700 dark:text-neutral-300">{assignment.quantity}</td>
-                    <td className="py-2 pr-3 text-gray-700 dark:text-neutral-300">{formatDateTime(assignment.performedAt)}</td>
-                    <td className="py-2 pr-3 text-gray-700 dark:text-neutral-300">{assignment.performedBy?.name || "Unknown"}</td>
+                    <td className="py-2 pr-3 text-gray-700 dark:text-neutral-300">{assignment.assignedQuantity}</td>
+                    <td className="py-2 pr-3 text-gray-700 dark:text-neutral-300">{formatDateTime(assignment.lastAssignedAt)}</td>
+                    <td className="py-2 pr-3 text-gray-700 dark:text-neutral-300">{assignment.lastAssignedBy?.name || "Unknown"}</td>
                   </tr>
                 ))}
               </tbody>

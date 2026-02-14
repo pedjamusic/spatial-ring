@@ -86,7 +86,7 @@ describe('Event asset assignments', () => {
     expect(asset?.status).toBe('InUse');
   });
 
-  it('GET /api/events/:id/assignments includes newly assigned asset', async () => {
+  it('GET /api/events/:id/assignments includes newly assigned asset with quantities', async () => {
     const res = await request(app)
       .get(`/api/events/${eventId}/assignments`)
       .set(auth);
@@ -94,26 +94,43 @@ describe('Event asset assignments', () => {
     expect(res.status).toBe(200);
     expect(res.body.data.length).toBe(1);
     expect(res.body.data[0].assetId).toBe(assetAId);
+    expect(res.body.data[0].assignedQuantity).toBe(1);
+    expect(res.body.data[0].availableQuantity).toBe(1);
+    expect(res.body.data[0].totalQuantity).toBe(2);
   });
 
-  it('GET /api/events/:id/assignable-assets excludes assets currently InUse', async () => {
+  it('GET /api/events/:id/assignable-assets includes partially available assets', async () => {
     const res = await request(app)
       .get(`/api/events/${eventId}/assignable-assets`)
       .set(auth);
 
     expect(res.status).toBe(200);
-    const ids = res.body.data.map((asset) => asset.id);
-    expect(ids.includes(assetAId)).toBe(false);
-    expect(ids.includes(assetBId)).toBe(true);
+    const assetA = res.body.data.find((asset) => asset.id === assetAId);
+    const assetB = res.body.data.find((asset) => asset.id === assetBId);
+    expect(assetA).toBeDefined();
+    expect(assetA.availableQuantity).toBe(1);
+    expect(assetA.totalQuantity).toBe(2);
+    expect(assetB).toBeDefined();
+    expect(assetB.availableQuantity).toBe(1);
   });
 
-  it('POST /api/events/:id/assignments rejects assigning already assigned asset', async () => {
+  it('POST /api/events/:id/assignments allows assigning remaining quantity', async () => {
+    const res = await request(app)
+      .post(`/api/events/${eventId}/assignments`)
+      .set(auth)
+      .send({ assetId: assetAId, quantity: 1 });
+
+    expect(res.status).toBe(201);
+    expect(res.body.assetId).toBe(assetAId);
+  });
+
+  it('POST /api/events/:id/assignments rejects assigning above available quantity', async () => {
     const res = await request(app)
       .post(`/api/events/${eventId}/assignments`)
       .set(auth)
       .send({ assetId: assetAId, quantity: 1 });
 
     expect(res.status).toBe(400);
-    expect(res.body.error).toContain('already assigned');
+    expect(res.body.error).toContain('Only 0 available');
   });
 });
