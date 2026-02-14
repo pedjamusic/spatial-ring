@@ -1,5 +1,13 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import {
+  Button,
+  Menu,
+  MenuItem,
+  MenuTrigger,
+  Popover,
+} from "react-aria-components";
+import { Check, Filter } from "lucide-react";
 import ModelTable from "../components/ModelTable";
 import ColumnSettings from "../components/ColumnSettings";
 import SearchInput from "../components/SearchInput";
@@ -31,6 +39,21 @@ const deepMerge = (a = {}, b = {}) =>
       return [k, bVal !== undefined ? bVal : aVal];
     }),
   );
+
+function getAssetAvailabilityFilterKey(asset) {
+  const total = Number(asset?.quantity || 0);
+  const available = Number(asset?.availableQuantity ?? total);
+  if (available <= 0) return "unavailable";
+  if (available >= total) return "available";
+  return "partial";
+}
+
+const ASSET_AVAILABILITY_FILTERS = [
+  { key: "all", label: "All" },
+  { key: "available", label: "Available" },
+  { key: "partial", label: "Partially in use" },
+  { key: "unavailable", label: "Unavailable" },
+];
 
 export default function GenericListPage({
   modelName,
@@ -79,6 +102,11 @@ export default function GenericListPage({
   const limit = Number(searchParams.get("limit")) || 25;
   const search = searchParams.get("search") || "";
   const [totalPages, setTotalPages] = useState(0);
+  const availabilityFilterParam = searchParams.get("availability");
+  const availabilityFilter = modelName === "Asset"
+    && ASSET_AVAILABILITY_FILTERS.some((f) => f.key === availabilityFilterParam)
+    ? availabilityFilterParam
+    : "all";
 
   // uiConfig state + localStorage
   const storageKey = `${STORAGE_KEY_PREFIX}${modelName}`;
@@ -255,6 +283,16 @@ export default function GenericListPage({
     });
   }, [setSearchParams]);
 
+  const handleAvailabilityFilterChange = useCallback((nextFilter) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      if (!nextFilter || nextFilter === "all") next.delete("availability");
+      else next.set("availability", nextFilter);
+      next.set("page", "1");
+      return next;
+    });
+  }, [setSearchParams]);
+
   const handleDelete = async (id) => {
     if (!confirm("Are you sure you want to delete this item?")) return;
     try {
@@ -272,6 +310,9 @@ export default function GenericListPage({
 
   const labelField = calendarConfig?.labelField || "name";
   const dateStartField = calendarConfig?.dateStartField || "startsAt";
+  const tableData = modelName === "Asset" && availabilityFilter !== "all"
+    ? data.filter((asset) => getAssetAvailabilityFilterKey(asset) === availabilityFilter)
+    : data;
 
   return (
     <div className="grid gap-y-4">
@@ -382,6 +423,46 @@ export default function GenericListPage({
                     )}
                   </Link>
                 )}
+                {modelName === "Asset" && (
+                  <MenuTrigger>
+                    <Button className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800/50 dark:hover:bg-neutral-800">
+                      <Filter size={16} strokeWidth={1.8} aria-hidden="true" />
+                      <span>
+                        Availability:{" "}
+                        {ASSET_AVAILABILITY_FILTERS.find((f) => f.key === availabilityFilter)?.label || "All"}
+                      </span>
+                    </Button>
+                    <Popover
+                      placement="bottom end"
+                      className="flex min-w-[250px] flex-col overflow-hidden rounded-xl border border-gray-200 bg-gray-50/50 shadow-xl backdrop-blur-sm dark:border-neutral-700 dark:bg-neutral-800/50"
+                    >
+                      <Menu
+                        selectionMode="single"
+                        selectedKeys={new Set([availabilityFilter])}
+                        onAction={(key) => handleAvailabilityFilterChange(String(key))}
+                        className="min-h-0 flex-1 overflow-auto p-2"
+                      >
+                        {ASSET_AVAILABILITY_FILTERS.map((filter) => (
+                          <MenuItem
+                            key={filter.key}
+                            id={filter.key}
+                            textValue={filter.label}
+                            className="flex cursor-pointer items-center justify-between gap-2 rounded px-3 py-2 text-sm text-gray-700 outline-none data-[focused]:bg-gray-300/50 dark:text-gray-200 dark:data-[focused]:bg-neutral-600/25"
+                          >
+                            {({ isSelected }) => (
+                              <>
+                                <span>{filter.label}</span>
+                                {isSelected && (
+                                  <Check size={14} strokeWidth={2} aria-hidden="true" />
+                                )}
+                              </>
+                            )}
+                          </MenuItem>
+                        ))}
+                      </Menu>
+                    </Popover>
+                  </MenuTrigger>
+                )}
                 <ColumnSettings
                   meta={meta}
                   config={uiConfig}
@@ -392,7 +473,7 @@ export default function GenericListPage({
             </div>
             <ModelTable
               meta={meta}
-              data={data}
+              data={tableData}
               onEdit={(row) => navigate(`${row.id}/edit`)}
               onDelete={handleDelete}
               uiConfig={uiConfig}

@@ -1,5 +1,11 @@
 {
   "Warehouse": {
+    "_tableConfig": {
+      "defaultSort": {
+        "field": "name",
+        "direction": "ascending"
+      }
+    },
     "id": {
       "hidden": true,
       "hideFromColumnSettings": true
@@ -13,6 +19,12 @@
     }
   },
   "AssetCategory": {
+    "_tableConfig": {
+      "defaultSort": {
+        "field": "name",
+        "direction": "ascending"
+      }
+    },
     "id": {
       "hidden": true,
       "hideFromColumnSettings": true
@@ -26,6 +38,12 @@
     }
   },
   "Asset": {
+    "_tableConfig": {
+      "defaultSort": {
+        "field": "name",
+        "direction": "ascending"
+      }
+    },
     "id": {
       "hidden": true,
       "hideFromColumnSettings": true
@@ -79,6 +97,12 @@
     }
   },
   "Event": {
+    "_tableConfig": {
+      "defaultSort": {
+        "field": "startsAt",
+        "direction": "ascending"
+      }
+    },
     "_viewConfig": {
       "calendar": {
         "enabled": true,
@@ -123,6 +147,12 @@
     }
   },
   "EventLocation": {
+    "_tableConfig": {
+      "defaultSort": {
+        "field": "name",
+        "direction": "ascending"
+      }
+    },
     "id": {
       "hidden": true,
       "hideFromColumnSettings": true
@@ -136,6 +166,12 @@
     }
   },
   "Movement": {
+    "_tableConfig": {
+      "defaultSort": {
+        "field": "expectedReturnAt",
+        "direction": "ascending"
+      }
+    },
     "id": {
       "hidden": true,
       "hideFromColumnSettings": true
