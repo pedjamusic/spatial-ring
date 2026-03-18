@@ -1,0 +1,27 @@
+# Default normalize
+* text=auto eol=lf
+
+# Explicit important text formats
+*.md  text eol=lf
+*.js  text eol=lf
+*.ts  text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.sh  text eol=lf
+
+# Windows scripts if any
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.mp3 binary
+*.wav binary
+*.ttf binary
+*.otf binary
