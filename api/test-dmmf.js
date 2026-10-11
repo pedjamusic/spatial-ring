@@ -4,7 +4,7 @@ async function testDMMF() {
   console.log('Testing DMMF access...')
   
   try {
-    const { Prisma } = await import('@prisma/client')
+    const { Prisma } = await import('./generated/client/index.js')
     console.log('Prisma imported successfully')
     console.log('Prisma.dmmf exists:', !!Prisma.dmmf)
     console.log('Prisma.dmmf.datamodel exists:', !!Prisma.dmmf?.datamodel)

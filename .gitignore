@@ -9,6 +9,7 @@ node_modules
 # Ignore Prisma Client
 /generated/prisma
 prisma/client/
+api/generated/client/
 
 .DS_Store
 .vscode

@@ -71,6 +71,7 @@ docker run -d \
 cd api
 npm install
 cp .env.example .env
+npm run db:generate
 npx prisma migrate dev
 npm run dev
 ```
@@ -85,6 +86,10 @@ npm run dev
 ```
 
 ## 📖 Documentation
+
+Prisma 7 reads the connection URL from `api/prisma.config.mjs`. Its JavaScript client is generated into the ignored `api/generated/client/` directory. Run `npm run db:generate` after installing dependencies or changing the schema; `npm run build` also generates the API client before building the frontend. PostgreSQL connections use the Prisma PG adapter. Existing `prisma://` and `prisma+postgres://` URLs select the Accelerate extension instead.
+
+Environment-specific API commands use Node 24's built-in `--env-file` loader: `.env` for local commands, `.env.production` for production aliases, and `.env.test` for tests. Existing shell environment variables take precedence over values in these files.
 
 - [Project Overview](docs/OVERVIEW.md)
 - [Docker Deployment](docs/DEPLOY.md)

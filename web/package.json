@@ -13,27 +13,27 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.1.13",
+    "@tailwindcss/vite": "^4.3.3",
     "flatpickr": "^4.6.13",
-    "lucide-react": "^0.545.0",
-    "react": "^19.1.1",
-    "react-aria-components": "^1.12.2",
-    "react-dom": "^19.1.1",
-    "react-router-dom": "^7.9.1",
-    "tailwindcss": "^4.1.13"
+    "lucide-react": "^1.52.0",
+    "react": "^19.3.0",
+    "react-aria-components": "^1.21.1",
+    "react-dom": "^19.3.0",
+    "react-router-dom": "^7.18.4",
+    "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
-    "@eslint/js": "^9.33.0",
-    "@tailwindcss/forms": "^0.5.10",
-    "@types/react": "^19.1.10",
-    "@types/react-dom": "^19.1.7",
-    "@vitejs/plugin-react": "^5.0.0",
-    "eslint": "^9.33.0",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-react-refresh": "^0.4.20",
-    "globals": "^16.3.0",
-    "prettier-plugin-tailwindcss": "^0.6.14",
-    "vite": "^7.1.2",
-    "vitest": "^4.1.11"
+    "@eslint/js": "^10.0.1",
+    "@tailwindcss/forms": "^0.5.11",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "eslint": "^10.12.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.7",
+    "globals": "^17.13.0",
+    "prettier-plugin-tailwindcss": "^0.8.1",
+    "vite": "^8.3.2",
+    "vitest": "^5.0.3"
   }
 }

@@ -1,5 +1,5 @@
 import express from 'express'
-import { Prisma } from '@prisma/client'
+import { Prisma } from '../../generated/client/index.js'
 
 const router = express.Router()
 
