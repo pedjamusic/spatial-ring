@@ -4,6 +4,117 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [Unreleased]
 
+### Local Restart & Compatible Dependency Maintenance — 2026-10-11, 19:11 CEST
+
+- Started Docker Desktop and recovered the existing `postgres-db` container (PostgreSQL 18.3). Its `app` database already contained the original 8 assets, 9 events, and 2 users; no restore or password reset was needed to run the API checks. The scripts' documented `pg-local` container name does not match this Mac's container.
+- Saved a private, Git-ignored logical backup at `backups/app_before_restart_20261011_190452.sql` with file permissions `0600`. After verification, all PostgreSQL COPY data sections from `app` matched this pre-test backup, proving the original records were preserved beyond matching counts.
+- Created the previously absent `app_test` database and ran the API suite against it. The test bootstrap resets only this configured test database; the development inventory remains separate.
+- Reproduced two failing CRUD tests in `api/test/models.test.js`: the file deleted its warehouse/event-location records and then reused their IDs for asset/event creation. Its whole-database cleanup also conflicted with another file's movement records in the parallel suite. The isolated file failed 2 of 10 tests before the repair.
+- Repaired only the CRUD test fixtures: dedicated relation records live until teardown, and cleanup deletes only IDs created by that file, including rows left after failed assertions. The isolated file then passed all 10 tests, and the complete suite passed all 54. No API application behavior was changed.
+- Updated compatible dependency versions in the lockfile: Multer `2.4.0`, express-rate-limit `8.7.0`, React Router `7.18.4`, Vite `7.3.6`, Vitest `3.2.7`, nodemon `3.1.14`, and Prisma client/CLI/internals `6.19.3`, plus compatible transitive security patches (including proxy-addr `2.0.8`). Existing workspace metadata and the owner's pre-existing lockfile corrections were preserved.
+- Applied non-forced npm audit fixes with install scripts disabled, retained `.npmrc`'s seven-day release-age setting, and explicitly regenerated Prisma Client `6.19.3`. No major migration, override, forced downgrade, global install-script approval, or package version bump was performed.
+- Final live security audit: **10 affected entries** (2 critical, 7 high, 1 moderate), down from 37. Critical entries remain in the Vitest/Tinypool development test chain. `npm audit --omit=dev` reports **6 high and 0 critical** entries; those six belong to Prisma/nodemon tool chains currently classified as production dependencies. Audit counts are package entries, not demonstrated exploit counts.
+- Remaining security decisions: review a Vitest major upgrade and its Tinypool/mocker chain, Prisma's deepmerge-ts configuration chain, and nodemon's braces/chokidar chain. npm currently recommends major upgrades or old-version downgrades for these; none were forced. The dependency tree is not security-clean.
+- Final checks on the existing Node `26.11.1` environment: `npm run test` passed **54/54** API tests; `npm run test:web` passed **7/7** web tests; `npm run build --workspace=web`, `npm run db:generate`, `npm ls --depth=0`, and `git diff --check` passed. Supported-LTS and fresh-clone installation checks remain open.
+- Web build warnings remain: a 652.75 kB main JS chunk (197.11 kB gzip), the runtime `/env-config.js` script, and Node's module-register deprecation. The root build script, Docker clean-clone inputs, tracked database backup, and deployment documentation findings from the restart checkpoint remain separate work.
+- Local development is available with `npm run dev:local`: web at `http://localhost:5173`, API at `http://localhost:3000`. Public model metadata returned 200, unauthenticated inventory returned 401, and the browser displayed the local login page. Local signed-in UI testing is not yet verified; the homelab testing account is in a separate database and is not automatically copied here.
+- Changes are local on `codex/project-restart-2026-10-11`; the homelab deployment was not changed. Git commit/merge/push still requires the owner's confirmation.
+
+### Project Restart Checkpoint — 2026-10-11, 18:35 CEST (Europe/Belgrade)
+
+This is a dated inspection and restart plan, not a release or an implementation change. No dependencies, account passwords, databases, or deployment settings were changed. Package versions remain `0.8.3`.
+
+#### Where we left off
+
+- **Product:** Spatial Ring, an inventory and event-equipment management app. Express 5 + Prisma 6 + PostgreSQL power the API; React 19 + Vite 7 + Tailwind 4 power the web UI. The mobile workspace remains a placeholder.
+- **Baseline:** local `main` and live GitHub `main` both point to `01e08b9acad086c2d19247979659f2ff4804b43c`. The last commits on March 18, 2026 normalized line endings after a macOS reinstall. The last feature work was February 14, 2026.
+- **Latest feature work:** dedicated Event details pages, inline event editing and equipment assignments, quantity-aware asset availability, active/archived event lists, table sorting defaults, and an availability filter. These features are merged into main; not all were described in the older Unreleased notes below.
+- **Task state:** no other local task branches and no open GitHub issues or pull requests were found. There is no clearly identified unfinished task. The generic CRUD refactor is marked complete in `docs/CRUD-REFACTOR-PROGRESS.md`.
+- **Backlog:** API input validation, bundle splitting, settings, date/time and recurrence improvements, TypeScript migration, and phased search upgrades remain open in `TODO.md`. TypeScript and advanced search are plans, not implemented capabilities. Recommended next work is environment/access recovery and dependency maintenance before new features.
+- **Inspection branch:** `codex/project-restart-2026-10-11`, created from main. Existing local work was preserved: modified `package-lock.json`, untracked `.claude/settings.local.json`, `.npmrc`, and `dump.sql`.
+- **Existing lockfile diff:** workspace version metadata was updated from `0.8.1` to `0.8.3` and the web Vitest dependency was recorded. This diff does not upgrade resolved package versions.
+
+#### Local environment and data
+
+- Installed Node/npm: `26.11.1` / `11.20.0`; `.node-version` pins `22.12.0`, while the Dockerfile uses Node 20. These environments disagree. Node 20 is now EOL; use a current supported Node 24 LTS patch for the maintenance baseline and align local/deployment configuration in a separate change. See the [official Node release status](https://nodejs.org/en/about/previous-releases).
+- `npm ls --depth=0` succeeds: installed direct dependencies are present and satisfy the manifests.
+- Local development config targets PostgreSQL `app` on `localhost:5432`. Test config separately targets `app_test`. JWT secrets are configured; their values were not recorded.
+- Docker.app is installed, but its configured daemon socket is absent. No local API, web, or PostgreSQL listener was found on ports 3000, 5173, or 5432. A host-level TCP check confirms port 5432 refuses connections.
+- The untracked `dump.sql` is a PostgreSQL 17.7 logical backup, modified March 18, 2026. Parsed COPY sections contain 8 assets, 4 categories, 9 events, 5 event locations, 4 movements, 2 users, 6 warehouses, and 7 migration records. These are backup counts, not live database counts. Account identity was reported privately in chat; no emails or password hashes are copied into this checkpoint.
+- `api/pgdata-backup/` is a PostgreSQL 17 physical data directory: approximately 62 MB and 1,309 tracked files. The GitHub repository is PUBLIC. Review the backup's contents and move database backups out of source control; any history cleanup needs a deliberate separate plan. This inspection did not establish which private records or credentials the physical backup contains.
+- `api/generated/` contributes 23 tracked files (about 20 MB), although the current Prisma generator uses the default client location. Review this older generated output separately; do not confuse generated declaration-file size with application complexity.
+- The logical backup does not include uploaded photo files. Inventory restoration needs a separate check for `api/uploads/assets/` or a server-side upload backup. No restore was attempted or verified.
+
+#### Login recovery — both environments
+
+- Authentication uses email plus a bcrypt password hash. The API implements login, registration, and client-side logout; there is no forgot-password/reset endpoint or UI. An existing plaintext password cannot be recovered from the stored hash.
+- **Local:** start Docker Desktop, inventory existing containers and volumes, and start the existing `pg-local` database if it is present. Inspect the live account list and inventory before changing anything. If the original database is absent, restore `dump.sql` into a NEW PostgreSQL 17 recovery database first, verify schema/counts, then explicitly select it for local development. Preserve the original dump and volumes.
+- Reset only the selected existing user's `passwordHash` with a new bcrypt hash through a verified database administration session, using a password supplied securely by the owner. Keep that password in a password manager. Do not create a substitute account when the existing user is linked to movement history. Verify actual login and an authenticated inventory request after the reset.
+- **Deployed:** `https://demo.toodear.rocks/` and same-origin API probes return HTTP 403 from this inspection environment. `api.demo.toodear.rocks`, still referenced by `web/.env.production`, does not resolve here. These observations do not prove the app itself is down or identify the source of the 403.
+- **Follow-up, October 11 at 18:49 CEST:** the owner confirmed the app is hosted on the homelab at `https://demo.toodear.rocks` and reported successfully signing in using an existing Bruno request. Codex's in-app browser also successfully opened the deployed login page. The earlier HTTP 403 probes therefore do not establish a deployment outage. A dedicated testing account is being arranged; its creation and authenticated access have not yet been verified. The owner will retain its password securely and sign in through the browser; no credentials are to be saved in project files.
+- **Testing access, October 11 at 18:55 CEST:** the owner reported creating the dedicated testing account and saving its credentials in a password manager. The in-app browser has a signed-in session: the protected dashboard and asset list successfully loaded live inventory data (8 asset records, total quantity 9, 4 categories, 6 warehouses), and the Events calendar opened. The session was left on the dashboard for further testing. This verifies authenticated read access, not account identity display, write operations, or an end-to-end regression suite. No inventory records were changed and no passwords/tokens were read or saved in the repository. Re-authentication may be needed when the browser session expires; unattended API access was not configured. Deployed login recovery is no longer an outstanding prerequisite; local database recovery and dependency maintenance remain open.
+- Identify the active Coolify/hosting project, public domain, API service, and authoritative database first. `api/.env.production` uses a Prisma Accelerate URL, whereas deployment docs describe a Coolify PostgreSQL setup; do not assume the old local file is the current production configuration. No production database query was made.
+- Back up the authoritative deployed database, confirm the account there, and reset only that account using the same secure process. Local and deployed databases are independent; a local reset does not update the deployed account. Verify login from an ordinary browser and authenticated inventory access.
+- Public `/auth/register` currently creates accounts without an invitation or role gate, and authenticated accounts share access to the inventory routes. Confirm this access policy before restoring public use; this inspection did not determine the intended registration policy.
+
+#### Dependency checkpoint
+
+Live npm registry checks were run on October 11, 2026. These are advisory/package counts, not counts of independently demonstrated exploitable application bugs.
+
+- Full `npm audit`: **37 affected dependency entries** — 3 critical, 27 high, 5 moderate, 2 low.
+- `npm audit --omit=dev`: **25 entries** — 1 critical, 22 high, 1 moderate, 1 low. This still includes Vite/build-tool chains and nodemon because of current manifest classification; it is not a pure runtime-exposure count.
+- Critical entries in the full report are `proxy-addr`, `tinypool`, and `vitest`. The Vitest UI advisory requires particular UI/API exposure conditions; the repository's ordinary test command is `vitest run`. See the [maintainer advisory](https://github.com/vitest-dev/vitest/security/advisories/GHSA-5xrq-8626-4rwp).
+- Prioritize upload and authentication dependencies, then runtime transitive dependencies and the build/test toolchain. Multer `2.0.2` is within the affected range of the [maintainer's denial-of-service advisory](https://github.com/expressjs/multer/security/advisories/GHSA-5528-5vmv-3xc2); rate limiting also has a [maintainer advisory](https://github.com/express-rate-limit/express-rate-limit/security/advisories/GHSA-46wh-pxpv-q5gq). No exploit test was run.
+
+| Package | Installed/locked | Latest allowed by current range | Latest registry release |
+| --- | --- | --- | --- |
+| multer | 2.0.2 | 2.4.0 | 2.4.0 |
+| express-rate-limit | 8.2.1 | 8.7.0 | 8.7.0 |
+| react-router-dom | 7.13.0 | 7.18.4 | 7.18.4 |
+| vite | 7.3.1 | 7.3.6 | 8.3.2 |
+| vitest | 3.2.4 | 3.2.7 | 5.0.3 |
+| prisma / @prisma/client / @prisma/internals | 6.19.2 | 6.19.3 | 7.10.0 |
+| react / react-dom | 19.2.3 | 19.3.0 | 19.3.0 |
+| tailwindcss / @tailwindcss/vite | 4.1.18 | 4.3.3 | 4.3.3 |
+| react-aria-components | 1.14.0 | 1.21.1 | 1.21.1 |
+| eslint | 9.39.2 | 9.39.5 | 10.12.0 |
+
+Apply and verify compatible maintenance updates in small groups, then re-run the audit. Do not use `npm audit fix --force` indiscriminately: the current report proposes downgrading Prisma/internals to `6.12.0` and nodemon to `1.14.10` for some chains. The allowed-version column is not a guarantee that every advisory will be resolved. Treat Prisma 7, Vite 8, Vitest 5, and ESLint 10 as separate migration decisions.
+
+#### Verification and maintenance findings
+
+| Check | Result at this checkpoint |
+| --- | --- |
+| `npm ls --depth=0` | Passed |
+| `npm run test:web` | Passed: 2 files, 7 tests; form key/value utility coverage only |
+| `npm run build --workspace=web` | Passed; main JS chunk 649.93 kB / 195.98 kB gzip; chunk-size and runtime env-script warnings |
+| Prisma validation from `api/` | Passed with `../node_modules/.bin/prisma validate` |
+| `npm run test` | Failed in global setup during `prisma db push --force-reset`; no API assertions ran |
+| Local database read | Failed to initialize; PostgreSQL TCP connection refused |
+| AGENTS command/file checklist | Passed: documented scripts and key paths exist |
+| Remote main / open work | Main matches local baseline; no open issues or PRs |
+| GitHub Actions | Last 3 runs are historical failed Release runs from February 11–12; latest is [run 21952269466](https://github.com/pedjamusic/spatial-ring/actions/runs/21952269466), unrelated older SHA `bfef690` |
+| CI configuration | No workflow files in the current tracked tree; no current automated CI gate verified |
+| End-to-end UI, local/deployed login, database restore, Docker image | Not verified |
+
+- The API test bootstrap resets the entire configured test database. Keep `app_test` isolated; never run tests against restored inventory or production. The env guard passed, but its string-based test-name check should not be treated as universal protection for arbitrary remote configurations.
+- Root `npm run build` calls an API build script that is literally `exit 1`, so it cannot complete. Use the web build command for the current frontend baseline; resolve the root build contract before adding CI.
+- The tracked Dockerfile copies `web/inject-env.sh`, which exists locally but is ignored/untracked. A clean clone will lack it. The Dockerfile also selects EOL Node 20 and copies the API directory containing tracked database backups. Docker image build was not attempted.
+- `docs/COOLIFY.md` recommends `db:migrate` (`prisma migrate dev`) at production startup. For this pinned Prisma 6 project, production should apply reviewed migrations using `prisma migrate deploy` with the actual deployment environment, after checking database state. Reconcile the same-origin proxy guide with the separate API URL described elsewhere.
+- README advertises `/api/docs`; no corresponding API route or documentation generator was found. The older Unreleased notes also omit the later archive/sorting/availability changes listed above.
+- API boundary validation remains uneven: auth and event assignment have some validation, while generic asset/movement CRUD accepts loosely parsed quantities. Before relying on multi-user event assignments, test concurrent requests: availability is read before the assignment transaction, so concurrency protection is not established. Dedicated event return/check-in UX is also absent; movements remain generic CRUD. These are follow-up review/test targets, not fixes applied here.
+- The audit signal script mostly flags generated Prisma declaration files as size hotspots. Its broad script/CI detection is incomplete for this workspace; the command-level results above take precedence. This was a restart assessment, not an exhaustive security or code audit.
+
+#### Recommended order of work
+
+1. **Recover local access and prove the backup:** start Docker, inspect existing volumes, connect to the existing database or restore into a new recovery database, verify counts/schema/photos, securely reset the existing account, and log in. Bring up development services with `npm run dev:local` once the intended local database is selected.
+2. **Recover deployed access:** identify the live hosting/database configuration, investigate the 403 and stale API hostname, take a current backup, reset the verified deployed account, and prove browser/API login. Do not overwrite deployed data with the old local dump.
+3. **Establish a reproducible baseline:** align on supported Node LTS, retain the existing lockfile work, run the API suite against an isolated test database, fix clean-clone Docker inputs, the root build contract, and deployment instructions. Address the public tracked database backup before further distribution.
+4. **Maintain dependencies:** update compatible groups, regenerate the matching Prisma client when needed, re-run web/API tests and builds, audit again, and document residual advisories with their actual exposure. Decide major migrations separately.
+5. **Resume product work:** start with API request validation and assignment/return correctness. Defer TypeScript, embeddings/LLMs, recurring events, and mobile until the existing inventory workflow is usable and verified. Add a CI gate once the baseline commands are dependable.
+
+Checkpoint completion: inspection and timestamp saved; account recovery, database restore, dependency updates, deployment repair, and end-to-end checks remain future work. Commit/merge/push require the owner's confirmation under `AGENTS.md`; nothing was committed or pushed during this inspection.
+
 ### Event Assignment & View Flow
 
 - Added a dedicated Event `VIEW` page (`/admin/events/:id`) as the default single-event page, with a built-in `Edit` action
