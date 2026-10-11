@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [Unreleased]
 
+### Vitest Security Maintenance — 2026-10-11, 19:33 CEST
+
+- Upgraded API and web test dependencies from Vitest `3.2.7` to `4.1.11`, with manifest ranges `^4.1.11`. This is the smallest next-major line that fixes the [mocker file-read advisory](https://github.com/vitest-dev/vitest/security/advisories/GHSA-82fw-gwwq-j7x9) and [removes Tinypool](https://v4.vitest.dev/guide/migration#pool-rework), eliminating its critical advisory chain. Vitest 5 was not required for these fixes.
+- Both workspaces share Vitest/mocker `4.1.11`; Tinypool and vite-node are absent from the lockfile. Vite remains `7.3.6`, Prisma remains `6.19.3`, Node remains `24.21.0`, and application dependencies/version `0.8.3` are unchanged. No overrides, forced audit fixes, test/config rewrites, or install-script approvals were needed; the existing release-age policy was retained.
+- On Node `24.21.0` / npm `11.19.0`, all **54 API tests** and **7 web tests**, the frontend build, dependency-tree validation, lockfile scope checks, and `git diff --check` passed. A fresh private temporary installation (`npm ci --ignore-scripts`, then explicit Prisma generation) also passed both complete suites against `app_test` and the frontend build. The temporary test configuration and installation were removed afterward.
+- Live npm audit now reports **7 high affected entries, 0 critical, and 0 moderate**, down from 10 entries before this step. Remaining chains are Prisma/config/deepmerge-ts and nodemon/chokidar/braces; they require separate reviewed changes. Existing bundle-size/runtime-env build warnings remain. This verifies the dependency tree and test migration, not exploit resistance or homelab deployment.
+
 ### Node Runtime Alignment — 2026-10-11, 19:28 CEST
 
 - Selected Node `24.21.0` LTS as the local verification baseline, confirmed against the [official release index](https://nodejs.org/dist/index.json). Updated `.node-version` and all three Node stages in the tracked root Dockerfile to this version. Root/API/web manifests and their lockfile entries now declare `engines.node: 24.x`; resolved dependency versions and application version `0.8.3` are unchanged.
