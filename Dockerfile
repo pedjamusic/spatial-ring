@@ -1,7 +1,7 @@
 # ==========================================
 # Stage 1: Build the Frontend (Web)
 # ==========================================
-FROM node:20-alpine AS web-builder
+FROM node:24.21.0-alpine AS web-builder
 WORKDIR /app
 # 1. Copy ROOT config first
 COPY package.json package-lock.json ./
@@ -19,7 +19,7 @@ RUN npm run build
 # ==========================================
 # Stage 2: Build the Backend (API)
 # ==========================================
-FROM node:20-alpine AS api-builder
+FROM node:24.21.0-alpine AS api-builder
 WORKDIR /app
 # 1. Copy ROOT config
 COPY package.json package-lock.json ./
@@ -38,7 +38,7 @@ RUN npx prisma generate
 # ==========================================
 # Stage 3: Final Production Image
 # ==========================================
-FROM node:20-alpine
+FROM node:24.21.0-alpine
 
 # Install Nginx and Supervisor
 RUN apk add --no-cache nginx supervisor

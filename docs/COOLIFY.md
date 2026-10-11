@@ -42,6 +42,8 @@ Add a PostgreSQL database resource to the project. Note the connection string â€
 
 ## Step 3: Create the API Application (`spatial-api`)
 
+Both applications use Node **24 LTS**, selected by `engines.node` in the root `package.json`. Use a Nixpacks version that supports Node 24. Remove a conflicting `NIXPACKS_NODE_VERSION` override or set it to `24` for both applications; this environment variable takes precedence over the manifest. Nixpacks selects the major version and may supply a different Node 24 patch than the `24.21.0` local/Docker baseline. Confirm `node --version` in the build logs after rebuilding.
+
 | Setting | Value |
 |---|---|
 | Source | Git repository (same repo) |

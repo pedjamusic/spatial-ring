@@ -25,7 +25,7 @@ Spatial Ring is a full-stack inventory management application built with:
 
 ### Prerequisites
 
-- Node.js (LTS version)
+- Node.js 24 LTS (local baseline: `24.21.0`, pinned in `.node-version`)
 - Docker Desktop
 - Visual Studio Code (recommended)
 
@@ -37,6 +37,18 @@ Spatial Ring is a full-stack inventory management application built with:
 git clone https://github.com/pedjamusic/spatial-ring.git
 cd spatial-ring
 ```
+
+Select the version in `.node-version` with your Node version manager before running npm commands. The root, API, and web manifests declare Node `24.x`; the Dockerfile uses `24.21.0` for every Node stage.
+
+On macOS with Homebrew's `node@24` installed, select it for the current terminal:
+
+```bash
+export PATH="$(brew --prefix node@24)/bin:$PATH"
+node --version # expected baseline: v24.21.0
+npm --version
+```
+
+This terminal setting leaves other projects' Node selection unchanged. Run the project commands below in the same terminal.
 
 2. Start PostgreSQL with Docker:
 

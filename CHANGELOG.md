@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [Unreleased]
 
+### Node Runtime Alignment — 2026-10-11, 19:28 CEST
+
+- Selected Node `24.21.0` LTS as the local verification baseline, confirmed against the [official release index](https://nodejs.org/dist/index.json). Updated `.node-version` and all three Node stages in the tracked root Dockerfile to this version. Root/API/web manifests and their lockfile entries now declare `engines.node: 24.x`; resolved dependency versions and application version `0.8.3` are unchanged.
+- Documented project-specific Node selection in README, including using the already installed Homebrew `node@24` in the current terminal. The machine's global Node installation and shell configuration were not changed. Both local development servers were restarted and their executable paths confirmed as Node `24.21.0`.
+- Documented Coolify/Nixpacks selection through the root manifest and the higher-priority `NIXPACKS_NODE_VERSION` override. Current [Nixpacks source](https://github.com/railwayapp/nixpacks/blob/main/src/providers/node/mod.rs) supports Node 24, but the homelab's installed builder version, overrides, and actual runtime remain unverified. Nixpacks selects a major version and may provide a different Node 24 patch from the exact local/Docker pin.
+- Verification on macOS Node `24.21.0` / npm `11.19.0`: API tests **54/54**, web tests **7/7**, frontend build, Prisma Client generation, dependency-tree validation, documented command/file checks, and runtime/config consistency checks passed. A fresh isolated `npm ci --ignore-scripts` also passed, followed by explicit Prisma generation and a frontend build without local environment files.
+- Built the root Dockerfile's `api-builder` and `web-builder` targets on `node:24.21.0-alpine` from a temporary tracked-source context excluding environment files, database backups, old generated Prisma output, and uploads. Fresh container `npm ci`, Prisma generation, and frontend build passed. Native bcrypt hash/compare passed; Prisma's native engine initialized and returned `P1001` when connecting to an intentionally closed port. This is engine startup evidence, not a container-to-database integration test.
+- Local HTTP smoke checks passed: web 200, model metadata 200, and protected inventory 401 without credentials. Existing bundle/runtime-env warnings and the 10 outstanding dependency audit entries remain. No full production image, Coolify deployment, or signed-in local UI test was claimed; existing packaging issues and ignored per-workspace Dockerfiles remain separate follow-up work.
+
 ### Local Restart & Compatible Dependency Maintenance — 2026-10-11, 19:11 CEST
 
 - Started Docker Desktop and recovered the existing `postgres-db` container (PostgreSQL 18.3). Its `app` database already contained the original 8 assets, 9 events, and 2 users; no restore or password reset was needed to run the API checks. The scripts' documented `pg-local` container name does not match this Mac's container.
