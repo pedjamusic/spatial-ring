@@ -50,6 +50,8 @@ npm --version
 
 This terminal setting leaves other projects' Node selection unchanged. Run the project commands below in the same terminal.
 
+The API development scripts use Node's built-in watch mode: edits to the server entry point or imported modules restart the API and preserve console output. Restart the command manually after changing environment files or other files outside the imported module graph. This replaces nodemon's broader directory watching and its interactive `rs` command.
+
 2. Start PostgreSQL with Docker:
 
 ```bash

@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [Unreleased]
 
+### Native Node Development Watcher — 2026-10-11, 19:40 CEST
+
+- Replaced nodemon in API `dev`, `dev:local`, and `dev:prod` scripts with Node 24's [built-in watch mode](https://nodejs.org/download/release/v24.21.0/docs/api/cli.html#--watch), preserving console output and the existing dotenv file selections. Removed nodemon and 26 lockfile packages, including its vulnerable chokidar 3/braces chain. No remaining package versions were changed, no replacement dependency was added, and application version remains `0.8.3`.
+- README documents the behavior change: native watch restarts for entry-point/imported-module changes rather than nodemon's broader directory/extension watch. Environment files and other files outside the imported graph require a manual command restart; nodemon's interactive `rs` command is no longer available.
+- Verified all three actual npm scripts in a temporary API copy with dummy environment files and an intentionally unreachable database: expected local/production environment selection, public metadata 200, protected inventory 401, and Ctrl-C releasing each listener. For `dev:local`, imported configuration edits and entry-point edits restarted the API; an intentional syntax error produced a failed start without killing the watcher, and correcting it restored HTTP responses. Temporary source edits did not touch the repository's application code.
+- Regression checks on Node `24.21.0`: **54 API tests**, **7 web tests**, frontend build, dependency-tree validation, command/file checklist, lockfile scope checks, and `git diff --check` passed. A fresh manifest/lockfile installation with `npm ci --ignore-scripts` passed. Temporary verification copies were removed. Local development was restarted using the native watcher and HTTP 200/200/401 checks passed.
+- Live npm audit now reports **4 high affected entries, 0 critical, and 0 moderate**, down from 7. Remaining findings are solely the Prisma/config/deepmerge-ts chain and need a separate reviewed change. Existing frontend build warnings remain. Watcher behavior was exercised on macOS; Linux/Windows watch behavior, production packaging, and homelab deployment were not tested in this step.
+
 ### Vitest Security Maintenance — 2026-10-11, 19:33 CEST
 
 - Upgraded API and web test dependencies from Vitest `3.2.7` to `4.1.11`, with manifest ranges `^4.1.11`. This is the smallest next-major line that fixes the [mocker file-read advisory](https://github.com/vitest-dev/vitest/security/advisories/GHSA-82fw-gwwq-j7x9) and [removes Tinypool](https://v4.vitest.dev/guide/migration#pool-rework), eliminating its critical advisory chain. Vitest 5 was not required for these fixes.

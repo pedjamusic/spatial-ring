@@ -7,9 +7,9 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "dev": "nodemon src/server.js",
-    "dev:prod": "dotenv -e .env.production -- nodemon src/server.js",
-    "dev:local": "dotenv -e .env -- nodemon src/server.js",
+    "dev": "node --watch --watch-preserve-output src/server.js",
+    "dev:prod": "dotenv -e .env.production -- node --watch --watch-preserve-output src/server.js",
+    "dev:local": "dotenv -e .env -- node --watch --watch-preserve-output src/server.js",
     "pg": "docker start pg-local",
     "setup": "npm run db:setup && npm run env:setup",
     "env:setup": "node scripts/setup-env.mjs",
@@ -44,8 +44,7 @@
     "express-rate-limit": "^8.2.1",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
-    "multer": "^2.0.2",
-    "nodemon": "^3.1.10"
+    "multer": "^2.0.2"
   },
   "devDependencies": {
     "@prisma/internals": "^6.17.1",
