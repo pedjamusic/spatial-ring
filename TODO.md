@@ -10,6 +10,7 @@ Effort tags: `⚡ quick` (<30 min) · `🟢 easy` (<half day) · `🟡 medium` (
 
 ## API
 
+- [x] `⚡ quick` **Warehouse notes persistence** — save notes on create/edit, preserve omitted notes, allow clearing, and reject non-text values
 - [ ] `🟡 medium` **Input validation on routes** — no validation on any API endpoint currently; should validate at system boundaries (user input, request bodies)
 - [x] `⚡ quick` **Login.jsx uses hardcoded `/auth/login`** — doesn't go through `config.js` / `api.js` like other endpoints *(fixed — `auth.js` uses `config.apiUrl`, Login.jsx delegates to `auth.js`)*
 

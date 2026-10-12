@@ -3,6 +3,9 @@ import prisma from '../lib/prisma.js';
 import { paginateQuery, paginateResponse } from '../lib/pagination.js';
 
 const router = express.Router();
+const BAD_REQUEST = 400;
+
+const isValidNotes = (notes) => notes === undefined || notes === null || typeof notes === 'string';
 
 // GET /api/warehouses
 router.get('/', async (req, res) => {
@@ -41,9 +44,10 @@ router.get('/:id', async (req, res) => {
 // POST /api/warehouses
 router.post('/', async (req, res) => {
   try {
-    const { name, kind } = req.body
+    const { name, kind, notes } = req.body
+    if (!isValidNotes(notes)) return res.status(BAD_REQUEST).json({ error: 'Notes must be text or null' });
     const warehouse = await prisma.warehouse.create({
-      data: { name, kind }
+      data: { name, kind, notes }
     })
     res.status(201).json(warehouse)
   } catch (error) {
@@ -54,10 +58,11 @@ router.post('/', async (req, res) => {
 // PUT /api/warehouses/:id
 router.put('/:id', async (req, res) => {
   try {
-    const { name, kind } = req.body
+    const { name, kind, notes } = req.body
+    if (!isValidNotes(notes)) return res.status(BAD_REQUEST).json({ error: 'Notes must be text or null' });
     const warehouse = await prisma.warehouse.update({
       where: { id: req.params.id },
-      data: { name, kind }
+      data: { name, kind, notes }
     })
     res.json(warehouse)
   } catch (error) {

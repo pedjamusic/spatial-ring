@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [Unreleased]
 
+### Warehouse Notes Persistence — 2026-10-12
+
+- Fixed warehouse POST and PUT dropping `notes` before passing data to Prisma. Both routes now persist optional text or null; omitted notes preserve an existing value on update, empty strings remain empty strings, and null clears the field. Raw whitespace, quotes, and multiline text are preserved. Non-text values return HTTP 400 before any write, so invalid updates leave the whole record unchanged. No form, schema, migration, dependency, or version changes were needed.
+- Added 16 authenticated Supertest regression cases with real database persistence checks through subsequent GET requests. Each test owns uniquely named fixtures and cleans up only those rows, including unexpected successful writes during failing tests. On the baseline route, 13 of the 16 failed; after the fix, all 16 passed. The complete API suite passed **78 tests across 9 files** on Node `24.21.0`.
+- Verified both the configured and effective database target as local `app_test`; only that database was reset under the owner's existing consent. The inventory and production databases were not accessed. Route syntax, documented script checks, and `git diff --check` passed. The existing upstream PG busy-client deprecation warning remains. The form's existing full-payload submission path was inspected, and the owner confirmed manual **Pass** on 2026-10-12. Application version remains `0.8.3` for this maintenance task.
+
 ### Deployment Packaging — 2026-10-12
 
 - Replaced the root Dockerfile's missing, ignored `web/inject-env.sh` input with tracked `docker/inject-env.mjs`. The generator JSON-serializes only the public `VITE_API_BASE_URL`, defaults to relative URLs, and handles quotes, backslashes, newlines, and script-like text. The entrypoint fails before starting Supervisor if runtime configuration cannot be written, and no longer prints configuration values into logs. The ignored local helper remains untouched.
