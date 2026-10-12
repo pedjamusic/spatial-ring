@@ -4,6 +4,10 @@ Items mentioned during development but deferred. Not urgent — just so nothing 
 
 Effort tags: `⚡ quick` (<30 min) · `🟢 easy` (<half day) · `🟡 medium` (1-2 days) · `🔴 large` (3+ days)
 
+## Deployment
+
+- [x] `🟢 easy` **Deployment packaging** — fix clean-clone Docker inputs, exclude local credentials/backups, generate safe runtime config, and correct production migration/origin instructions
+
 ## API
 
 - [ ] `🟡 medium` **Input validation on routes** — no validation on any API endpoint currently; should validate at system boundaries (user input, request bodies)

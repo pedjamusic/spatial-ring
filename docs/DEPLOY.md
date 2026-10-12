@@ -6,20 +6,21 @@ Spatial Ring supports two deployment modes. Choose the one that fits your infras
 
 ## Option A: Docker (Single Container) — Recommended
 
-Everything runs in one container: Nginx serves the frontend and reverse-proxies to the Node.js API. All requests stay on the same domain — no CORS configuration needed.
+Everything runs in one container: Nginx serves the frontend and reverse-proxies to the Node.js API. All requests stay on the same domain. The API still validates browser Origin headers, so configure its allowed public origin.
 
 ### Environment Variables
 
 ```bash
 DATABASE_URL=postgresql://user:pass@host:5432/dbname  # Required
 JWT_SECRET=<random-string>     # Required - generate with: openssl rand -base64 384
+CORS_ALLOWED_ORIGINS=https://your-domain.com  # Required for browser requests
 BCRYPT_COST=12                 # Optional (default: 12)
 NODE_ENV=production
 PORT=3000                      # Internal API port (nginx proxies to this)
 VITE_API_BASE_URL=             # Leave EMPTY for single-container setup
 ```
 
-> **Important:** `VITE_API_BASE_URL` must be empty (or unset). The frontend will use relative URLs (`/api/...`, `/auth/...`) which nginx proxies internally. No CORS needed.
+> **Important:** `VITE_API_BASE_URL` must be empty (or unset). The frontend will use relative URLs (`/api/...`, `/auth/...`) which nginx proxies internally. Set `CORS_ALLOWED_ORIGINS` to the public frontend origin even in this same-domain setup.
 
 ### Docker Compose
 
@@ -33,6 +34,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://user:pass@db:5432/dbname
       - JWT_SECRET=your-secret-here
+      - CORS_ALLOWED_ORIGINS=https://your-domain.com
       - BCRYPT_COST=12
       - NODE_ENV=production
       - PORT=3000
@@ -45,9 +47,23 @@ services:
 docker build -t spatial-ring .
 docker run -p 80:80 \
   -e DATABASE_URL="postgresql://..." \
+  -e CORS_ALLOWED_ORIGINS="http://localhost" \
   -e JWT_SECRET="$(openssl rand -base64 384)" \
   spatial-ring
 ```
+
+### Database Migrations and Persistent Photos
+
+Before starting an updated container, apply existing migrations using the deployment's database environment:
+
+```bash
+docker run --rm --env-file /path/to/runtime.env --entrypoint npm spatial-ring \
+  run db:deploy:prod --workspace=api
+```
+
+Use the same database settings and Docker network as the application. This uses `prisma migrate deploy`; never use the development migration or reset commands against production. The Docker entrypoint does not automatically migrate the database.
+
+Mount a persistent volume at `/app/api/uploads` to retain uploaded photos when replacing the container. Supply database and JWT credentials at runtime; environment files, database backups, local uploads, and previously generated client/build output are excluded from the Docker context. Frontend runtime configuration exposes only `VITE_API_BASE_URL`; other environment variables are not published to the browser.
 
 ### How It Works
 
@@ -120,7 +136,7 @@ The Docker container runs three processes managed by Supervisor:
 
 ### Startup Flow
 
-1. **Entrypoint** runs `inject-env.sh` to generate `env-config.js` from `VITE_*` env vars
+1. **Entrypoint** runs the tracked `docker/inject-env.mjs` to generate `env-config.js` from the public `VITE_API_BASE_URL` value
 2. **Supervisor** starts Node API and Nginx
 3. **Nginx** proxies `/api/*`, `/auth/*`, `/uploads/*` to the API
 
@@ -140,7 +156,7 @@ The Docker container runs three processes managed by Supervisor:
 - **Debug**: `docker logs <container>`
 
 ### Error: CORS / Preflight 404
-- **If using Docker (Option A)**: Set `VITE_API_BASE_URL=` (empty). No CORS needed.
+- **If using Docker (Option A)**: Set `VITE_API_BASE_URL=` (empty) and `CORS_ALLOWED_ORIGINS` to the public frontend origin.
 - **If using Git Source (Option B)**: Add your frontend domain to `CORS_ALLOWED_ORIGINS`
 - **Common mistake**: Domain mismatch (e.g., `.com` vs `.rocks`, missing `https://`)
 

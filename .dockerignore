@@ -1,3 +1,26 @@
 node_modules
 **/node_modules
 .git
+
+# Local credentials and machine-specific state must never enter image layers.
+.env
+.env.*
+**/.env
+**/.env.*
+.npmrc
+.claude
+.codex
+.agents
+.tmp
+tmp
+.playwright-cli
+
+# Database copies, uploads and generated output are runtime/local data.
+/*.sql
+backups
+api/pgdata-backup
+api/uploads
+api/generated
+web/dist
+coverage
+**/coverage

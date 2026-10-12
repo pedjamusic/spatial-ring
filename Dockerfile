@@ -62,9 +62,9 @@ COPY docker/nginx.conf /etc/nginx/http.d/default.conf
 COPY docker/supervisord.conf /etc/supervisord.conf
 
 # Entrypoint setup
-COPY web/inject-env.sh /docker-entrypoint.d/40-inject-env.sh
+COPY docker/inject-env.mjs /docker/inject-env.mjs
 COPY docker/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh /docker-entrypoint.d/40-inject-env.sh
+RUN chmod +x /entrypoint.sh
 
 # Environment
 ENV NODE_ENV=production

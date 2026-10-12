@@ -4,20 +4,13 @@ set -e
 echo "=== Starting deployment ==="
 
 # 1. Run the Environment Injection for Frontend
-if [ -f "/docker-entrypoint.d/40-inject-env.sh" ]; then
-    echo "Running env injection script..."
-    sh /docker-entrypoint.d/40-inject-env.sh
-
-    # Verify the file was created
-    if [ -f "/usr/share/nginx/html/env-config.js" ]; then
-        echo "✓ env-config.js created successfully"
-        cat /usr/share/nginx/html/env-config.js
-    else
-        echo "✗ ERROR: env-config.js was not created!"
-    fi
-else
-    echo "✗ WARNING: /docker-entrypoint.d/40-inject-env.sh not found!"
+echo "Generating frontend runtime configuration..."
+node /docker/inject-env.mjs
+if [ ! -s "/usr/share/nginx/html/env-config.js" ]; then
+    echo "✗ ERROR: env-config.js was not created!"
+    exit 1
 fi
+echo "✓ env-config.js created successfully"
 
 # 2. Check if API can start
 echo "Checking API configuration..."

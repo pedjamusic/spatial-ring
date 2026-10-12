@@ -52,7 +52,7 @@ Both applications use Node **24 LTS**, selected by `engines.node` in the root `p
 | Publish Directory | `/` |
 | Install Command | `npm ci && npm run db:generate --workspace=api` |
 | Build Command | `true` |
-| Start Command | `npm run db:migrate --workspace=api && node api/src/server.js` |
+| Start Command | `npm run db:deploy:prod --workspace=api && node api/src/server.js` |
 | Port | `3000` |
 | Network Alias | `spatial-api` |
 
