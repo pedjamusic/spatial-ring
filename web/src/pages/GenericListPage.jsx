@@ -23,6 +23,7 @@ import useCalendarEvents from "../components/calendar/useCalendarEvents";
 import { resource } from "../lib/api";
 import { toast } from "../lib/toast";
 
+const EMPTY_CONFIG = {};
 const STORAGE_KEY_PREFIX = "uiConfig_";
 const deepMerge = (a = {}, b = {}) =>
   Object.fromEntries(
@@ -58,9 +59,9 @@ const ASSET_AVAILABILITY_FILTERS = [
 export default function GenericListPage({
   modelName,
   resourceName,
-  uiConfig: defaultUiConfig = {},
-  titles = {},
-  fixedListParams = {},
+  uiConfig: defaultUiConfig = EMPTY_CONFIG,
+  titles = EMPTY_CONFIG,
+  fixedListParams = EMPTY_CONFIG,
   hideCreateButton = false,
   hideMobileCreateButton = false,
   toolbarScopeAction = null,
@@ -72,9 +73,10 @@ export default function GenericListPage({
 
   const [meta, setMeta] = useState(null);
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [scopeCount, setScopeCount] = useState(null);
+  const [requestState, setRequestState] = useState(null);
+  const [refreshVersion, setRefreshVersion] = useState(0);
+  const [requestError, setError] = useState("");
+  const [scopeResult, setScopeResult] = useState(null);
 
   // Calendar config from _viewConfig
   const calendarConfig = defaultUiConfig?._viewConfig?.calendar;
@@ -110,38 +112,38 @@ export default function GenericListPage({
 
   // uiConfig state + localStorage
   const storageKey = `${STORAGE_KEY_PREFIX}${modelName}`;
-  const [uiConfig, setUiConfig] = useState(() => {
+  const configContext = JSON.stringify([storageKey, defaultUiConfig]);
+  const readConfig = () => {
     try {
       const stored = JSON.parse(localStorage.getItem(storageKey) || "{}");
       return deepMerge(defaultUiConfig, stored);
     } catch {
       return defaultUiConfig;
     }
-  });
-
-  useEffect(() => {
-    try {
-      const stored = JSON.parse(localStorage.getItem(storageKey) || "{}");
-      setUiConfig(deepMerge(defaultUiConfig, stored));
-    } catch {
-      setUiConfig(defaultUiConfig);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modelName, JSON.stringify(defaultUiConfig)]);
+  };
+  const [configState, setConfigState] = useState(() => ({
+    context: configContext,
+    value: readConfig(),
+  }));
+  if (configState.context !== configContext) {
+    setConfigState({ context: configContext, value: readConfig() });
+  }
+  const uiConfig = configState.value;
 
   const handleToggleColumnPref = (fieldName, updates) => {
-    setUiConfig((prev) => {
+    setConfigState((prevState) => {
+      const prev = prevState.value;
       const next = { ...prev, [fieldName]: { ...(prev[fieldName] || {}), ...updates } };
       const currentStored = JSON.parse(localStorage.getItem(storageKey) || "{}");
       const nextStored = { ...currentStored, [fieldName]: { ...(currentStored[fieldName] || {}), ...updates } };
       localStorage.setItem(storageKey, JSON.stringify(nextStored));
-      return next;
+      return { context: configContext, value: next };
     });
   };
 
   const handleResetPrefs = () => {
     localStorage.removeItem(storageKey);
-    setUiConfig(defaultUiConfig);
+    setConfigState({ context: configContext, value: defaultUiConfig });
   };
 
   const api = useMemo(() => resource(resourceName), [resourceName]);
@@ -156,73 +158,74 @@ export default function GenericListPage({
     month: calMonth,
   });
 
-  const loadData = useCallback(async (signal) => {
-    setLoading(true);
-    setError("");
-    try {
-      // Load metadata
-      const metaResponse = await fetch(`/api/meta/models/${modelName}`, { signal });
-      if (!metaResponse.ok) throw new Error(`Meta fetch failed: ${metaResponse.status}`);
-      const metaData = await metaResponse.json();
-      setMeta(metaData);
-
-      // Load paginated data (only for table view)
-      if (!isCalendarView) {
-        const res = await api.list({
-          ...fixedListParams,
-          page,
-          limit,
-          search: search || undefined,
-        }, { signal });
-        setData(res.data || []);
-        setTotalPages(res.meta?.totalPages || 0);
-      }
-    } catch (err) {
-      if (err.name === "AbortError") return;
-      setError(err.message);
-    } finally {
-      if (!signal?.aborted) setLoading(false);
-    }
-  }, [modelName, api, page, limit, search, isCalendarView, fixedListParams]);
+  // Serialize query values so fresh prop objects do not restart requests.
+  const requestContext = JSON.stringify({ modelName, resourceName, page, limit,
+    search, isCalendarView, fixedListParams, refreshVersion });
+  if (requestState?.context !== requestContext) {
+    setRequestState({ context: requestContext, complete: false });
+  }
+  const loading = requestState?.context !== requestContext || !requestState.complete;
+  const error = loading ? "" : requestError;
 
   useEffect(() => {
-    const controller = new AbortController();
-    loadData(controller.signal);
-    return () => controller.abort();
-  }, [loadData]);
-
-  useEffect(() => {
-    if (!toolbarScopeAction?.countParams) {
-      setScopeCount(null);
-      return;
-    }
-
     const controller = new AbortController();
     const { signal } = controller;
-
+    const context = JSON.parse(requestContext);
     (async () => {
       try {
-        const res = await api.list(
-          {
-            ...toolbarScopeAction.countParams,
-            page: 1,
-            limit: 1,
-          },
-          { signal },
-        );
-        if (!signal.aborted) {
-          setScopeCount(res.meta?.total ?? null);
+        const metaResponse = await fetch(`/api/meta/models/${context.modelName}`, { signal });
+        if (!metaResponse.ok) throw new Error(`Meta fetch failed: ${metaResponse.status}`);
+        const metaData = await metaResponse.json();
+        if (signal.aborted) return;
+        setMeta(metaData);
+        const res = context.isCalendarView ? null : await api.list({
+          ...context.fixedListParams,
+          page: context.page,
+          limit: context.limit,
+          search: context.search || undefined,
+        }, { signal });
+        if (signal.aborted) return;
+        if (res) {
+          setData(res.data || []);
+          setTotalPages(res.meta?.totalPages || 0);
         }
-      } catch {
-        if (!signal.aborted) setScopeCount(null);
+        setError("");
+      } catch (err) {
+        if (signal.aborted || err.name === "AbortError") return;
+        setError(err.message);
+      } finally {
+        if (!signal.aborted) setRequestState({ context: requestContext, complete: true });
       }
     })();
-
     return () => controller.abort();
-  }, [api, toolbarScopeAction]);
+  }, [api, requestContext]);
+
+  const scopeContext = toolbarScopeAction?.countParams
+    ? JSON.stringify({ resourceName, params: toolbarScopeAction.countParams })
+    : null;
+  const scopeCount = scopeContext && scopeResult?.context === scopeContext
+    ? scopeResult.count : null;
+  useEffect(() => {
+    if (!scopeContext) return;
+    const controller = new AbortController();
+    const { signal } = controller;
+    const { params } = JSON.parse(scopeContext);
+    (async () => {
+      try {
+        const res = await api.list({ ...params, page: 1, limit: 1 }, { signal });
+        if (!signal.aborted) {
+          setScopeResult({ context: scopeContext, count: res.meta?.total ?? null });
+        }
+      } catch {
+        if (!signal.aborted) setScopeResult({ context: scopeContext, count: null });
+      }
+    })();
+    return () => controller.abort();
+  }, [api, scopeContext]);
 
   // View switching — persist to localStorage
   const handleViewChange = useCallback((newView) => {
+    const now = new Date();
     localStorage.setItem(viewStorageKey, newView);
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
@@ -244,7 +247,7 @@ export default function GenericListPage({
       }
       return next;
     });
-  }, [setSearchParams, now]);
+  }, [setSearchParams, viewStorageKey]);
 
   const handleCalendarNavigate = useCallback((newYear, newMonth) => {
     setSearchParams((prev) => {
@@ -298,7 +301,7 @@ export default function GenericListPage({
     try {
       await api.remove(id);
       toast.info(`${singular} deleted.`);
-      await loadData();
+      setRefreshVersion((version) => version + 1);
     } catch (err) {
       setError(err.message);
       toast.error(`Failed to delete ${singular}: ${err.message}`);

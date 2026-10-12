@@ -11,6 +11,7 @@ Effort tags: `⚡ quick` (<30 min) · `🟢 easy` (<half day) · `🟡 medium` (
 
 ## Frontend
 
+- [x] `🟢 easy` **Web lint cleanup** — remove effect-state and callback diagnostics while preserving form drafts, search, sorting, and calendar/event loading
 - [x] `🟢 easy` **Form error notification → toast** — removed inline error `<div>` from `GenericFormPage.jsx`; all errors now use `toast.error()` only
 - [x] `🟡 medium` **Form element consistency** — all CRUD form elements now share unified styling and validation behavior, including relation selects, number zero handling, and date-range widget validation flow
 - [ ] `🟢 easy` **Bundle size** — currently ~620kB; consider code splitting / lazy loading routes (`React.lazy` + `Suspense`)

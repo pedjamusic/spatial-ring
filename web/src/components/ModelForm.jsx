@@ -23,14 +23,17 @@ import { inputClasses } from "../lib/formStyles";
 import { getFieldValueKey } from "../lib/formFieldKeys";
 import { normalizeInputValue } from "../lib/formFieldValues";
 
+const EMPTY_INITIAL_DATA = {};
+
 export default function ModelForm({
   meta,
-  initialData = {},
+  initialData = EMPTY_INITIAL_DATA,
   onSubmit,
   onCancel,
   uiConfig = {},
 }) {
-  const [formData, setFormData] = useState(initialData);
+  // GenericFormPage remounts this form for each record, preserving drafts on rerenders.
+  const [formData, setFormData] = useState(initialData ?? EMPTY_INITIAL_DATA);
   const [relationOptions, setRelationOptions] = useState({});
   const [loading, setLoading] = useState(false);
   const [pendingPhotoFile, setPendingPhotoFile] = useState(null);
@@ -80,14 +83,7 @@ export default function ModelForm({
     }
   }, [meta, uiConfig]);
 
-  // Effect 2: Reset form when initial data changes
-  useEffect(() => {
-    // setFormData(initialData);
-    setFormData(initialData ?? {});
-    resetValidation();
-  }, [initialData, resetValidation]);
-
-  // Effect 3: Load data for relation dropdowns when meta changes
+  // Load data for relation dropdowns when meta changes
   useEffect(() => {
     if (!meta?.fields) return;
 
@@ -222,7 +218,7 @@ export default function ModelForm({
     // Dirty check: compare current formData against initialData
     const isDirty = Object.keys(formData).some((key) => {
       const current = formData[key] ?? "";
-      const original = initialData[key] ?? "";
+      const original = initialData?.[key] ?? "";
       return current !== original;
     });
 
@@ -230,7 +226,7 @@ export default function ModelForm({
       if (!confirm("You have unsaved changes. Discard them?")) return;
     }
 
-    setFormData(initialData ?? {}); // critical: reset to passed defaults, not {}
+    setFormData(initialData ?? EMPTY_INITIAL_DATA); // critical: reset to passed defaults, not {}
     onCancel?.(); // let container route back / close dialog
   };
 
@@ -457,7 +453,7 @@ export default function ModelForm({
                 : "bg-blue-600 text-white shadow-glow shadow-blue-600/50 hover:bg-blue-500"
             }`}
           >
-            {loading ? "Saving..." : initialData.id ? "Update" : "Create"}
+            {loading ? "Saving..." : initialData?.id ? "Update" : "Create"}
           </Button>
           {onCancel && (
             <Button

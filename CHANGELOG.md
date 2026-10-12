@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [Unreleased]
 
+### Web Lint and State Cleanup — 2026-10-12, 15:55 CEST
+
+- Removed all **12 web lint errors and 3 warnings** without rule suppressions, styling changes, API changes, or dependency upgrades. Form drafts now rely on the existing record-key remount boundary; sorting resets only when its model/defaults change; validation feedback transitions occur during validation events. Search clears cancel pending emissions, and date-picker callbacks read the latest committed dates without rebuilding the picker on each edit.
+- List, calendar, and event-detail loading derive from the current request's completion. Abort guards ignore superseded responses; serialized request contexts keep equivalent prop objects from restarting fetches. Column preferences survive data rerenders, absent scope counts are derived, and choosing an asset resets quantity in the selection event. Successful deletes, assignments, and detail saves trigger a fresh load.
+- Supervisor verification on Node `24.21.0`: ESLint with `--max-warnings 0` passed, all **7 existing web tests** passed, root build passed, and `git diff --check` passed. **33 browser fixture checks** passed across components and actual app pages, covering debounce cancellation, validation expiry, draft preservation/record reset, sort preservation/reset, latest date Cancel/Apply callbacks, stale calendar responses, pagination, search, column preferences, table/calendar/archive navigation, delete refresh, asset quantity reset, assignment refresh, and live detail saves. Browser regression assertions failed on the baseline for stale pending searches and stale date Cancel snapshots, then passed with the cleanup.
+- Browser checks used a temporary real-Chrome session and mocked API responses; they do not prove live backend or homelab integration. No database was accessed or reset. The API suite was not rerun for this web-only change. Existing frontend bundle/runtime-env build warnings remain. React Aria's missing row-header diagnostic during table rerenders was reproduced on the unchanged baseline and remains a separate accessibility fix.
+- The owner confirmed manual **Pass** on 2026-10-12. Application version remains `0.8.3`; this maintenance task does not create a versioned release. Temporary browser fixtures/services were removed after verification.
+
 ### Full Dependency Upgrade — 2026-10-11, 21:20 CEST
 
 - Updated all 35 retained direct dependency entries to the newest stable releases eligible under the owner's seven-day release-age policy. Major upgrades include Prisma `7.10.0`, Vite `8.3.2`, Vitest `5.0.3`, ESLint `10.12.0`, React `19.3.0`, React Aria `1.21.1`, and Tailwind `4.3.3`. Application version remains `0.8.3`; Node remains `24.21.0` with `24.x` engines. Prisma's `8.0.0-rc.22` preview was excluded.

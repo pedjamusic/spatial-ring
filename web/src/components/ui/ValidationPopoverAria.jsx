@@ -21,7 +21,7 @@ export function ValidationPopover({
     toggle: () => onOpenChange(!isOpen),
   };
 
-  const { popoverProps, arrowProps, underlayProps, placement } = usePopover(
+  const { popoverProps, arrowProps, underlayProps } = usePopover(
     {
       triggerRef,
       popoverRef,

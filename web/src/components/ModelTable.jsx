@@ -135,14 +135,23 @@ export default function ModelTable({
   const [sortDescriptor, setSortDescriptor] = useState(
     defaultSortField ? { column: defaultSortField, direction: defaultSortDirection } : null,
   );
+  const [sortContext, setSortContext] = useState({
+    field: defaultSortField,
+    direction: defaultSortDirection,
+    modelName,
+  });
 
-  useEffect(() => {
-    if (!defaultSortField) {
-      setSortDescriptor(null);
-      return;
-    }
-    setSortDescriptor({ column: defaultSortField, direction: defaultSortDirection });
-  }, [defaultSortField, defaultSortDirection, modelName]);
+  // Reset only when the sort defaults or model change, preserving user sorting on rerenders.
+  if (
+    sortContext.field !== defaultSortField ||
+    sortContext.direction !== defaultSortDirection ||
+    sortContext.modelName !== modelName
+  ) {
+    setSortContext({ field: defaultSortField, direction: defaultSortDirection, modelName });
+    setSortDescriptor(
+      defaultSortField ? { column: defaultSortField, direction: defaultSortDirection } : null,
+    );
+  }
 
   // If the page provides uiConfig.columnOrder = ['field1','field2',…]
   // sort meta.fields accordingly and fall back to schema order.

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { PageHeader } from "../components/layout/PageHeader";
 import { H1 } from "../components/typography/H1";
@@ -50,7 +50,13 @@ export default function EventViewPage() {
   const [assignments, setAssignments] = useState([]);
   const [availableAssets, setAvailableAssets] = useState([]);
   const [eventLocations, setEventLocations] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [requestState, setRequestState] = useState(null);
+  const [refreshVersion, setRefreshVersion] = useState(0);
+  const requestContext = JSON.stringify({ id, refreshVersion });
+  if (requestState?.context !== requestContext) {
+    setRequestState({ context: requestContext, complete: false });
+  }
+  const loading = requestState?.context !== requestContext || !requestState.complete;
   const [error, setError] = useState("");
   const [isEditingDetails, setIsEditingDetails] = useState(false);
   const [savingDetails, setSavingDetails] = useState(false);
@@ -76,19 +82,20 @@ export default function EventViewPage() {
   const selectedAsset = availableAssets.find((asset) => asset.id === assetId);
   const parsedQuantity = Number(quantity);
 
-  const loadData = useCallback(
-    async (signal) => {
-      setLoading(true);
-      setError("");
+  useEffect(() => {
+    const controller = new AbortController();
+    const { signal } = controller;
+    const { id: eventId } = JSON.parse(requestContext);
+    (async () => {
       try {
         const [eventData, assignmentData, assignableData, locationsData] =
           await Promise.all([
-            eventsApi.get(id, { signal }),
-            authFetch(`events/${id}/assignments`, { signal }),
-            authFetch(`events/${id}/assignable-assets`, { signal }),
+            eventsApi.get(eventId, { signal }),
+            authFetch(`events/${eventId}/assignments`, { signal }),
+            authFetch(`events/${eventId}/assignable-assets`, { signal }),
             authFetch("eventLocations?limit=200", { signal }),
           ]);
-
+        if (signal.aborted) return;
         setEvent(eventData);
         setAssignments(assignmentData.data || []);
         setAvailableAssets(assignableData.data || []);
@@ -100,25 +107,16 @@ export default function EventViewPage() {
           endsAt: toDateTimeLocalValue(eventData.endsAt),
           notes: eventData.notes || "",
         });
+        setError("");
       } catch (err) {
-        if (err.name === "AbortError") return;
+        if (signal.aborted || err.name === "AbortError") return;
         setError(err.message || "Failed to load event");
       } finally {
-        if (!signal?.aborted) setLoading(false);
+        if (!signal.aborted) setRequestState({ context: requestContext, complete: true });
       }
-    },
-    [eventsApi, id],
-  );
-
-  useEffect(() => {
-    const controller = new AbortController();
-    loadData(controller.signal);
+    })();
     return () => controller.abort();
-  }, [loadData]);
-
-  useEffect(() => {
-    setQuantity(1);
-  }, [assetId]);
+  }, [eventsApi, requestContext]);
 
   const handleAssignAsset = async (e) => {
     e.preventDefault();
@@ -142,7 +140,7 @@ export default function EventViewPage() {
       setAssetId("");
       setQuantity(1);
       setNotes("");
-      await loadData();
+      setRefreshVersion((version) => version + 1);
     } catch (err) {
       toast.error(err.message || "Failed to assign asset");
     } finally {
@@ -193,7 +191,7 @@ export default function EventViewPage() {
       });
       toast.success("Event details updated.");
       setIsEditingDetails(false);
-      await loadData();
+      setRefreshVersion((version) => version + 1);
     } catch (err) {
       toast.error(err.message || "Failed to update event details.");
     } finally {
@@ -400,7 +398,10 @@ export default function EventViewPage() {
             Asset
             <select
               value={assetId}
-              onChange={(e) => setAssetId(e.target.value)}
+              onChange={(e) => {
+                setAssetId(e.target.value);
+                setQuantity(1);
+              }}
               className="mt-1 block w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-0 focus:border-blue-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"
             >
               <option value="">Select an asset</option>

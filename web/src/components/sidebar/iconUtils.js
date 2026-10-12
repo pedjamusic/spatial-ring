@@ -28,7 +28,6 @@ export function getIconByKey(key, registry) {
 
   // Not found
   if (import.meta?.env?.MODE !== "production") {
-    // eslint-disable-next-line no-console
     console.warn(`[sidebar] Unknown icon key: "${key}". Add it to iconRegistry.js or ensure generator emits a known key.`);
   }
   return null;

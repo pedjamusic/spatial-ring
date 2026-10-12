@@ -1,19 +1,27 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 
+const SEARCH_DEBOUNCE_MS = 300;
+
 export default function SearchInput({ value = "", onChange, placeholder = "Search..." }) {
   const [local, setLocal] = useState(value);
+  const [previousValue, setPreviousValue] = useState(value);
   const timerRef = useRef(null);
   const inputRef = useRef(null);
 
-  // Sync from parent when value is cleared externally
+  // A parent clear replaces the draft; typing while the parent is empty remains local.
+  if (value !== previousValue) {
+    setPreviousValue(value);
+    if (value === "") setLocal("");
+  }
+
   useEffect(() => {
-    if (value === "" && local !== "") setLocal("");
-  }, [value]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (value === "") clearTimeout(timerRef.current);
+  }, [value]);
 
   const debounceEmit = useCallback(
     (val) => {
       clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(() => onChange(val), 300);
+      timerRef.current = setTimeout(() => onChange(val), SEARCH_DEBOUNCE_MS);
     },
     [onChange],
   );

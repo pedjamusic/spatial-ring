@@ -15,7 +15,6 @@ export default function ValidatedFormField({
   required = false,
   error = null,
   touched = false,
-  className = "",
   ...inputProps
 }) {
   const showError = touched && error;

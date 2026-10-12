@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useEffectEvent } from "react";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import "../styles/flatpickr-theme.css";
@@ -30,22 +30,25 @@ export default function DateRangePicker({
   // Pending selection (not yet committed)
   const pendingRef = useRef({ start: "", end: "" });
 
-  const commitDates = useCallback(
-    (start, end) => {
-      onChangeStart(start);
-      onChangeEnd(end);
-    },
-    [onChangeStart, onChangeEnd],
-  );
+  // Library callbacks need current props without rebuilding the open picker.
+  const getCommittedDates = useEffectEvent(() => ({
+    start: startValue || "",
+    end: endValue || "",
+  }));
+  const commitDates = useEffectEvent((start, end) => {
+    onChangeStart(start);
+    onChangeEnd(end);
+  });
 
   useEffect(() => {
     if (!inputRef.current) return;
 
+    const { start, end } = getCommittedDates();
     const defaultDates = [];
-    if (startValue) defaultDates.push(new Date(startValue));
-    if (endValue) defaultDates.push(new Date(endValue));
+    if (start) defaultDates.push(new Date(start));
+    if (end) defaultDates.push(new Date(end));
 
-    pendingRef.current = { start: startValue || "", end: endValue || "" };
+    pendingRef.current = { start, end };
 
     const fp = flatpickr(inputRef.current, {
       mode: "range",
@@ -63,10 +66,7 @@ export default function DateRangePicker({
         };
       },
       onOpen() {
-        snapshotRef.current = {
-          start: startValue || "",
-          end: endValue || "",
-        };
+        snapshotRef.current = getCommittedDates();
       },
       onReady(_dates, _str, instance) {
         // Inject Cancel / Apply footer

@@ -1,6 +1,8 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 
-export function useFieldValidation(validationFn, successDuration = 3000) { // change successDuration for input field hint after error has been corrected
+const DEFAULT_SUCCESS_DURATION_MS = 3000;
+
+export function useFieldValidation(validationFn, successDuration = DEFAULT_SUCCESS_DURATION_MS) { // change successDuration for input field hint after error has been corrected
   const [validation, setValidation] = useState({
     state: "none",
     message: "",
@@ -8,27 +10,23 @@ export function useFieldValidation(validationFn, successDuration = 3000) { // ch
   const [touched, setTouched] = useState(false);
   const [hadError, setHadError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const successTimer = useRef();
 
   useEffect(() => {
-    if (validation.state === "invalid") {
-      setHadError(true);
+    if (!showSuccess) return;
+    const successTimer = setTimeout(() => {
       setShowSuccess(false);
-      if (successTimer.current) clearTimeout(successTimer.current);
-    } else if (validation.state === "valid" && hadError) {
-      setShowSuccess(true);
-      if (successTimer.current) clearTimeout(successTimer.current);
-      successTimer.current = setTimeout(() => {
-        setShowSuccess(false);
-      }, successDuration);
-    }
-    return () => {
-      if (successTimer.current) clearTimeout(successTimer.current);
-    };
-  }, [validation.state, hadError, successDuration]);
+    }, successDuration);
+    return () => clearTimeout(successTimer);
+  }, [showSuccess, successDuration]);
 
   const validate = (value) => {
     const result = validationFn(value);
+    if (result.state === "invalid") {
+      setHadError(true);
+      setShowSuccess(false);
+    } else if (result.state === "valid" && validation.state !== "valid" && hadError) {
+      setShowSuccess(true);
+    }
     setValidation(result);
     return result;
   };
